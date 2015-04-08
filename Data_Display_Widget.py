@@ -21,6 +21,7 @@ class Data_Display_Widget(QtGui.QMainWindow):
         self.Frame_Visualizer = None
         self.LUT_Controlers = None
         self.Traces_Visualizer = None
+        self.Traces_Visualizer_Stimsorted = None
         
         self.color_maps = None
         self.colors = None
@@ -42,6 +43,7 @@ class Data_Display_Widget(QtGui.QMainWindow):
         self.Frame_Visualizer = Frame_Visualizer_Widget(self.Main,self)
         self.LUT_Controlers = LUT_Controlers_Widget(self.Main,self)
         self.Traces_Visualizer = Traces_Visualizer_Widget(self.Main,self)
+        self.Traces_Visualizer_Stimsorted = Traces_Visualizer_Stimsorted_Widget(self.Main,self)
         
         # color ### FIXME does not work ... 
         palette = QtGui.QPalette(QtGui.QColor(90,90,90,90))
@@ -52,7 +54,9 @@ class Data_Display_Widget(QtGui.QMainWindow):
         
         # Frame_Visualizer + LUT_Controlers
         self.FrameWidget = QtGui.QWidget(self)
-        self.FrameLayout = QtGui.QHBoxLayout() 
+        self.FrameLayout = QtGui.QHBoxLayout()
+        self.FrameLayout.setMargin(0)
+        self.FrameLayout.setSpacing(0)
         self.FrameLayout.addWidget(self.Frame_Visualizer)
         self.FrameLayout.addWidget(self.LUT_Controlers)
         self.FrameLayout.setStretchFactor(self.Frame_Visualizer,5)
@@ -62,27 +66,15 @@ class Data_Display_Widget(QtGui.QMainWindow):
         self.setCentralWidget(self.FrameWidget)
 
         self.Traces_Dock = QtGui.QDockWidget(self)
-        self.Traces_Dock.setWidget(self.Traces_Visualizer)
+        self.Traces_Tabbed = QtGui.QTabWidget(self)
+        
+        self.Traces_Tabbed.addTab(self.Traces_Visualizer,'common timebase')
+        self.Traces_Tabbed.addTab(self.Traces_Visualizer_Stimsorted,'sorted to stimulus class')
+        
+        self.Traces_Dock.setWidget(self.Traces_Tabbed)
         self.Traces_Dock.setFloating(False)
-#        self.Traces_Dock.setMovable(True)
         self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.Traces_Dock)
-
-#        self.Traces_Dock.setFeatures(QtGui.QDockWidget.DockWidgetMovable)
-        # Frame_Visualizer and Traces_Visualizer divided by QSplitter
-#        self.FrameContainer = QtGui.QWidget() # is needed because Splitter works on Widgets and not on layouts
-#        self.FrameContainer.setLayout(self.FrameLayout) # putting the widgets inside
-#        self.DisplaySplitter = QtGui.QSplitter(QtCore.Qt.Vertical)
         
-        # putting both in
-#        self.DisplaySplitter.addWidget(self.FrameContainer)
-#        self.DisplaySplitter.addWidget(self.Traces_Visualizer)
-        
-        # setting initial split
-
-        # and putting all in the main container
-#        self.Container.addWidget(self.DisplaySplitter)
-#        self.setLayout(self.Container)
-
 
     def reset(self):
         self.Frame_Visualizer.reset()
@@ -91,7 +83,7 @@ class Data_Display_Widget(QtGui.QMainWindow):
         pass
     
     def init_data(self):
-        # weakref to data
+        # weakref to data and Options. Needed?
         self.data = weakref.ref(self.Main.Data)()
         self.Options = weakref.ref(self.Main.Options)()
         
@@ -99,12 +91,17 @@ class Data_Display_Widget(QtGui.QMainWindow):
         self.Frame_Visualizer.init_data()
         self.LUT_Controlers.init_data()
         self.Traces_Visualizer.init_data()
+        self.Traces_Visualizer_Stimsorted.init_data()
+        
         self.Frame_Visualizer.update()
         pass
     
     def update(self):
         self.Frame_Visualizer.update()
+        
+        # here is a possible entry point for avoiding costly multiple slicing
         self.Traces_Visualizer.update()
+        self.Traces_Visualizer_Stimsorted.update()
     
     def calc_colormaps(self,nColors,hot=False):
         """ generate evenly spaced colors on the HSV wheel """
@@ -137,10 +134,7 @@ class Data_Display_Widget(QtGui.QMainWindow):
     pass
 
 class Frame_Visualizer_Widget(pg.GraphicsView):
-    """ 
-    missing: intercept mouse click and add ROI
-    
-    """
+
     def __init__(self,Main,parent):
         super(Frame_Visualizer_Widget,self).__init__()
         
@@ -293,6 +287,8 @@ class LUT_Controlers_Widget(QtGui.QWidget):
         self.Layout = QtGui.QHBoxLayout()
         self.Layout.addWidget(self.LUTwidgets)
         self.Layout.addWidget(self.LUTwidgets_dFF)
+        self.Layout.setMargin(0)
+        self.Layout.setSpacing(0)
         self.setLayout(self.Layout)
         pass
     
@@ -472,21 +468,8 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
                     Trace = sp.average(sliced,axis=0)
                     self.traces[n].setData(Trace)
                     self.traces[n].show()
-                    
-                    # update the normal traces plot or update the Trace Inspector.
-                    # this needs cleaning!
-    #                if self.Traces_Inspector_exists_flag:
-    #                    self.Traces_Inspector.update_trace(Trace,n)
-    #                    self.Traces_Inspector.traces[n].show()
-    #                else:
-    
                 else:
                     self.traces[n].hide()
-    #                if self.Traces_Inspector_exists_flag:
-    #                    self.Traces_Inspector.traces[n].hide()
-    #                self.dots[n].hide()
-                pass
-            pass
     
     def reset(self):
         for trace in self.traces:
@@ -495,6 +478,92 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         
         pass
     pass
+
+#class Traces_Visualizer_Stimsorted_Widget(pg.GraphicsLayoutWidget):
+class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
+    """ plots the current traces, trial sorted with avg 
+    2 do: speed issues, maybe disable other trace updater?
+    implement in main window?
+    implement stim region    
+    """
+    def __init__(self,Main,parent):
+        super(Traces_Visualizer_Stimsorted_Widget, self).__init__()
+    
+
+        self.plotWidget = pg.GraphicsLayoutWidget()    
+        self.Data_Display = parent
+        self.Main = Main
+
+    def init_data(self):
+        # some preparations
+        self.trial_labels = self.Main.Data.Metadata.trial_labels
+        self.trial_indices = range(self.Main.Data.nFiles)
+        self.trial_labels_unique = sp.unique(self.trial_labels)
+        self.nStimClasses = len(self.trial_labels_unique)
+        self.nRepetitions = self.trial_labels.count(self.trial_labels[0]) # FIXME: this imposes a fixed number of repetitions per trial. this should be changed into a vector holding values for each stim
+
+        # generating the UI
+        self.plotItems = []
+        self.traces = []
+
+        # looping over StimClasses
+        for i,StimClass in enumerate(range(self.nStimClasses)):
+            plot = self.plotWidget.addPlot(title=self.trial_labels_unique[StimClass]) # for inheriting from QWidget
+#            plot = self.addPlot(title=self.trial_labels_unique[StimClass]) # for inheriting form pg.GraphicsLayoutWidget directly
+            plot.setLabel('left','F')
+            plot.setLabel('bottom','frame #')
+            plot.showGrid(x=True,y=True,alpha=0.5)
+            if i != 0:
+                plot.setYLink(self.plotItems[0])
+            # add the stimulus time marker
+            stim_region = pg.LinearRegionItem(values=[self.Main.Options.preprocessing['stimulus_onset'],self.Main.Options.preprocessing['stimulus_offset']],movable=False,brush=pg.mkBrush([50,50,50,100]))
+            for line in stim_region.lines:
+                line.hide()
+            stim_region.setZValue(-1000)
+            plot.addItem(stim_region)
+            
+            # add the plot to the list of plots
+            self.plotItems.append(plot)
+
+
+        for trial in self.trial_indices:
+            # draw the trace in the correct panel with the correct pen
+            # in the correct panel
+            stimClass = self.trial_labels[trial]
+            correct_panel_index = sp.where(self.trial_labels_unique == stimClass)[0]
+            
+            # correct pen
+            pen = pg.mkPen(self.Data_Display.colors[trial],width=2)
+
+            self.traces.append(self.plotItems[correct_panel_index].plot(pen=pen))
+                                        
+        # set the layout
+        layout = QtGui.QHBoxLayout()
+        layout.addWidget(self.plotWidget)
+        self.setLayout(layout)
+        
+    def update(self):
+        if self.Main.ROIs.nROIs != 0:
+            for n in range(self.Main.Data.nFiles):
+                if self.Main.Options.view['show_flags'][n] == True: # only work on active datasets
+                
+                    # implementation using the pyqtgraph internal slicing
+                    ROI = self.Main.ROIs.ROI_list[self.Main.ROIs.active_ROI_id]
+                    
+                    # func bool mask slicing
+                    mask, inds = self.Main.ROIs.get_ROI_mask(ROI)
+                    
+                    if self.Main.Options.view['show_dFF']:
+                        sliced = self.Main.Data.dFF[mask,:,n]
+                    else:
+                        sliced = self.Main.Data.raw[mask,:,n]
+            
+                    Trace = sp.average(sliced,axis=0)
+                    self.traces[n].setData(Trace)
+                    self.traces[n].show()
+                else:
+                    self.traces[n].hide()
+                    
 
 if __name__ == '__main__':
     pass

@@ -129,6 +129,7 @@ class ROIs_Object():
 #        pos = self.get_ROI_position(ROI)
         
         self.Main.Data_Display.Traces_Visualizer.update()
+        self.Main.Data_Display.Traces_Visualizer_Stimsorted.update()
         
     def ROI_hover(self,evt): # this one can be reimplemented
         """ on ROI hover: update traces with the ROI hovered """

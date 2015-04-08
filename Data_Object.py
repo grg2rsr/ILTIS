@@ -10,13 +10,13 @@ import IOtools as io
 import scipy as sp
 import os
 from scipy import ndimage
+from Metadata_Object import Metadata_Object
 
 class Data_Object():
     """ 
     specification of a Data Object:    
     """
     def __init__(self,parent):
-        
         self.Main = parent
         self.raw = None
         self.dFF = None
@@ -24,7 +24,6 @@ class Data_Object():
         self.extraction_mask = None
         self.Metadata_Object = None
         self.nFiles = None # number of files = number of trials
-        
         pass
     
     ### calculations
@@ -109,6 +108,11 @@ class Data_Object():
         self.nFiles = len(paths)
         self.nFrames = self.raw.shape[2]
         self.Main.MainWindow.statusBar().clearMessage()
+        
+        # hacking in metadata. FIXME
+        self.Metadata = Metadata_Object(self.Main,self)
+        self.Metadata.paths = paths
+        self.Metadata.trial_labels = paths
         pass
     
     def associate_metadata(self,meta_data,recalc=True):
