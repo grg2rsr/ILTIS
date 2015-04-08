@@ -10,7 +10,7 @@ from PyQt4 import QtGui, QtCore
 import pyqtgraph as pg
 from Options_Object import Options_Object
 from Data_Object import Data_Object
-from MainWindow import MainWindow
+from MainWindow_Widget import MainWindow_Widget
 from ROIs_Object import ROIs_Object
 import IOtools as io
 import scipy as sp
@@ -36,7 +36,7 @@ class Main():
 
         self.Options = Options_Object(self)
         self.ROIs = ROIs_Object(self)
-        self.MainWindow = MainWindow(self)
+        self.MainWindow = MainWindow_Widget(self)
         pass
 
 
