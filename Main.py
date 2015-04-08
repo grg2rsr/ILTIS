@@ -19,7 +19,6 @@ pg.setConfigOptions(antialias=True)
 
 class Main():
     def __init__(self,verbose=False):
-        
         # fields
         self.cwd = None
         self.program_path = None
@@ -37,7 +36,6 @@ class Main():
         self.Options = Options_Object(self)
         self.ROIs = ROIs_Object(self)
         self.MainWindow = MainWindow_Widget(self)
-        pass
 
 
     ### File Dialogs
@@ -107,7 +105,6 @@ class Main():
             self.tmp_path = '/tmp'
         else:
             self.tmp_path = 'C:\\Windows\\temp'
-        pass
     
     def initialize_dataset(self):
         """ replaces old prepare_dataset"""
@@ -144,10 +141,6 @@ class Main():
                 if self.Options.general['verbose']:
                     print "removing file: ",filepath
                 os.remove(filepath)
-    pass
-
-
-    pass
 
 def main():
     # run application

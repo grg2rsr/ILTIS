@@ -60,18 +60,13 @@ class MainWindow_Widget(QtGui.QMainWindow):
         # ini
         self.Data_Display = Data_Display_Widget(self.Main,self)
         self.Front_Control_Panel = Front_Control_Panel_Widget(self.Main,self)
-        
         self.Container = QtGui.QWidget()
-#        HBox = QtGui.QHBoxLayout()
-#        HBox.addWidget(self.Data_Display)
-#        HBox.addWidget(self.Front_Control_Panel)
-#        
-#        self.Container.setLayout(HBox)
+        
+        # splitter variant
         self.Splitter = QtGui.QSplitter(QtCore.Qt.Horizontal)
         self.Splitter.addWidget(self.Data_Display)
         self.Splitter.addWidget(self.Front_Control_Panel)
         
-#        self.Container.addWidget(self.DisplaySplitter)
         self.setCentralWidget(self.Splitter)
         
 #        self.setWindowIcon(QtGui.QIcon(self.Main.graphics_path + os.path.sep + )) ### FIXME

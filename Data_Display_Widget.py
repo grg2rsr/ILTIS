@@ -10,7 +10,7 @@ import weakref
 import scipy as sp
 from scipy import random
 
-class Data_Display_Widget(QtGui.QWidget):
+class Data_Display_Widget(QtGui.QMainWindow):
     def __init__(self,Main,parent):
         super(Data_Display_Widget,self).__init__()
 
@@ -49,30 +49,39 @@ class Data_Display_Widget(QtGui.QWidget):
         
         ### layout
         # The main Layout: Stacks Frame_Visualizer (+ LUT_Controlers) and Traces_Visualizer
-        self.Container = QtGui.QHBoxLayout(self) 
-
         
-        # Frame_Visualizer + LUT_Controlers 
+        # Frame_Visualizer + LUT_Controlers
+        self.FrameWidget = QtGui.QWidget(self)
         self.FrameLayout = QtGui.QHBoxLayout() 
         self.FrameLayout.addWidget(self.Frame_Visualizer)
         self.FrameLayout.addWidget(self.LUT_Controlers)
         self.FrameLayout.setStretchFactor(self.Frame_Visualizer,5)
         self.FrameLayout.setStretchFactor(self.LUT_Controlers,1)
+        self.FrameWidget.setLayout(self.FrameLayout)
 
+        self.setCentralWidget(self.FrameWidget)
+
+        self.Traces_Dock = QtGui.QDockWidget(self)
+        self.Traces_Dock.setWidget(self.Traces_Visualizer)
+        self.Traces_Dock.setFloating(False)
+#        self.Traces_Dock.setMovable(True)
+        self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.Traces_Dock)
+
+#        self.Traces_Dock.setFeatures(QtGui.QDockWidget.DockWidgetMovable)
         # Frame_Visualizer and Traces_Visualizer divided by QSplitter
-        self.FrameContainer = QtGui.QWidget() # is needed because Splitter works on Widgets and not on layouts
-        self.FrameContainer.setLayout(self.FrameLayout) # putting the widgets inside
-        self.DisplaySplitter = QtGui.QSplitter(QtCore.Qt.Vertical)
+#        self.FrameContainer = QtGui.QWidget() # is needed because Splitter works on Widgets and not on layouts
+#        self.FrameContainer.setLayout(self.FrameLayout) # putting the widgets inside
+#        self.DisplaySplitter = QtGui.QSplitter(QtCore.Qt.Vertical)
         
         # putting both in
-        self.DisplaySplitter.addWidget(self.FrameContainer)
-        self.DisplaySplitter.addWidget(self.Traces_Visualizer)
+#        self.DisplaySplitter.addWidget(self.FrameContainer)
+#        self.DisplaySplitter.addWidget(self.Traces_Visualizer)
         
         # setting initial split
 
         # and putting all in the main container
-        self.Container.addWidget(self.DisplaySplitter)
-        self.setLayout(self.Container)
+#        self.Container.addWidget(self.DisplaySplitter)
+#        self.setLayout(self.Container)
 
 
     def reset(self):

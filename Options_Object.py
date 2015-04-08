@@ -60,27 +60,6 @@ class Options_Object():
                        'data':'dFF',
                        }
                        
-#        self.verbose = True
-#        self.stimulus_onset = 25
-#        self.stimulus_offset = 75
-#        self.filter_xy = 0.8
-#        self.filter_z = 2
-#        self.filter_target = 'raw'
-#        self.ROI_diameter = 8
-#        self.ROI_type = 'circle'
-#        self.composition_mode = 'Screen'
-#        self.export_format = 'csv'
-#        self.export_data = 'dFF'
-#        self.last_selected = 0
-#        self.flags = {'show_dFF':False,
-#              'show_avg':False,
-#              'monochrome_mode':False,
-#              'lst_was_read':False,
-#              'global_levels':False}
-#
-#        self.dFF_frames = (0,20)
-#        self.show_flags = )
-#        self.path = self.Main.MainWindow.path
         pass
 
     def load_options(self):
