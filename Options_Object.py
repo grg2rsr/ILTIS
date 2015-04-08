@@ -149,7 +149,7 @@ class Options_Object():
                 self.Main.LUT_Controlers.LUTwidgets.widget(i).item.gradient.setColorMap(self.Main.Data_Display.color_maps[i])
                 self.Main.LUT_Controlers.LUTwidgets_dFF.widget(i).item.gradient.setColorMap(self.Main.Data_Display.color_maps[i])
             # back to multi selection model
-            self.Main.Data_Selector.setSelectionMode(Qt.QAbstractItemView.MultiSelection)
+            self.Main.Data_Selector.setSelectionMode(Qt.QAbstractItemView.ExtendedSelection)
 
         self.Main.Data_Display.update()
 

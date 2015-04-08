@@ -7,10 +7,10 @@ Created on Wed Apr  1 13:23:18 2015
 from PyQt4 import QtGui, QtCore
 import os
 
-class Options_Control(QtGui.QTabWidget):
+class Options_Control_Widget(QtGui.QTabWidget):
     """ the GUI widget to set the options, possibly one with tabs """
     def __init__(self,Main,parent):
-        super(Options_Control,self).__init__()
+        super(Options_Control_Widget,self).__init__()
         self.MainWindow = parent
         self.Main = Main
         self.Main.Options_Control = self

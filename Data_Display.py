@@ -10,16 +10,16 @@ import weakref
 import scipy as sp
 from scipy import random
 
-class Data_Display(QtGui.QWidget):
+class Data_Display_Widget(QtGui.QWidget):
     def __init__(self,Main,parent):
-        super(Data_Display,self).__init__()
+        super(Data_Display_Widget,self).__init__()
 
         self.Main = Main
-        self.Main.Data_Display = self
+        self.Main.Data_Display_Widget = self
         self.MainWindow = parent
         
-        self.Frame_Visualizer = None
-        self.LUT_Controlers = None
+        self.Frame_Visualizer_Widget = None
+        self.LUT_Controlers_Widget = None
         self.Traces_Visualizer = None
         
         self.color_maps = None
@@ -39,8 +39,8 @@ class Data_Display(QtGui.QWidget):
         
     def initUI(self):
         # ini the widgets
-        self.Frame_Visualizer = Frame_Visualizer(self.Main,self)
-        self.LUT_Controlers = LUT_Controlers(self.Main,self)
+        self.Frame_Visualizer_Widget = Frame_Visualizer_Widget(self.Main,self)
+        self.LUT_Controlers_Widget = LUT_Controlers_Widget(self.Main,self)
         self.Traces_Visualizer = Traces_Visualizer(self.Main,self)
         
         # color ### FIXME does not work ... 
@@ -48,18 +48,18 @@ class Data_Display(QtGui.QWidget):
         self.setPalette(palette)
         
         ### layout
-        # The main Layout: Stacks Frame_Visualizer (+ LUT_Controlers) and Traces_Visualizer
+        # The main Layout: Stacks Frame_Visualizer_Widget (+ LUT_Controlers_Widget) and Traces_Visualizer
         self.Container = QtGui.QHBoxLayout(self) 
 
         
-        # Frame_Visualizer + LUT_Controlers 
+        # Frame_Visualizer_Widget + LUT_Controlers_Widget 
         self.FrameLayout = QtGui.QHBoxLayout() 
-        self.FrameLayout.addWidget(self.Frame_Visualizer)
-        self.FrameLayout.addWidget(self.LUT_Controlers)
-        self.FrameLayout.setStretchFactor(self.Frame_Visualizer,5)
-        self.FrameLayout.setStretchFactor(self.LUT_Controlers,1)
+        self.FrameLayout.addWidget(self.Frame_Visualizer_Widget)
+        self.FrameLayout.addWidget(self.LUT_Controlers_Widget)
+        self.FrameLayout.setStretchFactor(self.Frame_Visualizer_Widget,5)
+        self.FrameLayout.setStretchFactor(self.LUT_Controlers_Widget,1)
 
-        # Frame_Visualizer and Traces_Visualizer divided by QSplitter
+        # Frame_Visualizer_Widget and Traces_Visualizer divided by QSplitter
         self.FrameContainer = QtGui.QWidget() # is needed because Splitter works on Widgets and not on layouts
         self.FrameContainer.setLayout(self.FrameLayout) # putting the widgets inside
         self.DisplaySplitter = QtGui.QSplitter(QtCore.Qt.Vertical)
@@ -76,8 +76,8 @@ class Data_Display(QtGui.QWidget):
 
 
     def reset(self):
-        self.Frame_Visualizer.reset()
-        self.LUT_Controlers.reset()
+        self.Frame_Visualizer_Widget.reset()
+        self.LUT_Controlers_Widget.reset()
         self.Traces_Visualizer.reset()
         pass
     
@@ -87,14 +87,14 @@ class Data_Display(QtGui.QWidget):
         self.Options = weakref.ref(self.Main.Options)()
         
         self.colors,self.color_maps = self.calc_colormaps(self.data.nFiles)
-        self.Frame_Visualizer.init_data()
-        self.LUT_Controlers.init_data()
+        self.Frame_Visualizer_Widget.init_data()
+        self.LUT_Controlers_Widget.init_data()
         self.Traces_Visualizer.init_data()
-        self.Frame_Visualizer.update()
+        self.Frame_Visualizer_Widget.update()
         pass
     
     def update(self):
-        self.Frame_Visualizer.update()
+        self.Frame_Visualizer_Widget.update()
         self.Traces_Visualizer.update()
     
     def calc_colormaps(self,nColors,hot=False):
@@ -127,18 +127,18 @@ class Data_Display(QtGui.QWidget):
     
     pass
 
-class Frame_Visualizer(pg.GraphicsView):
+class Frame_Visualizer_Widget(pg.GraphicsView):
     """ 
     missing: intercept mouse click and add ROI
     
     """
     def __init__(self,Main,parent):
-        super(Frame_Visualizer,self).__init__()
+        super(Frame_Visualizer_Widget,self).__init__()
         
         self.Main = Main
-        self.Main.Frame_Visualizer = self
+        self.Main.Frame_Visualizer_Widget = self
         
-        self.Data_Display = parent
+        self.Data_Display_Widget = parent
         
         self.ImageItems = [] # list with the image items
         self.ImageItems_dFF = [] # list with the image items
@@ -208,8 +208,8 @@ class Frame_Visualizer(pg.GraphicsView):
                         
                     self.ImageItems[n].show()
                     
-                self.ImageItems[n].setLevels(self.Data_Display.LUT_Controlers.raw_levels[n])
-                self.ImageItems_dFF[n].setLevels(self.Data_Display.LUT_Controlers.dFF_levels[n])        
+                self.ImageItems[n].setLevels(self.Data_Display_Widget.LUT_Controlers_Widget.raw_levels[n])
+                self.ImageItems_dFF[n].setLevels(self.Data_Display_Widget.LUT_Controlers_Widget.dFF_levels[n])        
         pass
     
     def init_data(self):
@@ -258,7 +258,7 @@ class Frame_Visualizer(pg.GraphicsView):
             if evt.button() == 1:
                 pos = self.ViewBox.mapToView(evt.pos()) # position of mouse click
                 self.Main.ROIs.add_ROI(pos=sp.array([pos.x(),pos.y()]))
-                self.Data_Display.update()
+                self.Data_Display_Widget.update()
                 pass
             pass
         pass
@@ -266,14 +266,14 @@ class Frame_Visualizer(pg.GraphicsView):
     pass
 
 
-class LUT_Controlers(QtGui.QWidget):
+class LUT_Controlers_Widget(QtGui.QWidget):
     def __init__(self,Main,parent):
-        super(LUT_Controlers,self).__init__()
+        super(LUT_Controlers_Widget,self).__init__()
         
         self.Main = Main
-        self.Main.LUT_Controlers = self
+        self.Main.LUT_Controlers_Widget = self
         
-        self.Data_Display = parent
+        self.Data_Display_Widget = parent
         self.LUTwidgets = QtGui.QStackedWidget()
         self.LUTwidgets_dFF = QtGui.QStackedWidget()
 
@@ -289,27 +289,27 @@ class LUT_Controlers(QtGui.QWidget):
     
     def init_data(self):
         # get weakref to dataset
-        self.data = weakref.ref(self.Data_Display.MainWindow.Main.Data)()
-        self.Options = weakref.ref(self.Data_Display.MainWindow.Main.Options)()
+        self.data = weakref.ref(self.Data_Display_Widget.MainWindow.Main.Data)()
+        self.Options = weakref.ref(self.Data_Display_Widget.MainWindow.Main.Options)()
         
         # ini and connect
         for n in range(self.data.nFiles):
             # for raw
             self.raw_levels.append(self.calc_levels(self.data.raw[:,:,:,n],fraction=(0.3,0.9995),nbins=100,samples=2000))
             LUTwidget = pg.HistogramLUTWidget()
-            LUTwidget.setImageItem(self.Data_Display.Frame_Visualizer.ImageItems[n])
+            LUTwidget.setImageItem(self.Data_Display_Widget.Frame_Visualizer_Widget.ImageItems[n])
             LUTwidget.item.setHistogramRange(self.data.raw.min(),self.data.raw.max()) # disables autoscaling
             LUTwidget.item.setLevels(self.raw_levels[n][0],self.raw_levels[n][1])
-            LUTwidget.item.gradient.setColorMap(self.Data_Display.color_maps[n])
+            LUTwidget.item.gradient.setColorMap(self.Data_Display_Widget.color_maps[n])
             self.LUTwidgets.addWidget(LUTwidget)
     
             # for dFF        
             self.dFF_levels.append(self.calc_levels(self.data.dFF[:,:,:,n],fraction=(0.7,0.9995),nbins=100,samples=2000))
             LUTwidget = pg.HistogramLUTWidget()
-            LUTwidget.setImageItem(self.Data_Display.Frame_Visualizer.ImageItems_dFF[n])
+            LUTwidget.setImageItem(self.Data_Display_Widget.Frame_Visualizer_Widget.ImageItems_dFF[n])
             LUTwidget.item.setHistogramRange(self.data.dFF.min(),self.data.dFF.max()) # disables autoscaling
             LUTwidget.item.setLevels(self.dFF_levels[n][0],self.dFF_levels[n][1])
-            LUTwidget.item.gradient.setColorMap(self.Data_Display.color_maps[n])
+            LUTwidget.item.gradient.setColorMap(self.Data_Display_Widget.color_maps[n])
             self.LUTwidgets_dFF.addWidget(LUTwidget)
             pass
         
@@ -401,7 +401,7 @@ class Traces_Visualizer(pg.GraphicsLayoutWidget):
         self.Main = Main
         self.Main.Traces_Visualizer = self        
         
-        self.Data_Display = parent
+        self.Data_Display_Widget = parent
         self.plotWidget = pg.GraphicsLayoutWidget()
         
         self.plotItem = self.addPlot()
@@ -412,7 +412,7 @@ class Traces_Visualizer(pg.GraphicsLayoutWidget):
         self.traces = []
 
         
-        self.vline = self.plotItem.addLine(x=self.Data_Display.Frame_Visualizer.frame,movable=True)
+        self.vline = self.plotItem.addLine(x=self.Data_Display_Widget.Frame_Visualizer_Widget.frame,movable=True)
         self.vline.sigPositionChanged.connect(self.vlinePosChanged) # add interactivity
     
     def init_data(self):
@@ -423,7 +423,7 @@ class Traces_Visualizer(pg.GraphicsLayoutWidget):
         self.vline.setBounds((0, self.Main.Data.nFrames -1))
 
         for n in range(self.Main.Data.nFiles):
-            pen = pg.mkPen(self.Data_Display.colors[n], width=2)
+            pen = pg.mkPen(self.Data_Display_Widget.colors[n], width=2)
             trace = self.plotItem.plot(pen=pen)
             self.traces.append(trace)
             
@@ -438,9 +438,9 @@ class Traces_Visualizer(pg.GraphicsLayoutWidget):
     
     def vlinePosChanged(self,evt):
         """ updater for the zlayer change caused by the vline """
-        self.Data_Display.Frame_Visualizer.frame = int(evt.pos().x())
+        self.Data_Display_Widget.Frame_Visualizer_Widget.frame = int(evt.pos().x())
         self.vline.setValue(evt.pos().x())
-        self.Data_Display.Frame_Visualizer.update()
+        self.Data_Display_Widget.Frame_Visualizer_Widget.update()
         pass        
         
     def update(self):

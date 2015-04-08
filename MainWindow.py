@@ -6,9 +6,9 @@ Created on Wed Apr  1 13:02:55 2015
 """
 from PyQt4 import QtGui, QtCore
 import os
-from Data_Display import Data_Display
-from Front_Control_Panel import Front_Control_Panel
-from Options_Control import Options_Control
+from Data_Display_Widget import Data_Display_Widget
+from Front_Control_Panel_Widget import Front_Control_Panel_Widget
+from Options_Control_Widget import Options_Control_Widget
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self,parent):
@@ -58,8 +58,8 @@ class MainWindow(QtGui.QMainWindow):
     def initUI(self):
         """ """
         # ini
-        self.Data_Display = Data_Display(self.Main,self)
-        self.Front_Control_Panel = Front_Control_Panel(self.Main,self)
+        self.Data_Display = Data_Display_Widget(self.Main,self)
+        self.Front_Control_Panel = Front_Control_Panel_Widget(self.Main,self)
         
         self.Container = QtGui.QWidget()
 #        HBox = QtGui.QHBoxLayout()
@@ -78,7 +78,7 @@ class MainWindow(QtGui.QMainWindow):
         self.setWindowTitle('ILTIS')
 
         # extra Widgets
-        self.Options_Control = Options_Control(self.Main,self)
+        self.Options_Control = Options_Control_Widget(self.Main,self)
         self.show()
         pass
     

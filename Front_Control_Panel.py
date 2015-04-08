@@ -11,9 +11,9 @@ import scipy as sp
 import pyqtgraph as pg
 from ROI import myCircleROI,myPolyLineROI
 
-class Front_Control_Panel(QtGui.QWidget): # has to interit from some pg.widget
+class Front_Control_Panel_Widget(QtGui.QWidget): # has to interit from some pg.widget
     def __init__(self,Main,parent):
-        super(Front_Control_Panel,self).__init__()
+        super(Front_Control_Panel_Widget,self).__init__()
         
         self.Main = Main
         self.Main.Front_Control_Panel = self
@@ -48,9 +48,9 @@ class Front_Control_Panel(QtGui.QWidget): # has to interit from some pg.widget
         pass
 
 
-class Data_Selector(QtGui.QTableWidget):
+class Data_Selector_Widget(QtGui.QTableWidget):
     def __init__(self,Main,parent):
-        super(Data_Selector,self).__init__()
+        super(Data_Selector_Widget,self).__init__()
 
         self.Main = Main
         self.Main.Data_Selector = self
@@ -108,9 +108,9 @@ class Data_Selector(QtGui.QTableWidget):
 
     
 
-class ROI_Manager(QtGui.QTableWidget): # has to inherit from pg.widget
+class ROI_Manager_Widget(QtGui.QTableWidget): # has to inherit from pg.widget
     def __init__(self,Main,parent):
-        super(ROI_Manager,self).__init__()
+        super(ROI_Manager_Widget,self).__init__()
         
         self.Main = Main
         self.Main.ROI_Manager = self
