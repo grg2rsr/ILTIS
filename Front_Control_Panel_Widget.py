@@ -60,8 +60,6 @@ class Data_Selector_Widget(QtGui.QTableWidget):
         self.setHorizontalHeaderLabels(['select data'])
         self.horizontalHeader().setStretchLastSection(True)
         
-        self.view_checkboxes = []
-
         pass
     
     def init_data(self):
@@ -96,12 +94,6 @@ class Data_Selector_Widget(QtGui.QTableWidget):
         pass
     
     def reset(self):
-        for checkbox in self.view_checkboxes:
-            self.Container.removeWidget(checkbox)
-            checkbox.deleteLater()
-            checkbox = None
-        self.checkboxes = []
-        self.view_checkboxes = []
         pass
         
     pass

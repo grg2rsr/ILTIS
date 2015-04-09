@@ -24,6 +24,9 @@ class Options_Object():
         self.export = {} # all export options
         self.ROI = {} # all ROI related options
         
+        self.load_default_options()
+        self.make_settable_options()
+             
 
         pass
     pass
@@ -40,12 +43,11 @@ class Options_Object():
                               'dFF_frames':(0,20),
                               'filter_xy':0.8,
                               'filter_t':1,
-                              'filter_targe':'raw',
-                              'ROI_type':'circle',
-                              'ROI_diameter':8
+                              'filter_target':'raw',
+                              'filter_size':(0.8,1)
                               }
                               
-        self.view = {'show_flags':sp.ones(self.Main.Data.nFiles,dtype='bool'),
+        self.view = {'show_flags':[0],
                      'composition_mode':'Screen',
                      'last_selected':0,
                      'show_dFF':False,
@@ -53,6 +55,7 @@ class Options_Object():
                      'show_monochrome':False,
                      'use_global_levels':False
                      }
+                     
         self.ROI = {'type':'circle',
                     'diameter':8}
                     
@@ -61,13 +64,33 @@ class Options_Object():
                        }
                        
         pass
-
-    def load_options(self):
+    
+    def make_settable_options(self):
+        """ 
+        var, page, label, kind, nfields=1,choices=None
+        kind: bool, int, float, string, path
+        for string, choices must be set
+        for path, path selector needed
+        note: for fetchers, string and path are equal
+        
+        """
+        self.settable_options = [
+                                [self.general['verbose'],'General','verbose mode','bool',1,None],
+                                [self.general['options_filepath'],'General','options filepath','path',1,None],
+                                [self.preprocessing['stimulus_onset'],'Preprocessing','stimulus onset frame','int',1,None],
+                                [self.preprocessing['stimulus_offset'],'Preprocessing','stimulus offset frame','int',1,None],
+                                [self.preprocessing['dFF_frames'],'Preprocessing','frames for background calculation','int',2,None],
+                                [self.preprocessing['filter_size'],'Preprocessing','xy t filter size','float',2,None],
+                                [self.preprocessing['filter_target'],'Preprocessing','apply filter to','string',1,['raw','dFF']],
+                                [self.view['composition_mode'],'View','image composition mode','string',1,['SourceOver','DestinationOver','Clear','Source','Destination','SourceIn','DestinationIn','SourceOut','DestinationOut','SourceAtop','DestinationAtop','Xor','Plus','Multiply','Screen','Overlay','Darken','Lighten','ColorDodge','ColorBurn','HardLight','SoftLight','Difference','Exclusion','SourceOrDestination','SourceAndDestination','SourceXorDestination','NotSourceAndNotDestination','NotSourceOrNotDestination','NotSourceXorDestination','NotSource','NotSourceAndDestination','SourceAndNotDestination']],
+                                [self.ROI['diameter'],'View','ROI diameter','float',1,None],
+                                [self.ROI['type'],'View','ROI type','string',1,['circular','polygon']],
+                                [self.export['data'],'Export','Export traces from','string',1,['raw','dFF']],
+                                [self.export['format'],'Export','Export format','string',1,['.csv','.gloDatamix']]
+                                ]
         pass
     
-    def save_options(self):
-        """ """
-        pass
+
     
     def init_data(self):
         """ resets the options object. Look for one attached to the dataset, and
@@ -77,12 +100,27 @@ class Options_Object():
             if os.path.exists(self.options_filepath):
                 if self.Main.verbose:
                     print "loading options file from ", self.options_filepath
-                    self.load_options_file(self.options_filepath)
-        else:
-            if self.Main.verbose:
-                print "loading default options"
-                self.load_default_options()
-            
+                    self.load_options()
+#        else:
+#            if self.Main.verbose:
+#                print "loading default options"
+#                self.load_default_options()
+    
+    def update(self):
+        """ fetch current options from the Options_Control_Widget """
+
+
+#==============================================================================
+    ### IO        
+#==============================================================================
+    def load_options(self):
+        """ load options from options_filepath """
+        pass
+    
+    def save_options(self):
+        """ save options to options_filepath """
+        pass
+    
     ### togglers view mode
     def toggle_dFF(self):     
         """ toggles the dFF show flag, button on the toolbar """

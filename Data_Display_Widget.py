@@ -70,12 +70,14 @@ class Data_Display_Widget(QtGui.QMainWindow):
         
         self.Traces_Tabbed.addTab(self.Traces_Visualizer,'common timebase')
         self.Traces_Tabbed.addTab(self.Traces_Visualizer_Stimsorted,'sorted to stimulus class')
-        
+        tabBar = self.Traces_Tabbed.tabBar()
+        for i in range(2):
+            tabBar.setTabTextColor(i,QtGui.QColor(0,0,0,255)) # no idea why, but it defaults to white ... 
+            
         self.Traces_Dock.setWidget(self.Traces_Tabbed)
         self.Traces_Dock.setFloating(False)
         self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.Traces_Dock)
         
-
     def reset(self):
         self.Frame_Visualizer.reset()
         self.LUT_Controlers.reset()
@@ -85,7 +87,7 @@ class Data_Display_Widget(QtGui.QMainWindow):
     def init_data(self):
         # weakref to data and Options. Needed?
         self.data = weakref.ref(self.Main.Data)()
-        self.Options = weakref.ref(self.Main.Options)()
+        self.Main.Options = weakref.ref(self.Main.Options)()
         
         self.colors,self.color_maps = self.calc_colormaps(self.data.nFiles)
         self.Frame_Visualizer.init_data()
@@ -177,21 +179,24 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
 
         # work only on those that are active
         for n in range(self.data.nFiles):
-            if self.Options.view['show_flags'][n] == False: # hide inactive
+#            import pdb
+#            pdb.set_trace()
+            print self.Main.Options.view['show_flags']
+            if self.Main.Options.view['show_flags'][n] == False: # hide inactive
                 self.ImageItems[n].hide()
                 self.ImageItems_dFF[n].hide()
 
                 
-            if self.Options.view['show_flags'][n] == True: # work only on those that are active
+            if self.Main.Options.view['show_flags'][n] == True: # work only on those that are active
                 
-                if self.Options.view['show_dFF']: # when showing dFF
+                if self.Main.Options.view['show_dFF']: # when showing dFF
                 
-                    if self.Options.view['show_monochrome']: # when in mono glow mode
+                    if self.Main.Options.view['show_monochrome']: # when in mono glow mode
                         self.ImageItems[n].show()
                     else:
                         self.ImageItems[n].hide()
                         
-                    if self.Options.view['show_avg']: # when showing avg
+                    if self.Main.Options.view['show_avg']: # when showing avg
                         self.ImageItems_dFF[n].setImage(sp.average(self.data.dFF[:,:,:,n],axis=2))
                         self.ImageItems[n].setImage(sp.average(self.data.raw[:,:,:,n],axis=2))
 
@@ -204,7 +209,7 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
                     
                 else: # when showing raw
                     self.ImageItems_dFF[n].hide() # no dFF
-                    if self.Options.view['show_avg']:
+                    if self.Main.Options.view['show_avg']:
                         self.ImageItems[n].setImage(sp.average(self.data.raw[:,:,:,n],axis=2))
                     else:
                         self.ImageItems[n].setImage(self.data.raw[:,:,self.frame,n])
@@ -218,7 +223,7 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
     def init_data(self):
         ### initializing image and LUTwidget
         self.data = weakref.ref(self.Main.Data)()
-        self.Options = weakref.ref(self.Main.Options)()
+#        self.Main.Options = weakref.ref(self.Main.Options)()
 
         for n in range(self.data.nFiles):
             ImageItem_raw = pg.ImageItem(self.data.raw[:,:,self.frame,n])
@@ -295,7 +300,7 @@ class LUT_Controlers_Widget(QtGui.QWidget):
     def init_data(self):
         # get weakref to dataset
         self.data = weakref.ref(self.Data_Display.MainWindow.Main.Data)()
-        self.Options = weakref.ref(self.Data_Display.MainWindow.Main.Options)()
+#        self.Main.Options = weakref.ref(self.Data_Display.MainWindow.Main.Options)()
         
         # ini and connect
         for n in range(self.data.nFiles):
@@ -325,7 +330,7 @@ class LUT_Controlers_Widget(QtGui.QWidget):
         pass
     
     def LUT_changed(self):
-        if self.Options.view['use_global_levels']:
+        if self.Main.Options.view['use_global_levels']:
             # take LUT levels from active LUT widget and write it to all
             current_lut = self.LUTwidgets.currentIndex()
             for n in range(self.data.nFiles):
@@ -422,7 +427,7 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
     
     def init_data(self):
         
-        self.Options = weakref.ref(self.Main.Options)()
+        self.Main.Options = weakref.ref(self.Main.Options)()
         
         ### plot
         self.vline.setBounds((0, self.Main.Data.nFrames -1))
@@ -434,7 +439,7 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
             
         self.plotItem.setRange(xRange=[0, self.Main.Data.nFrames], disableAutoRange=False)
         
-        self.stim_region = pg.LinearRegionItem(values=[self.Options.preprocessing['stimulus_onset'], self.Options.preprocessing['stimulus_offset']],movable=False,brush=pg.mkBrush([50,50,50,100]))
+        self.stim_region = pg.LinearRegionItem(values=[self.Main.Options.preprocessing['stimulus_onset'], self.Main.Options.preprocessing['stimulus_offset']],movable=False,brush=pg.mkBrush([50,50,50,100]))
         for line in self.stim_region.lines:
             line.hide()
         self.stim_region.setZValue(-1000)
@@ -453,14 +458,14 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         if self.Main.ROIs.nROIs != 0:
                 
             for n in range(self.Main.Data.nFiles):
-                if self.Options.view['show_flags'][n] == True: # only work on active datasets
+                if self.Main.Options.view['show_flags'][n] == True: # only work on active datasets
                 
                     # implementation using the pyqtgraph internal slicing
                     ROI = self.Main.ROIs.ROI_list[self.Main.ROIs.active_ROI_id]
                     
                     # func bool mask slicing
                     mask, inds = self.Main.ROIs.get_ROI_mask(ROI)
-                    if self.Options.view['show_dFF']:
+                    if self.Main.Options.view['show_dFF']:
                         sliced = self.Main.Data.dFF[mask,:,n]
                     else:
                         sliced = self.Main.Data.raw[mask,:,n]

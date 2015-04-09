@@ -87,7 +87,7 @@ class Main():
             
             self.Data = Data_Object(self)
             self.Data.read_tifs(self.paths)
-            
+        
         return None
     
     ### writers/savers

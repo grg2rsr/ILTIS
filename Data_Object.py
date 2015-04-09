@@ -113,6 +113,8 @@ class Data_Object():
         self.Metadata = Metadata_Object(self.Main,self)
         self.Metadata.paths = paths
         self.Metadata.trial_labels = paths
+        
+        self.Main.Options.view['show_flags'] = sp.ones(self.Main.Data.nFiles,dtype='bool')
         pass
     
     def associate_metadata(self,meta_data,recalc=True):
