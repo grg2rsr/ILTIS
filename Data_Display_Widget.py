@@ -179,9 +179,6 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
 
         # work only on those that are active
         for n in range(self.data.nFiles):
-#            import pdb
-#            pdb.set_trace()
-            print self.Main.Options.view['show_flags']
             if self.Main.Options.view['show_flags'][n] == False: # hide inactive
                 self.ImageItems[n].hide()
                 self.ImageItems_dFF[n].hide()
