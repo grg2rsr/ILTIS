@@ -4,11 +4,12 @@ Created on Wed Apr  1 13:02:55 2015
 
 @author: georg
 """
-from PyQt4 import QtGui, QtCore
+from qtpy import QtGui, QtCore
 import os
 from Data_Display_Widget import Data_Display_Widget
 from Front_Control_Panel_Widget import Front_Control_Panel_Widget
 from Options_Control_Widget import Options_Control_Widget
+import qtawesome as qta
 
 class MainWindow_Widget(QtGui.QMainWindow):
     def __init__(self,parent):
@@ -133,7 +134,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
         OpenActionDict = {'name':'OpenAction',
                           'label':'Load Data',
                           'status_tip':'Read data from disk',
-                          'icon': self.Main.graphics_path + os.path.sep + 'fileopen.png',
+                          'icon':'',
                           'func':''} # for future use w connect
         
         self.OpenAction = self.setup_action(OpenActionDict)
@@ -210,7 +211,8 @@ class MainWindow_Widget(QtGui.QMainWindow):
 # Display switches
 #==============================================================================
         ### display dF/F
-        self.toggledFFAction = QtGui.QAction(QtGui.QIcon(self.Main.graphics_path + os.path.sep + 'calc_dFF.png'), 'Display dFF',self)
+        self.toggledFFAction = QtGui.QAction(qta.icon('fa.folder-open'), 'Display dFF',self)        
+#        self.toggledFFAction = QtGui.QAction(QtGui.QIcon(self.Main.graphics_path + os.path.sep + 'calc_dFF.png'), 'Display dFF',self)
         self.toggledFFAction.setStatusTip('Toggles dF/F')       
         self.toggledFFAction.setCheckable(True)
         self.toggledFFAction.triggered.connect(self.Main.Options.toggle_dFF)

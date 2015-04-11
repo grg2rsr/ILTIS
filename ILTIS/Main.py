@@ -6,13 +6,14 @@ Created on Wed Apr  1 13:29:30 2015
 """
 import os
 import sys
-from PyQt4 import QtGui, QtCore
+from qtpy import QtGui, QtCore
 import pyqtgraph as pg
 from Options_Object import Options_Object
 from Data_Object import Data_Object
 from MainWindow_Widget import MainWindow_Widget
 from ROIs_Object import ROIs_Object
 import IOtools as io
+print io.__file__
 import scipy as sp
 
 pg.setConfigOptions(antialias=True)
@@ -144,6 +145,9 @@ class Main():
 
 def main():
     # run application
+    for arg in sys.argv:
+        print arg
+        
     app = QtGui.QApplication(sys.argv)
     Iltis = Main(verbose=True)
    

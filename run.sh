@@ -1,2 +1,2 @@
 #!/bin/sh
-python Main.py
+python ./ILTIS/Main.py
