@@ -6,9 +6,7 @@ Created on Wed Apr  1 13:29:30 2015
 """
 import os
 import sys
-sys.path.append(os.path.split(os.path.realpath(__file__))[0])
-for path in sys.path:
-    print path
+sys.path.append(os.path.split(os.path.realpath(__file__))[0] + os.path.sep + os.pardir) # this fixes imoprt issues if run by script from a different folder
 from PyQt4 import QtGui, QtCore
 import pyqtgraph as pg
 from Options_Object import Options_Object
@@ -23,7 +21,7 @@ class Main():
     def __init__(self,verbose=False):
         # fields
         self.cwd = None
-        self.program_path = None
+        self.program_dir = None
         self.graphics_path = None # move to MainWindow
         self.tmp_path = None
         self.Data = None
@@ -101,9 +99,8 @@ class Main():
         
         self.cwd = os.getcwd()
         self.cwd = '/home/georg/python/better_than_turner/testdata/testdata_multi' # FIXME
-        self.program_path = os.path.split(os.path.realpath(__file__))[0] # of the dir where this code is executed from!
-        print self.program_path
-        self.graphics_path = self.program_path + os.path.sep + 'graphics' 
+        self.program_dir = os.path.split(os.path.realpath(__file__))[0] # of the dir where this code is executed from!
+        self.graphics_path = self.program_dir + os.path.sep + 'graphics' 
         if os.name == 'posix': ### FIXME mac?
             self.tmp_path = '/tmp'
         else:
@@ -149,7 +146,6 @@ def main():
     # run application
     for arg in sys.argv:
         print arg
-    print "nothing?"
     app = QtGui.QApplication(sys.argv)
     Iltis = Main(verbose=True)
    
