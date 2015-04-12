@@ -452,6 +452,8 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         
     def update(self):
 #        self.last_pos = pos # needed for keeping the lines while some are removed or added
+    
+        self.stim_region.setRegion(self.Main.Options.preprocessing['stimulus_onset'], self.Main.Options.preprocessing['stimulus_offset'])
         if self.Main.ROIs.nROIs != 0:
                 
             for n in range(self.Main.Data.nFiles):

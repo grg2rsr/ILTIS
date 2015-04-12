@@ -4,6 +4,7 @@ Created on Wed Apr  1 13:23:18 2015
 
 @author: georg
 """
+import sys
 import os
 import scipy as sp
 from PyQt4 import Qt
@@ -75,22 +76,95 @@ class Options_Object():
         
         """
         self.settable_options = [
-                                [self.general['verbose'],'General','verbose mode','bool',1,None],
-                                [self.general['options_filepath'],'General','options filepath','path',1,None],
-                                [self.preprocessing['stimulus_onset'],'Preprocessing','stimulus onset frame','int',1,None],
-                                [self.preprocessing['stimulus_offset'],'Preprocessing','stimulus offset frame','int',1,None],
-                                [self.preprocessing['dFF_frames'],'Preprocessing','frames for background calculation','int',2,None],
-                                [self.preprocessing['filter_size'],'Preprocessing','xy t filter size','float',2,None],
-                                [self.preprocessing['filter_target'],'Preprocessing','apply filter to','string',1,['raw','dFF']],
-                                [self.view['composition_mode'],'View','image composition mode','string',1,['SourceOver','DestinationOver','Clear','Source','Destination','SourceIn','DestinationIn','SourceOut','DestinationOut','SourceAtop','DestinationAtop','Xor','Plus','Multiply','Screen','Overlay','Darken','Lighten','ColorDodge','ColorBurn','HardLight','SoftLight','Difference','Exclusion','SourceOrDestination','SourceAndDestination','SourceXorDestination','NotSourceAndNotDestination','NotSourceOrNotDestination','NotSourceXorDestination','NotSource','NotSourceAndDestination','SourceAndNotDestination']],
-                                [self.ROI['diameter'],'View','ROI diameter','float',1,None],
-                                [self.ROI['type'],'View','ROI type','string',1,['circular','polygon']],
-                                [self.export['data'],'Export','Export traces from','string',1,['raw','dFF']],
-                                [self.export['format'],'Export','Export format','string',1,['.csv','.gloDatamix']]
+                                ["general['verbose']",'General','verbose mode','bool',1,None],
+                                ["general['options_filepath']",'General','options filepath','path',1,None],
+                                ["preprocessing['stimulus_onset']",'Preprocessing','stimulus onset frame','int',1,None],
+                                ["preprocessing['stimulus_offset']",'Preprocessing','stimulus offset frame','int',1,None],
+                                ["preprocessing['dFF_frames']",'Preprocessing','frames for background calculation','int',2,None],
+                                ["preprocessing['filter_size']",'Preprocessing','xy t filter size','float',2,None],
+                                ["preprocessing['filter_target']",'Preprocessing','apply filter to','string',1,['raw','dFF']],
+                                ["view['composition_mode']",'View','image composition mode','string',1,['SourceOver','DestinationOver','Clear','Source','Destination','SourceIn','DestinationIn','SourceOut','DestinationOut','SourceAtop','DestinationAtop','Xor','Plus','Multiply','Screen','Overlay','Darken','Lighten','ColorDodge','ColorBurn','HardLight','SoftLight','Difference','Exclusion','SourceOrDestination','SourceAndDestination','SourceXorDestination','NotSourceAndNotDestination','NotSourceOrNotDestination','NotSourceXorDestination','NotSource','NotSourceAndDestination','SourceAndNotDestination']],
+                                ["ROI['diameter']",'View','ROI diameter','float',1,None],
+                                ["ROI['type']",'View','ROI type','string',1,['circular','polygon']],
+                                ["export['data']",'Export','Export traces from','string',1,['raw','dFF']],
+                                ["export['format']",'Export','Export format','string',1,['.csv','.gloDatamix']]
                                 ]
         pass
     
+    def send_options_to_Options_Control(self):
+        """ sets the Options_Control GUI to the values that are in this object
+        this function will be needed at ini and at options loading """
+        for row_index, row in enumerate(self.Main.Options_Control.rows):
+            kind = self.settable_options[row_index][3] # type
+            nFields = self.settable_options[row_index][4] # nFileds
+            choices = self.settable_options[row_index][5] # choices
+            
+            for i in range(nFields):
+                # converting from user input to variable format
+                if kind == 'int' or kind == 'float':
+                    val = getattr(self,self.settable_options[row_index][0])
+                    if kind == 'int':
+                        val = str(val)
+                    if kind == 'float':
+                        val = str(sp.around(val,2))
+                        
+                    row.children()[i+1].setText(val) # first child is the layout, the following are the input fields
+                    
+                    
+                        
+                if kind == 'bool':
+                    val = ['True','False'][row.children()[1].currentIndex()]
+  
+                if kind == 'string':
+                    val = choices[row.children()[1].currentIndex()]
+                    pass
+                
+                if kind == 'path':
+                    pass
 
+                
+        pass
+    
+    def fetch_options_from_Options_Control(self):
+        """ reads from the Options_Control widget the currently present user
+        defined values for the variables """
+        
+        """ iterate over rows in Options_Control """        
+        
+#        for var in self.settable_options[:][0]:
+        for row_index, row in enumerate(self.Main.Options_Control.rows):
+            kind = self.settable_options[row_index][3] # type
+            nFields = self.settable_options[row_index][4] # nFileds
+            choices = self.settable_options[row_index][5] # choices
+            
+            for i in range(nFields):
+                # converting from user input to variable format
+                if kind == 'int' or kind == 'float':
+                    string = row.children()[i+1].text() # first child is the layout, the following are the input fields
+                    
+                    if kind == 'int':
+                        val = sp.int32(string)
+                    if kind == 'float':
+                        val = sp.float32(string)
+                        
+                if kind == 'bool':
+                    val = ['True','False'][row.children()[1].currentIndex()]
+  
+                if kind == 'string':
+                    val = choices[row.children()[1].currentIndex()]
+                    pass
+                
+                if kind == 'path':
+                    pass
+  
+                # setting the values          
+                if nFields == 1:
+                    setattr(self,self.settable_options[row_index][0],val)
+                if nFields < 1:
+                    setattr(self,self.settable_options[row_index][0][i],val)
+            
+            
+        pass
     
     def init_data(self):
         """ resets the options object. Look for one attached to the dataset, and
@@ -107,7 +181,9 @@ class Options_Object():
 #                self.load_default_options()
     
     def update(self):
-        """ fetch current options from the Options_Control_Widget """
+        """ currently just executes the fetch function """
+        self.fetch_options_from_Options_Control()
+        pass
 
 
 #==============================================================================
