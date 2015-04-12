@@ -4,9 +4,7 @@ Created on Wed Apr  1 13:15:52 2015
 @author: georg
 """
 
-import sys
-sys.path.append('lib')
-import IOtools as io
+from lib import IOtools as io
 import scipy as sp
 import os
 from scipy import ndimage

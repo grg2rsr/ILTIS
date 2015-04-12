@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Flaticon WebFont</title>
+    <link rel="stylesheet" type="text/css" href="flaticon.css">
+    <meta charset="UTF-8">
+    <style>
+    body {
+        font-family: sans-serif;
+        line-height: 1.5;
+        font-size: 16px;
+        padding: 20px;
+        color:#333;
+    }
+    * {
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    [class^="flaticon-"]:before, [class*=" flaticon-"]:before, [class^="flaticon-"]:after, [class*=" flaticon-"]:after {
+        font-family: Flaticon;
+        font-size: 30px;
+        font-style: normal;
+        margin-left: 20px;
+        color: #333;
+    }
+    .image p {
+		font-size: 12px;
+		margin: 0px;
+		clear: none;
+		width: 300px;
+		line-height: 40px;
+	}
+    .text {
+        float: left;
+        font-size:14px;
+        margin-top: 15px;
+    }
+    .text ul {
+        margin-left:0px;
+        color:#111;
+        margin-bottom:20px;
+    }
+    .text .ex {
+        font-size:12px;
+        color:#666;
+        margin-left:35px;
+        display:block;
+    }
+    .text ul li {
+        margin-top:10px;
+        list-style:none;
+    }
+    .num {
+        background:#66A523;
+        color:#fff;
+        border-radius:20px;
+        padding:1px;
+        display:inline-block;
+        width:22px;
+        height:22px;
+        text-align:center;
+        margin-right: 5px;
+    }
+    .text ul strong {
+        font-weight:normal;
+        color:#000;
+    }
+    .image {
+        width: 280px;
+        float: left;
+        margin-bottom: 15px;
+        margin-right: 30px;
+    }
+    #glyphs {
+        clear: both;
+    }
+    .image p:nth-child(even) i {
+        clear: none;
+    }
+    .glyph {
+        display: inline-block;
+        width: 120px;
+        margin: 10px;
+        text-align: center;
+        vertical-align: top;
+        background: #FFF;
+    }
+    .glyph .glyph-icon {
+        padding: 10px;
+        display: block;
+        font-family:"Flaticon";
+        font-size: 64px;
+        line-height: 1;
+    }
+    .glyph .glyph-icon:before {
+        font-size: 64px;
+        color: #666;
+        margin-left: 0;
+    }
+    .class-name {
+        font-size: 12px;
+    }
+    .author-name {
+		font-size: 10px;
+	}
+	a{
+		color: #66A523;
+	}
+    .instructions {
+        font-style:italic;
+        font-size:22px;
+        margin-bottom:10px;
+    }
+    .iconsuse {
+        font-size:22px;
+        font-style:italic;
+        padding-top:20px;
+        margin-top:20px;
+        border-top:1px solid #bbb;
+    }
+    .usetitle {
+        margin-bottom: 10px;
+        font-size: 20px;
+        font-style: italic;
+    }
+    .class-name:last-child {
+        font-size: 10px;
+        color:#888;
+    }
+    .class-name:last-child a {
+        font-size: 10px;
+        color:#555;
+    }
+    .class-name:last-child a:hover {
+        color:#66A523;
+    }
+    .glyph > input {
+        display: block;
+        width: 100px;
+        margin: 5px auto;
+        text-align: center;
+        font-size: 12px;
+        cursor: text;
+    }
+    .glyph > input.icon-input {
+        font-family:"Flaticon";
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+    h1.logo {
+        font-size: 40px;
+        letter-spacing: -1px;
+        margin-top: -16px;
+        text-transform: lowercase;
+        border-bottom:1px solid #bbb;
+    }
+    h1.logo strong {
+        font-size: 16px;
+        font-family:sans-serif;
+        font-weight:normal;
+        color:#333;
+    }
+    h1.logo a {
+        color:#34302d;
+        text-decoration: none;
+    }
+    h1.logo a span {
+        color:#66A523;
+    }
+    #footer {
+        padding-top:40px;
+        clear:both;
+        text-align:center;
+    }
+    #footer a {
+        color:#66A523;
+    }
+    textarea {
+		margin: 0px;
+		width: 800px;
+		height: 150px;
+		border: 1px solid #CCC;
+		resize: none;
+		background: #EEE;
+    }
+    .author-link, .attrDiv a{
+    	font-size: 12px;
+    	color: #333;
+    	text-decoration: none;
+    }
+    .external {
+    	display: block;
+    }
+    .attrDiv {
+		font-size: 12px;
+	}
+    .attribution {
+        border-top: 1px solid #AAA;
+        margin: 10px 0;
+        padding-top: 15px;
+    }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1 class="logo">
+            <a href="http://www.flaticon.com">
+                <span>FLAT</span>ICON</a>
+            <strong>Font Demo</strong>
+        </h1>
+    </header>
+
+    <section class="demo">
+        <div class="text">
+
+            <div class="instructions">Instructions:</div>
+
+            <ul>
+                <li>
+                    <p>
+                        <span class="num">1</span>Copy the "Fonts" files and CSS files to your website CSS folder.
+                </li>
+                <li>
+                    <p>
+                        <span class="num">2</span>Add the CSS link to your website source code on header.
+                        <br />
+                        <span class="ex">&lt;head&gt;
+                            <br/>...
+                            <br/>&lt;link rel="stylesheet" type="text/css" href="your_website_domain/css_root/flaticon.css"&gt;
+                            <br/>...
+                            <br/>&lt;/head&gt;</span>
+                </li>
+
+                <li>
+                    <p>
+                        <span class="num">3</span>Use the icon class on "display:inline" elements:
+                        <br />
+                        <span class="ex">Use example: &lt;i class=&quot;flaticon-airplane49&quot;&gt;&lt;/i&gt; or &lt;span class=&quot;flaticon-airplane49&quot;&gt;&lt;/span&gt;</span>
+                </li>
+            </ul>
+        </div>
+
+    </section>
+
+    <section id="glyphs"><div class="glyph">
+		<div class="glyph-icon flaticon-adjust4"></div>
+		<div class="class-name">.flaticon-adjust4</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/adjust-contrast_25636">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-align14"></div>
+		<div class="class-name">.flaticon-align14</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/align-justify_25181">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-align15"></div>
+		<div class="class-name">.flaticon-align15</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/align-to-right_25288">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-align16"></div>
+		<div class="class-name">.flaticon-align16</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/align-to-left_25351">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-ambulance8"></div>
+		<div class="class-name">.flaticon-ambulance8</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/ambulance_25253">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-anchor16"></div>
+		<div class="class-name">.flaticon-anchor16</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/anchor-shape_25675">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-android4"></div>
+		<div class="class-name">.flaticon-android4</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/android-character-symbol_25374">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-angle1"></div>
+		<div class="class-name">.flaticon-angle1</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/angle-arrow-down_25623">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-angle2"></div>
+		<div class="class-name">.flaticon-angle2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/angle-arrow-pointing-to-right_25638">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-angle"></div>
+		<div class="class-name">.flaticon-angle</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/angle-pointing-to-left_25322">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-apple22"></div>
+		<div class="class-name">.flaticon-apple22</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/apple-logo_25345">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-archive15"></div>
+		<div class="class-name">.flaticon-archive15</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/archive-black-box_25640">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-arrow459"></div>
+		<div class="class-name">.flaticon-arrow459</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/arrow-angle-up_25223">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-arrow460"></div>
+		<div class="class-name">.flaticon-arrow460</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/arrow-pointing-left-inside-a-circle_25299">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-arrow461"></div>
+		<div class="class-name">.flaticon-arrow461</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/arrow-pointing-right-in-a-circle_25346">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-arrow462"></div>
+		<div class="class-name">.flaticon-arrow462</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/arrow-pointing-to-left_25354">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-arrow463"></div>
+		<div class="class-name">.flaticon-arrow463</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/arrow-up-on-a-black-circle-background_25366">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-arrow464"></div>
+		<div class="class-name">.flaticon-arrow464</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/arrow-down-on-black-circular-background_25472">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-arrow465"></div>
+		<div class="class-name">.flaticon-arrow465</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/arrow-pointing-to-right_25606">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-arrow466"></div>
+		<div class="class-name">.flaticon-arrow466</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/arrow-pointing-down_25610">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-arrow467"></div>
+		<div class="class-name">.flaticon-arrow467</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/arrow-up_25637">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-arrowhead5"></div>
+		<div class="class-name">.flaticon-arrowhead5</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/arrowhead-pointing-to-the-right_25446">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-arrowhead6"></div>
+		<div class="class-name">.flaticon-arrowhead6</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/arrowhead-pointing-up-inside-a-square-box-outline_25455">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-arrowheads"></div>
+		<div class="class-name">.flaticon-arrowheads</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/arrowheads-pointing-to-the-left_25408">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-asterisk2"></div>
+		<div class="class-name">.flaticon-asterisk2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/asterisk_25218">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-ban"></div>
+		<div class="class-name">.flaticon-ban</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/ban-circle-symbol_25342">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-bar10"></div>
+		<div class="class-name">.flaticon-bar10</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/bar-graph-on-a-rectangle_25368">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-barcode2"></div>
+		<div class="class-name">.flaticon-barcode2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/barcode_25350">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-beaker2"></div>
+		<div class="class-name">.flaticon-beaker2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/beaker_25348">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-beer9"></div>
+		<div class="class-name">.flaticon-beer9</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/beer-jar-black-silhouette_25656">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-bell13"></div>
+		<div class="class-name">.flaticon-bell13</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/bell-musical-tool_25356">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-bitbucket"></div>
+		<div class="class-name">.flaticon-bitbucket</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/bitbucket-sign_25609">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-bitcoin"></div>
+		<div class="class-name">.flaticon-bitcoin</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/bitcoin-btc_25180">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-bold14"></div>
+		<div class="class-name">.flaticon-bold14</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/bold-text-option_25432">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-book95"></div>
+		<div class="class-name">.flaticon-book95</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/book_25303">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-bookmark10"></div>
+		<div class="class-name">.flaticon-bookmark10</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/bookmark-white_25667">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-bookmark9"></div>
+		<div class="class-name">.flaticon-bookmark9</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/bookmark-black-shape_25353">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-branch"></div>
+		<div class="class-name">.flaticon-branch</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/branch-with-leaves-black-shape_25611">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-briefcase11"></div>
+		<div class="class-name">.flaticon-briefcase11</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/briefcase-in-black-version_25256">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-bug6"></div>
+		<div class="class-name">.flaticon-bug6</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/bug_25646">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-building8"></div>
+		<div class="class-name">.flaticon-building8</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/building-front_25323">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-bull1"></div>
+		<div class="class-name">.flaticon-bull1</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/bull-horn-announcer_25460">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-bullseye"></div>
+		<div class="class-name">.flaticon-bullseye</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/bullseye_25221">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-calendar51"></div>
+		<div class="class-name">.flaticon-calendar51</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/calendar-page-empty_25329">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-calendar52"></div>
+		<div class="class-name">.flaticon-calendar52</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/calendar-with-spring-binder-and-date-blocks_25393">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-camera46"></div>
+		<div class="class-name">.flaticon-camera46</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/camera-retro_25326">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-camera47"></div>
+		<div class="class-name">.flaticon-camera47</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/bitbucket-logotype-camera-lens-in-perspective_25654">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-caret4"></div>
+		<div class="class-name">.flaticon-caret4</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/caret-left_25184">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-caret5"></div>
+		<div class="class-name">.flaticon-caret5</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/caret-down_25243">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-caret6"></div>
+		<div class="class-name">.flaticon-caret6</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/caret-arrow-up_25678">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-center5"></div>
+		<div class="class-name">.flaticon-center5</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/center-text-alignment_25440">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-certificate6"></div>
+		<div class="class-name">.flaticon-certificate6</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/certificate-shape_25370">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-check29"></div>
+		<div class="class-name">.flaticon-check29</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/check-box-empty-rounded-square_25235">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-check30"></div>
+		<div class="class-name">.flaticon-check30</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/check_25643">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-check31"></div>
+		<div class="class-name">.flaticon-check31</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/check-sign-in-a-rounded-black-square_25697">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-checkered2"></div>
+		<div class="class-name">.flaticon-checkered2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/checkered-raised-flag_25577">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-chevron17"></div>
+		<div class="class-name">.flaticon-chevron17</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/chevron-arrow-sign-up-button_25282">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-chevron18"></div>
+		<div class="class-name">.flaticon-chevron18</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/chevron-pointing-right_25283">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-chevron19"></div>
+		<div class="class-name">.flaticon-chevron19</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/chevron-sign-to-right_25318">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-chevron20"></div>
+		<div class="class-name">.flaticon-chevron20</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/chevron-pointing-to-the-left_25409">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-chevron21"></div>
+		<div class="class-name">.flaticon-chevron21</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/chevron-arrow-down_25629">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-chevron22"></div>
+		<div class="class-name">.flaticon-chevron22</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/chevron-arrow-up_25649">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-chevron23"></div>
+		<div class="class-name">.flaticon-chevron23</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/chevron-sign-down_25664">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-chevron24"></div>
+		<div class="class-name">.flaticon-chevron24</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/chevron-sign-left_25705">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-circle33"></div>
+		<div class="class-name">.flaticon-circle33</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/circle-shape-outline_25477">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-circle34"></div>
+		<div class="class-name">.flaticon-circle34</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/circle-with-an-arrow-pointing-to-left_25704">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-circular56"></div>
+		<div class="class-name">.flaticon-circular56</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/circular-shape-silhouette_25444">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-cloud106"></div>
+		<div class="class-name">.flaticon-cloud106</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/cloud-storage-uploading-option_25399">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-cloud107"></div>
+		<div class="class-name">.flaticon-cloud107</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/cloud-storage-download_25449">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-code10"></div>
+		<div class="class-name">.flaticon-code10</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/code_25185">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-code11"></div>
+		<div class="class-name">.flaticon-code11</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/code-fork-symbol_25406">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-coffee18"></div>
+		<div class="class-name">.flaticon-coffee18</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/coffee-cup-on-a-plate-black-silhouettes_25699">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-cog2"></div>
+		<div class="class-name">.flaticon-cog2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/cog-wheel-silhouette_25442">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-cogs3"></div>
+		<div class="class-name">.flaticon-cogs3</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/cogs-one-big-and-two-small_25319">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-collapse2"></div>
+		<div class="class-name">.flaticon-collapse2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/collapse-window-option_25443">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-comment32"></div>
+		<div class="class-name">.flaticon-comment32</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/comment-black-oval-bubble-shape_25355">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-comment33"></div>
+		<div class="class-name">.flaticon-comment33</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/comment-white-oval-bubble_25663">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-comments16"></div>
+		<div class="class-name">.flaticon-comments16</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/comments_25360">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-compass41"></div>
+		<div class="class-name">.flaticon-compass41</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/compass-circular-variant_25352">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-computer74"></div>
+		<div class="class-name">.flaticon-computer74</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/computer-tablet_25466">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-copy10"></div>
+		<div class="class-name">.flaticon-copy10</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/copy-document_25436">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-correct8"></div>
+		<div class="class-name">.flaticon-correct8</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/correct-symbol_25404">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-couple35"></div>
+		<div class="class-name">.flaticon-couple35</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/couple-of-arrows-changing-places_25344">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-credit40"></div>
+		<div class="class-name">.flaticon-credit40</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/credit-card_25246">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-crop4"></div>
+		<div class="class-name">.flaticon-crop4</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/crop-interface-symbol_25254">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-cross41"></div>
+		<div class="class-name">.flaticon-cross41</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/cross-mark-on-a-black-circle-background_25364">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-css3"></div>
+		<div class="class-name">.flaticon-css3</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/css-3-logo_25462">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-curved8"></div>
+		<div class="class-name">.flaticon-curved8</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/arrow-angle-pointing-down_25382">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-cut18"></div>
+		<div class="class-name">.flaticon-cut18</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/cut_25620">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-dashboard2"></div>
+		<div class="class-name">.flaticon-dashboard2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/dashboard_25703">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-delivery7"></div>
+		<div class="class-name">.flaticon-delivery7</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/delivery-truck-silhouette_25430">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-desktop14"></div>
+		<div class="class-name">.flaticon-desktop14</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/desktop-monitor_25240">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-dot"></div>
+		<div class="class-name">.flaticon-dot</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/dot-and-circle_25615">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-double28"></div>
+		<div class="class-name">.flaticon-double28</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/double-angle-up_25216">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-double29"></div>
+		<div class="class-name">.flaticon-double29</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/double-angle-arrow-pointing-left_25257">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-double30"></div>
+		<div class="class-name">.flaticon-double30</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/double-angle-pointing-to-right_25358">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-double31"></div>
+		<div class="class-name">.flaticon-double31</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/double-sided-eraser_25454">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-double32"></div>
+		<div class="class-name">.flaticon-double32</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/double-strikethrough-option_25461">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-download62"></div>
+		<div class="class-name">.flaticon-download62</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/download-symbol_25324">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-download63"></div>
+		<div class="class-name">.flaticon-download63</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/download-to-storage-drive_25407">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-dribbble4"></div>
+		<div class="class-name">.flaticon-dribbble4</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/dribbble-logo_25631">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-dropbox13"></div>
+		<div class="class-name">.flaticon-dropbox13</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/dropbox-logo_25250">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-earth17"></div>
+		<div class="class-name">.flaticon-earth17</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/earth-globe_25680">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-edit24"></div>
+		<div class="class-name">.flaticon-edit24</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/edit-interface-sign_25359">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-eject14"></div>
+		<div class="class-name">.flaticon-eject14</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/eject-symbol_25707">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-envelope4"></div>
+		<div class="class-name">.flaticon-envelope4</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/envelope-of-rectangular-rounded-black-design_25236">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-envelope5"></div>
+		<div class="class-name">.flaticon-envelope5</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/envelope-of-white-paper_25647">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-euro29"></div>
+		<div class="class-name">.flaticon-euro29</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/euro-currency-symbol_25403">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-exchange1"></div>
+		<div class="class-name">.flaticon-exchange1</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/exchange-arrows_25677">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-exclamation8"></div>
+		<div class="class-name">.flaticon-exclamation8</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/exclamation-sign_25607">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-exclamation9"></div>
+		<div class="class-name">.flaticon-exclamation9</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/exclamation_25652">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-expand16"></div>
+		<div class="class-name">.flaticon-expand16</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/expand-interface-symbol_25300">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-external1"></div>
+		<div class="class-name">.flaticon-external1</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/external-link-symbol_25284">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-external2"></div>
+		<div class="class-name">.flaticon-external2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/external-link-square-with-an-arrow-in-right-diagonal_25614">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-eye50"></div>
+		<div class="class-name">.flaticon-eye50</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/eye-open_25186">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-eye51"></div>
+		<div class="class-name">.flaticon-eye51</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/eye-with-a-diagonal-line-interface-symbol-for-invisibility_25674">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-facebook25"></div>
+		<div class="class-name">.flaticon-facebook25</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/facebook-logo-letter_25187">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-facebook26"></div>
+		<div class="class-name">.flaticon-facebook26</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/facebook-sign-of-letter-f-inside-a-black-rounded-square-shape_25305">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-facetime"></div>
+		<div class="class-name">.flaticon-facetime</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/facetime-button_25457">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-fast13"></div>
+		<div class="class-name">.flaticon-fast13</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/fast-forward-arrows_25293">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-female76"></div>
+		<div class="class-name">.flaticon-female76</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/female-silhouette_25396">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-fighter2"></div>
+		<div class="class-name">.flaticon-fighter2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/fighter-jet-silhouette_25431">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-file27"></div>
+		<div class="class-name">.flaticon-file27</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/file-black-page_25176">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-file28"></div>
+		<div class="class-name">.flaticon-file28</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/file-interface-symbol-of-a-white-page-with-one-folded-corner_25295">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-film28"></div>
+		<div class="class-name">.flaticon-film28</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/film-strip-with-two-photograms_25311">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-filter10"></div>
+		<div class="class-name">.flaticon-filter10</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/filter-tool-black-shape_25337">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-finger6"></div>
+		<div class="class-name">.flaticon-finger6</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/finger-of-a-hand-pointing-to-right-direction_25628">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-fire16"></div>
+		<div class="class-name">.flaticon-fire16</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/fire-black-flame-on-a-line_25247">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-fire17"></div>
+		<div class="class-name">.flaticon-fire17</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/fire-extinguisher_25625">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-flag28"></div>
+		<div class="class-name">.flaticon-flag28</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/flag-black-shape_25669">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-flickr8"></div>
+		<div class="class-name">.flaticon-flickr8</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/flickr-website-logo-silhouette_25384">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-fluffy1"></div>
+		<div class="class-name">.flaticon-fluffy1</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/fluffy-cloud-silhouette_25450">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-folder64"></div>
+		<div class="class-name">.flaticon-folder64</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/folder-open-in-black-version_25302">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-folder65"></div>
+		<div class="class-name">.flaticon-folder65</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/folder-closed-black-shape_25659">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-folder66"></div>
+		<div class="class-name">.flaticon-folder66</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/folder-white-shape_25676">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-font2"></div>
+		<div class="class-name">.flaticon-font2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/font-selection-editor_25363">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-font3"></div>
+		<div class="class-name">.flaticon-font3</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/font-symbol-of-letter-a_25645">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-fork9"></div>
+		<div class="class-name">.flaticon-fork9</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/fork-and-knife-silhouette_25459">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-forward8"></div>
+		<div class="class-name">.flaticon-forward8</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/forward-button_25650">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-four29"></div>
+		<div class="class-name">.flaticon-four29</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/four-black-squares_25605">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-foursquare5"></div>
+		<div class="class-name">.flaticon-foursquare5</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/foursquare-button_25420">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-frown"></div>
+		<div class="class-name">.flaticon-frown</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/frown_25327">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-fullscreen4"></div>
+		<div class="class-name">.flaticon-fullscreen4</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/fullscreen-arrows-symbol_25183">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-gamepad1"></div>
+		<div class="class-name">.flaticon-gamepad1</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/gamepad-console_25428">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-gift49"></div>
+		<div class="class-name">.flaticon-gift49</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/gift-box_25338">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-github10"></div>
+		<div class="class-name">.flaticon-github10</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/github-cat-in-a-circle_25231">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-github11"></div>
+		<div class="class-name">.flaticon-github11</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/github-character_25471">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-github12"></div>
+		<div class="class-name">.flaticon-github12</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/github-sign_25657">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-gittip"></div>
+		<div class="class-name">.flaticon-gittip</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/gittip-website-logo_25401">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-glass8"></div>
+		<div class="class-name">.flaticon-glass8</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/glass-black-silhouette_25248">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-google25"></div>
+		<div class="class-name">.flaticon-google25</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/google-plus-symbol_25413">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-google26"></div>
+		<div class="class-name">.flaticon-google26</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/google-plus-symbol_25686">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-great11"></div>
+		<div class="class-name">.flaticon-great11</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/great-britain-pound_25343">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-group41"></div>
+		<div class="class-name">.flaticon-group41</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/group-profile-users_25437">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-half14"></div>
+		<div class="class-name">.flaticon-half14</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/half-star-shape_25417">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-hand34"></div>
+		<div class="class-name">.flaticon-hand34</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/hand-pointing-to-left-direction_25339">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-hand35"></div>
+		<div class="class-name">.flaticon-hand35</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/hand-pointing-upward_25439">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-hand40"></div>
+		<div class="class-name">.flaticon-hand40</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/hand-finger-pointing-down_25700">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-hdd"></div>
+		<div class="class-name">.flaticon-hdd</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/hdd_25177">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-heart74"></div>
+		<div class="class-name">.flaticon-heart74</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/heart-shape-outline_25424">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-heart75"></div>
+		<div class="class-name">.flaticon-heart75</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/heart-shape-silhouette_25451">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-horizontal9"></div>
+		<div class="class-name">.flaticon-horizontal9</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/horizontal-resize-option_25464">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-hostpital"></div>
+		<div class="class-name">.flaticon-hostpital</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/hostpital-building_25661">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-hotel17"></div>
+		<div class="class-name">.flaticon-hotel17</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/hotel-letter-h-sign-inside-a-black-rounded-square_25334">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-html4"></div>
+		<div class="class-name">.flaticon-html4</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/html-5-logo_25252">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-inbox12"></div>
+		<div class="class-name">.flaticon-inbox12</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/inbox_25362">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-increase"></div>
+		<div class="class-name">.flaticon-increase</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/increase-size-option_25390">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-indent1"></div>
+		<div class="class-name">.flaticon-indent1</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/indent-right_25233">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-information34"></div>
+		<div class="class-name">.flaticon-information34</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/information-symbol_25365">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-information35"></div>
+		<div class="class-name">.flaticon-information35</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/information-button_25467">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-instagram3"></div>
+		<div class="class-name">.flaticon-instagram3</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/instagram-symbol_25425">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-italicize"></div>
+		<div class="class-name">.flaticon-italicize</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/italicize-text_25392">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-keyboard13"></div>
+		<div class="class-name">.flaticon-keyboard13</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/keyboard_25308">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-left32"></div>
+		<div class="class-name">.flaticon-left32</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/left-indentation-option_25410">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-legal1"></div>
+		<div class="class-name">.flaticon-legal1</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/legal-hammer_25687">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-lemon3"></div>
+		<div class="class-name">.flaticon-lemon3</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/lemon-outline_25279">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-leter"></div>
+		<div class="class-name">.flaticon-leter</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/leter-a-inside-a-black-circle_25653">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-letter15"></div>
+		<div class="class-name">.flaticon-letter15</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/letter-p-symbol_25397">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-level"></div>
+		<div class="class-name">.flaticon-level</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/level-up-arrow_25225">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-light45"></div>
+		<div class="class-name">.flaticon-light45</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/light-bulb_25349">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-lightning14"></div>
+		<div class="class-name">.flaticon-lightning14</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/lightning-bolt-shadow_25445">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-link15"></div>
+		<div class="class-name">.flaticon-link15</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/link-symbol_25385">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-linkedin10"></div>
+		<div class="class-name">.flaticon-linkedin10</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/linkedin-letters_25325">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-linkedin9"></div>
+		<div class="class-name">.flaticon-linkedin9</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/linkedin-sign_25320">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-linux3"></div>
+		<div class="class-name">.flaticon-linux3</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/linux-logo_25719">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-list28"></div>
+		<div class="class-name">.flaticon-list28</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/list-on-window_25463">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-list29"></div>
+		<div class="class-name">.flaticon-list29</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/list-with-dots_25648">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-list30"></div>
+		<div class="class-name">.flaticon-list30</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/list_25655">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-listing1"></div>
+		<div class="class-name">.flaticon-listing1</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/listing-option_25373">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-location28"></div>
+		<div class="class-name">.flaticon-location28</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/location-black-arrow_25222">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-lock24"></div>
+		<div class="class-name">.flaticon-lock24</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/lock_25239">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-long3"></div>
+		<div class="class-name">.flaticon-long3</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/long-arrow-down_25238">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-long4"></div>
+		<div class="class-name">.flaticon-long4</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/long-arrow-pointing-to-the-right_25426">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-long5"></div>
+		<div class="class-name">.flaticon-long5</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/long-arrow-pointing-up_25435">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-long6"></div>
+		<div class="class-name">.flaticon-long6</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/long-arrow-pointing-to-left_25618">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-magic7"></div>
+		<div class="class-name">.flaticon-magic7</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/magic-stick_25301">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-male93"></div>
+		<div class="class-name">.flaticon-male93</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/male_25258">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-map25"></div>
+		<div class="class-name">.flaticon-map25</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/map-marker_25613">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-maxcdn"></div>
+		<div class="class-name">.flaticon-maxcdn</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/maxcdn-website-logo_25458">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-medkit"></div>
+		<div class="class-name">.flaticon-medkit</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/medkit_25296">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-meh"></div>
+		<div class="class-name">.flaticon-meh</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/meh-face-emoticon_25693">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-microphone27"></div>
+		<div class="class-name">.flaticon-microphone27</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/microphone-off_25632">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-microphone28"></div>
+		<div class="class-name">.flaticon-microphone28</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/microphone-black-shape_25682">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-minus18"></div>
+		<div class="class-name">.flaticon-minus18</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/minus-symbol_25232">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-minus19"></div>
+		<div class="class-name">.flaticon-minus19</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/minus-sign-inside-a-black-rounded-square-shape_25317">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-minus20"></div>
+		<div class="class-name">.flaticon-minus20</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/minus-sign-inside-a-black-circle_25336">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-minus21"></div>
+		<div class="class-name">.flaticon-minus21</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/minus-button_25434">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-minus22"></div>
+		<div class="class-name">.flaticon-minus22</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/minus-sign-on-a-square-outline_25475">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-mobile29"></div>
+		<div class="class-name">.flaticon-mobile29</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/mobile-phone_25658">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-money10"></div>
+		<div class="class-name">.flaticon-money10</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/money-bill-of-1_25227">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-moon18"></div>
+		<div class="class-name">.flaticon-moon18</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/moon-phase-outline_25665">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-move14"></div>
+		<div class="class-name">.flaticon-move14</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/move-option_25476">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-music66"></div>
+		<div class="class-name">.flaticon-music66</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/music-headphones_25468">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-music67"></div>
+		<div class="class-name">.flaticon-music67</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/music-note-black-symbol_25651">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-musical32"></div>
+		<div class="class-name">.flaticon-musical32</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/musical-bell-outline_25441">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-nine10"></div>
+		<div class="class-name">.flaticon-nine10</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/nine-black-tiles_25604">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-numbered4"></div>
+		<div class="class-name">.flaticon-numbered4</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/numbered-list_25242">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-ok2"></div>
+		<div class="class-name">.flaticon-ok2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/ok-sign-in-a-circle_25179">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-ok3"></div>
+		<div class="class-name">.flaticon-ok3</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/ok-symbol-inside-a-circle-outline_25244">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-open94"></div>
+		<div class="class-name">.flaticon-open94</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/open-padlock-silhouette_25331">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-open95"></div>
+		<div class="class-name">.flaticon-open95</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/open-wrench-tool-silhouette_25371">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-open96"></div>
+		<div class="class-name">.flaticon-open96</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/open-folder-outline_25402">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-open97"></div>
+		<div class="class-name">.flaticon-open97</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/open-laptop-computer_25447">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-paper47"></div>
+		<div class="class-name">.flaticon-paper47</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/paper-clip-outline_25427">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-paper48"></div>
+		<div class="class-name">.flaticon-paper48</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/paper-push-pin_25474">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-paste2"></div>
+		<div class="class-name">.flaticon-paste2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/paste-from-clipboard_25375">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-pause14"></div>
+		<div class="class-name">.flaticon-pause14</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/pause-symbol_25696">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-pencil30"></div>
+		<div class="class-name">.flaticon-pencil30</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/pencil_25688">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-photo33"></div>
+		<div class="class-name">.flaticon-photo33</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/photo-camera-black-shape_25315">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-picture13"></div>
+		<div class="class-name">.flaticon-picture13</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/picture_25666">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-pinterest12"></div>
+		<div class="class-name">.flaticon-pinterest12</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/pinterest-sign_25633">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-pinterest13"></div>
+		<div class="class-name">.flaticon-pinterest13</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/pinterest-logo_25698">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-plane12"></div>
+		<div class="class-name">.flaticon-plane12</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/plane-black-shape-rotated-to-right-diagonal_25314">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-plant16"></div>
+		<div class="class-name">.flaticon-plant16</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/plant-leaf-with-white-details_25576">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-play39"></div>
+		<div class="class-name">.flaticon-play39</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/play-arrow_25226">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-play40"></div>
+		<div class="class-name">.flaticon-play40</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/play-sign_25306">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-play41"></div>
+		<div class="class-name">.flaticon-play41</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/play-video-button_25470">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-play42"></div>
+		<div class="class-name">.flaticon-play42</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/play-circle_25683">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-plus25"></div>
+		<div class="class-name">.flaticon-plus25</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/plus-black-symbol_25304">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-plus26"></div>
+		<div class="class-name">.flaticon-plus26</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/plus-sign-in-a-black-circle_25340">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-plus27"></div>
+		<div class="class-name">.flaticon-plus27</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/plus-symbol-in-a-rounded-black-square_25668">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-power27"></div>
+		<div class="class-name">.flaticon-power27</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/power-button-off_25706">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-printing1"></div>
+		<div class="class-name">.flaticon-printing1</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/printing-tool_25383">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-puzzle12"></div>
+		<div class="class-name">.flaticon-puzzle12</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/puzzle-piece-silhouette_25579">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-qr2"></div>
+		<div class="class-name">.flaticon-qr2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/qr-code_25213">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-question22"></div>
+		<div class="class-name">.flaticon-question22</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/question-sign_25333">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-question23"></div>
+		<div class="class-name">.flaticon-question23</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/question-mark-on-a-circular-black-background_25400">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-quote2"></div>
+		<div class="class-name">.flaticon-quote2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/quote-left_25672">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-reduced"></div>
+		<div class="class-name">.flaticon-reduced</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/reduced-volume_25414">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-refresh36"></div>
+		<div class="class-name">.flaticon-refresh36</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/refresh-page-option_25429">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-refresh37"></div>
+		<div class="class-name">.flaticon-refresh37</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/refresh-arrow_25465">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-remove10"></div>
+		<div class="class-name">.flaticon-remove10</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/remove-circle_25230">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-remove11"></div>
+		<div class="class-name">.flaticon-remove11</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/remove-interface-cross-symbol_25298">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-renren"></div>
+		<div class="class-name">.flaticon-renren</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/renren-social-network-of-china-logotype_25689">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-reorder"></div>
+		<div class="class-name">.flaticon-reorder</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/reorder-option_25391">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-reply8"></div>
+		<div class="class-name">.flaticon-reply8</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/reply_25255">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-reply9"></div>
+		<div class="class-name">.flaticon-reply9</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/reply-arrow_25691">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-resize4"></div>
+		<div class="class-name">.flaticon-resize4</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/resize-option_25387">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-retweet2"></div>
+		<div class="class-name">.flaticon-retweet2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/retweet-arrows-symbol_25328">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-rewind25"></div>
+		<div class="class-name">.flaticon-rewind25</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/rewind-button_25616">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-right28"></div>
+		<div class="class-name">.flaticon-right28</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/right-quotation-mark_25418">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-right29"></div>
+		<div class="class-name">.flaticon-right29</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/right-arrow-in-a-circle_25621">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-road16"></div>
+		<div class="class-name">.flaticon-road16</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/road-perspective_25276">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-rounded30"></div>
+		<div class="class-name">.flaticon-rounded30</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/rounded-black-square-shape_25394">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-rss25"></div>
+		<div class="class-name">.flaticon-rss25</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/rss-symbol_25234">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-rss26"></div>
+		<div class="class-name">.flaticon-rss26</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/rss-feed-button_25367">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-rupee1"></div>
+		<div class="class-name">.flaticon-rupee1</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/rupee-indian_25473">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-save8"></div>
+		<div class="class-name">.flaticon-save8</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/save-file-option_25398">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-screenshot"></div>
+		<div class="class-name">.flaticon-screenshot</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/screenshot_25639">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-search19"></div>
+		<div class="class-name">.flaticon-search19</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/search-interface-symbol_25313">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-share13"></div>
+		<div class="class-name">.flaticon-share13</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/share-post-symbol_25386">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-share14"></div>
+		<div class="class-name">.flaticon-share14</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/share-option_25419">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-share15"></div>
+		<div class="class-name">.flaticon-share15</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/share-symbol_25702">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-shield36"></div>
+		<div class="class-name">.flaticon-shield36</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/shield-half-white-and-half-black_25229">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-shopping69"></div>
+		<div class="class-name">.flaticon-shopping69</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/shopping-cart-black-shape_25619">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-sign3"></div>
+		<div class="class-name">.flaticon-sign3</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/sign-in_25245">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-sign4"></div>
+		<div class="class-name">.flaticon-sign4</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/sign-out-option_25376">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-signal22"></div>
+		<div class="class-name">.flaticon-signal22</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/signal-bars_25316">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-sitemap1"></div>
+		<div class="class-name">.flaticon-sitemap1</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/sitemap_25622">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-skype9"></div>
+		<div class="class-name">.flaticon-skype9</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/skype-logo_25671">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-small143"></div>
+		<div class="class-name">.flaticon-small143</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/three-small-square-shapes_25421">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-small144"></div>
+		<div class="class-name">.flaticon-small144</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/small-rocket-ship-silhouette_25452">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-smile"></div>
+		<div class="class-name">.flaticon-smile</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/smile_25361">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-sort10"></div>
+		<div class="class-name">.flaticon-sort10</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/sort-reverse-alphabetical-order_25378">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-sort11"></div>
+		<div class="class-name">.flaticon-sort11</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/sort-by-alphabet_25608">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-sort12"></div>
+		<div class="class-name">.flaticon-sort12</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/sort-by-attributes-interface-button-option_25612">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-sort13"></div>
+		<div class="class-name">.flaticon-sort13</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/sort-by-numeric-order_25630">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-sort14"></div>
+		<div class="class-name">.flaticon-sort14</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/sort-arrows-couple-pointing-up-and-down_25756">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-sort6"></div>
+		<div class="class-name">.flaticon-sort6</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/sort-down_25224">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-sort7"></div>
+		<div class="class-name">.flaticon-sort7</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/sort-by-order_25310">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-sort8"></div>
+		<div class="class-name">.flaticon-sort8</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/sort-by-attributes_25321">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-sort9"></div>
+		<div class="class-name">.flaticon-sort9</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/sort-up_25330">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-speech59"></div>
+		<div class="class-name">.flaticon-speech59</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/speech-bubbles-comment-option_25379">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-spinner8"></div>
+		<div class="class-name">.flaticon-spinner8</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/spinner-of-dots_25220">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-square62"></div>
+		<div class="class-name">.flaticon-square62</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/square-shape-shadow_25469">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-stack10"></div>
+		<div class="class-name">.flaticon-stack10</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/stack-exchange-symbol_25381">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-stack11"></div>
+		<div class="class-name">.flaticon-stack11</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/stack-exchange-logo_25670">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-star60"></div>
+		<div class="class-name">.flaticon-star60</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/star-of-five-points-in-black_25182">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-star61"></div>
+		<div class="class-name">.flaticon-star61</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/star-outline_25291">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-star62"></div>
+		<div class="class-name">.flaticon-star62</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/star-half-empty_25662">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-step1"></div>
+		<div class="class-name">.flaticon-step1</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/step-backward_25641">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-step"></div>
+		<div class="class-name">.flaticon-step</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/step-forward_25309">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-stethoscope6"></div>
+		<div class="class-name">.flaticon-stethoscope6</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/stethoscope_25624">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-strikethrough1"></div>
+		<div class="class-name">.flaticon-strikethrough1</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/strikethrough_25626">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-suitcase24"></div>
+		<div class="class-name">.flaticon-suitcase24</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/suitcase-with-white-details_25380">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-sun32"></div>
+		<div class="class-name">.flaticon-sun32</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/sun-shape_25290">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-superscript"></div>
+		<div class="class-name">.flaticon-superscript</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/superscript-text-formatting_25416">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-table21"></div>
+		<div class="class-name">.flaticon-table21</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/table-grid_25617">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-tag32"></div>
+		<div class="class-name">.flaticon-tag32</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/tag-black-shape_25679">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-tags2"></div>
+		<div class="class-name">.flaticon-tags2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/tags_25644">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-tasks"></div>
+		<div class="class-name">.flaticon-tasks</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/tasks-list_25217">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-telephone65"></div>
+		<div class="class-name">.flaticon-telephone65</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/telephone-symbol-button_25377">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-telephone66"></div>
+		<div class="class-name">.flaticon-telephone66</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/telephone-handle-silhouette_25453">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-terminal7"></div>
+		<div class="class-name">.flaticon-terminal7</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/terminal_25627">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-text59"></div>
+		<div class="class-name">.flaticon-text59</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/text-file_25307">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-text60"></div>
+		<div class="class-name">.flaticon-text60</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/text-height-adjustment_25405">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-text61"></div>
+		<div class="class-name">.flaticon-text61</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/text-file_25642">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-text62"></div>
+		<div class="class-name">.flaticon-text62</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/text-width_25673">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-thin24"></div>
+		<div class="class-name">.flaticon-thin24</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/thin-arrowheads-pointing-down_25415">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-thumbs25"></div>
+		<div class="class-name">.flaticon-thumbs25</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/thumbs-down-hand-outline_25237">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-thumbs26"></div>
+		<div class="class-name">.flaticon-thumbs26</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/thumbs-up-hand-outline_25297">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-thumbs27"></div>
+		<div class="class-name">.flaticon-thumbs27</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/thumbs-down-silhouette_25395">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-thumbs28"></div>
+		<div class="class-name">.flaticon-thumbs28</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/thumbs-up-hand-symbol_25423">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-ticket6"></div>
+		<div class="class-name">.flaticon-ticket6</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/ticket-rotated-to-right-diagonal_25219">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-time7"></div>
+		<div class="class-name">.flaticon-time7</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/time_25692">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-tint"></div>
+		<div class="class-name">.flaticon-tint</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/tint-drop_25241">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-trash29"></div>
+		<div class="class-name">.flaticon-trash29</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/trash_25214">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-trello"></div>
+		<div class="class-name">.flaticon-trello</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/trello-website-logo_25388">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-trophy3"></div>
+		<div class="class-name">.flaticon-trophy3</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/trophy-silhouette_25251">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-tumblr10"></div>
+		<div class="class-name">.flaticon-tumblr10</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/tumblr-letter-logo_25280">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-tumblr11"></div>
+		<div class="class-name">.flaticon-tumblr11</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/tumblr-logo_25690">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-turkish1"></div>
+		<div class="class-name">.flaticon-turkish1</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/turkish-lire-symbol_25294">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-twitter15"></div>
+		<div class="class-name">.flaticon-twitter15</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/twitter-sign_25347">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-twitter16"></div>
+		<div class="class-name">.flaticon-twitter16</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/twitter-black-shape_25660">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-two121"></div>
+		<div class="class-name">.flaticon-two121</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/two-columns-layout_25292">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-u1"></div>
+		<div class="class-name">.flaticon-u1</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/u-shaped-thick-magnet_25448">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-umbrella16"></div>
+		<div class="class-name">.flaticon-umbrella16</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/umbrella-black-silhouette_25357">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-underline2"></div>
+		<div class="class-name">.flaticon-underline2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/underline-text-option_25433">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-undo5"></div>
+		<div class="class-name">.flaticon-undo5</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/undo-arrow_25249">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-unlink"></div>
+		<div class="class-name">.flaticon-unlink</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/unlink-symbol_25341">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-unlock3"></div>
+		<div class="class-name">.flaticon-unlock3</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/unlock_25215">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-upload39"></div>
+		<div class="class-name">.flaticon-upload39</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/upload-interface-symbol_25278">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-upload40"></div>
+		<div class="class-name">.flaticon-upload40</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/upload_25635">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-usd"></div>
+		<div class="class-name">.flaticon-usd</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/usd-dollar-symbol_25228">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-user77"></div>
+		<div class="class-name">.flaticon-user77</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/user-shape_25634">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-user78"></div>
+		<div class="class-name">.flaticon-user78</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/user-md-symbol_25701">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-vertical5"></div>
+		<div class="class-name">.flaticon-vertical5</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/vertical-ellipsis_25389">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-vertical6"></div>
+		<div class="class-name">.flaticon-vertical6</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/vertical-resizing-option_25456">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-video91"></div>
+		<div class="class-name">.flaticon-video91</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/video-play-square-button_25372">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-vimeo10"></div>
+		<div class="class-name">.flaticon-vimeo10</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/vimeo-square-logo_25422">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-vintage27"></div>
+		<div class="class-name">.flaticon-vintage27</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/vintage-key-outline_25578">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-vk"></div>
+		<div class="class-name">.flaticon-vk</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/vk-social-network-logo_25684">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-volume28"></div>
+		<div class="class-name">.flaticon-volume28</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/volume-off_25212">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-volume29"></div>
+		<div class="class-name">.flaticon-volume29</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/volume-up-interface-symbol_25695">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-warning18"></div>
+		<div class="class-name">.flaticon-warning18</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/warning-sign-on-a-triangular-background_25411">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-weibo"></div>
+		<div class="class-name">.flaticon-weibo</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/weibo-website-logo_25438">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-wheelchair2"></div>
+		<div class="class-name">.flaticon-wheelchair2</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/wheelchair_25332">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-white66"></div>
+		<div class="class-name">.flaticon-white66</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/white-flag-symbol_25369">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-windows20"></div>
+		<div class="class-name">.flaticon-windows20</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/windows-logo-silhouette_25412">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-x21"></div>
+		<div class="class-name">.flaticon-x21</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/x2-symbol-of-a-letter-and-a-number-subscript_25685">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-xing4"></div>
+		<div class="class-name">.flaticon-xing4</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/xing-sign_25281">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-xing5"></div>
+		<div class="class-name">.flaticon-xing5</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/xing-logotype_25289">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-yen18"></div>
+		<div class="class-name">.flaticon-yen18</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/yen-symbol-jpy_25188">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-youtube13"></div>
+		<div class="class-name">.flaticon-youtube13</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/youtube-play-button_25178">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-youtube14"></div>
+		<div class="class-name">.flaticon-youtube14</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/youtube-sign_25312">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-youtube15"></div>
+		<div class="class-name">.flaticon-youtube15</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/youtube-logo_25681">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-zoom27"></div>
+		<div class="class-name">.flaticon-zoom27</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/zoom-in_25277">Dave Gandy</a></div></div><div class="glyph">
+		<div class="glyph-icon flaticon-zoom28"></div>
+		<div class="class-name">.flaticon-zoom28</div><div class="author-name">Author: <a href="http://www.flaticon.com/free-icon/zoom-out_25335">Dave Gandy</a></div></div></section>
+
+<section class="attribution">
+
+	<div class="usetitle">License and attribution:</div><div class="attrDiv">Font generated by <a href="http://www.flaticon.com">flaticon.com</a>
+ under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY</a>. The authors are: <a href="http://fontawesome.io">Dave Gandy</a>.</div><div class="usetitle">Copy the Attribution License:</div>
+
+<textarea onclick="this.focus();this.select();">Font generated by &lt;a href=&quot;http://www.flaticon.com&quot;&gt;flaticon.com&lt;/a&gt;
+ under &lt;a href=&quot;http://creativecommons.org/licenses/by/3.0/&quot;&gt;CC BY&lt;/a&gt;. The authors are: &lt;a href=&quot;http://fontawesome.io&quot;&gt;Dave Gandy&lt;/a&gt;.</textarea>
+
+</section>
+
+<section class="iconsuse">
+    	<div class="usetitle">Examples:</div>
+		<div class="image"><p>&lt;i class=&quot;flaticon-adjust4&quot;&gt;&lt;/i&gt; <i class="flaticon-adjust4"></i></p><p>&lt;i class=&quot;flaticon-align14&quot;&gt;&lt;/i&gt; <i class="flaticon-align14"></i></p><p>&lt;i class=&quot;flaticon-align15&quot;&gt;&lt;/i&gt; <i class="flaticon-align15"></i></p><p>&lt;i class=&quot;flaticon-align16&quot;&gt;&lt;/i&gt; <i class="flaticon-align16"></i></p><p>&lt;i class=&quot;flaticon-ambulance8&quot;&gt;&lt;/i&gt; <i class="flaticon-ambulance8"></i></p></div><div class="image"><p>&lt;span class=&quot;flaticon-anchor16&quot;&gt;&lt;/span&gt; <span class="flaticon-anchor16"></span></p><p>&lt;span class=&quot;flaticon-android4&quot;&gt;&lt;/span&gt; <span class="flaticon-android4"></span></p><p>&lt;span class=&quot;flaticon-angle1&quot;&gt;&lt;/span&gt; <span class="flaticon-angle1"></span></p><p>&lt;span class=&quot;flaticon-angle2&quot;&gt;&lt;/span&gt; <span class="flaticon-angle2"></span></p><p>&lt;span class=&quot;flaticon-angle&quot;&gt;&lt;/span&gt; <span class="flaticon-angle"></span></p></div><div class="image"><p>&lt;span class=&quot;flaticon-apple22&quot;&gt;&lt;/span&gt; <span class="flaticon-apple22"></span></p><p>&lt;i class=&quot;flaticon-archive15&quot;&gt;&lt;/i&gt; <i class="flaticon-archive15"></i></p><p>&lt;i class=&quot;flaticon-arrow459&quot;&gt;&lt;/i&gt; <i class="flaticon-arrow459"></i></p><p>&lt;i class=&quot;flaticon-arrow460&quot;&gt;&lt;/i&gt; <i class="flaticon-arrow460"></i></p><p>&lt;i class=&quot;flaticon-arrow461&quot;&gt;&lt;/i&gt; <i class="flaticon-arrow461"></i></p></div><div class="image"><p>&lt;span class=&quot;flaticon-arrow462&quot;&gt;&lt;/span&gt; <span class="flaticon-arrow462"></span></p><p>&lt;span class=&quot;flaticon-arrow463&quot;&gt;&lt;/span&gt; <span class="flaticon-arrow463"></span></p><p>&lt;span class=&quot;flaticon-arrow464&quot;&gt;&lt;/span&gt; <span class="flaticon-arrow464"></span></p><p>&lt;span class=&quot;flaticon-arrow465&quot;&gt;&lt;/span&gt; <span class="flaticon-arrow465"></span></p><p>&lt;span class=&quot;flaticon-arrow466&quot;&gt;&lt;/span&gt; <span class="flaticon-arrow466"></span></p></div><div class="image"></div>
+</section>
+<div id="footer">
+    <div>Generated by <a href="http://www.flaticon.com">flaticon.com</a>
+    </div>
+</div>
+	</body>
+</html>
