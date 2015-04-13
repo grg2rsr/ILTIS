@@ -46,6 +46,7 @@ class Options_Control_Widget(QtGui.QTabWidget):
         this one then iterates over all rows and reads the values
         has to determine what kind of row and how many fields """
         
+        print "making row", row_index
         
         input_field = QtGui.QWidget(self)
         input_field_layout = QtGui.QHBoxLayout(input_field)        
