@@ -215,6 +215,8 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
                     
                 self.ImageItems[n].setLevels(self.Data_Display.LUT_Controlers.raw_levels[n])
                 self.ImageItems_dFF[n].setLevels(self.Data_Display.LUT_Controlers.dFF_levels[n])        
+        
+        self.set_composition_mode(12)
         pass
     
     def init_data(self):
@@ -453,7 +455,9 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
     def update(self):
 #        self.last_pos = pos # needed for keeping the lines while some are removed or added
     
-        self.stim_region.setRegion(self.Main.Options.preprocessing['stimulus_onset'], self.Main.Options.preprocessing['stimulus_offset'])
+        self.stim_region.setRegion([self.Main.Options.preprocessing['stimulus_onset'], self.Main.Options.preprocessing['stimulus_offset']])
+        print self.Main.Options.preprocessing['stimulus_onset'], self.Main.Options.preprocessing['stimulus_offset']
+        
         if self.Main.ROIs.nROIs != 0:
                 
             for n in range(self.Main.Data.nFiles):

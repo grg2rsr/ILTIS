@@ -25,9 +25,10 @@ class Options_Control_Widget(QtGui.QTabWidget):
         self.setWindowTitle('Options')    
         for row_index,options_string in enumerate(self.Main.Options.settable_options):
             self.make_row(row_index,*options_string)
+        self.Main.Options.send_options_to_Options_Control()
          
     
-    def make_row(self,row_index,var_name,page,label,kind,nfields,choices):
+    def make_row(self,row_index,var_name,page,label,kind,choices):
         """ programatically generates the whole options_control GUI from a list
         of variables defined in options. this is for flexible extension of the 
         options. DOCUMENT MORE """
@@ -42,25 +43,28 @@ class Options_Control_Widget(QtGui.QTabWidget):
         
         
         input_field = QtGui.QWidget(self)
-        input_field_layout = QtGui.QHBoxLayout(input_field)            
-        for i in range(nfields):
-            if kind == 'int' or kind == 'float':
+        input_field_layout = QtGui.QHBoxLayout(input_field)        
+        
+        nFields = len(kind) # because kind is [type]*n
+        
+        for i in range(nFields):
+            if kind[i] == 'int' or kind[i] == 'float':
                 LineEdit = QtGui.QLineEdit(input_field)
                 input_field_layout.addWidget(LineEdit)
                 LineEdit.textChanged.connect(self.Main.Options.update)
-            if kind == 'bool':
+            if kind[i] == 'bool':
                 ComboBox = QtGui.QComboBox(input_field)
                 for state in ['True','False']:
                     ComboBox.addItem(state)
                 ComboBox.currentIndexChanged.connect(self.Main.Options.update)
                 input_field_layout.addWidget(ComboBox)
-            if kind == 'string':
+            if kind[i] == 'string':
                 ComboBox = QtGui.QComboBox(input_field)
                 for choice in choices:
                     ComboBox.addItem(choice)
                 ComboBox.currentIndexChanged.connect(self.Main.Options.update)
                 input_field_layout.addWidget(ComboBox)
-            if kind == 'path':
+            if kind[i] == 'path':
                 Button = QtGui.QPushButton(input_field)
                 input_field_layout.addWidget(Button)
                 Button.clicked.connect(self.Main.Options.update)

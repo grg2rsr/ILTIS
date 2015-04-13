@@ -76,50 +76,60 @@ class Options_Object():
         
         """
         self.settable_options = [
-                                ["general['verbose']",'General','verbose mode','bool',1,None],
-                                ["general['options_filepath']",'General','options filepath','path',1,None],
-                                ["preprocessing['stimulus_onset']",'Preprocessing','stimulus onset frame','int',1,None],
-                                ["preprocessing['stimulus_offset']",'Preprocessing','stimulus offset frame','int',1,None],
-                                ["preprocessing['dFF_frames']",'Preprocessing','frames for background calculation','int',2,None],
-                                ["preprocessing['filter_size']",'Preprocessing','xy t filter size','float',2,None],
-                                ["preprocessing['filter_target']",'Preprocessing','apply filter to','string',1,['raw','dFF']],
-                                ["view['composition_mode']",'View','image composition mode','string',1,['SourceOver','DestinationOver','Clear','Source','Destination','SourceIn','DestinationIn','SourceOut','DestinationOut','SourceAtop','DestinationAtop','Xor','Plus','Multiply','Screen','Overlay','Darken','Lighten','ColorDodge','ColorBurn','HardLight','SoftLight','Difference','Exclusion','SourceOrDestination','SourceAndDestination','SourceXorDestination','NotSourceAndNotDestination','NotSourceOrNotDestination','NotSourceXorDestination','NotSource','NotSourceAndDestination','SourceAndNotDestination']],
-                                ["ROI['diameter']",'View','ROI diameter','float',1,None],
-                                ["ROI['type']",'View','ROI type','string',1,['circular','polygon']],
-                                ["export['data']",'Export','Export traces from','string',1,['raw','dFF']],
-                                ["export['format']",'Export','Export format','string',1,['.csv','.gloDatamix']]
+                                ["general['verbose']",'General','verbose mode',['bool'],None],
+                                ["general['options_filepath']",'General','options filepath',['path'],None],
+                                ["preprocessing['stimulus_onset']",'Preprocessing','stimulus onset frame',['int'],None],
+                                ["preprocessing['stimulus_offset']",'Preprocessing','stimulus offset frame',['int'],None],
+                                ["preprocessing['dFF_frames']",'Preprocessing','frames for background calculation',['int']*2,None],
+                                ["preprocessing['filter_size']",'Preprocessing','xy t filter size',['float']*2,None],
+                                ["preprocessing['filter_target']",'Preprocessing','apply filter to',['string'],['raw','dFF']],
+                                ["view['composition_mode']",'View','image composition mode',['string'],['SourceOver','DestinationOver','Clear','Source','Destination','SourceIn','DestinationIn','SourceOut','DestinationOut','SourceAtop','DestinationAtop','Xor','Plus','Multiply','Screen','Overlay','Darken','Lighten','ColorDodge','ColorBurn','HardLight','SoftLight','Difference','Exclusion','SourceOrDestination','SourceAndDestination','SourceXorDestination','NotSourceAndNotDestination','NotSourceOrNotDestination','NotSourceXorDestination','NotSource','NotSourceAndDestination','SourceAndNotDestination']],
+                                ["ROI['diameter']",'View','ROI diameter',['float'],None],
+                                ["ROI['type']",'View','ROI type',['string'],['circle','polygon']],
+                                ["export['data']",'Export','Export traces from',['string'],['raw','dFF']],
+                                ["export['format']",'Export','Export format',['string'],['.csv','.gloDatamix']]
                                 ]
         pass
     
     def send_options_to_Options_Control(self):
         """ sets the Options_Control GUI to the values that are in this object
         this function will be needed at ini and at options loading """
+        print "sending"
         for row_index, row in enumerate(self.Main.Options_Control.rows):
             kind = self.settable_options[row_index][3] # type
-            nFields = self.settable_options[row_index][4] # nFileds
-            choices = self.settable_options[row_index][5] # choices
+            nFields = len(kind) # nFileds
+            choices = self.settable_options[row_index][4] # choices
+
+            # dirty parsing of the args for the getattr functions
+            dict_name = self.settable_options[row_index][0].split('[')[0]            
+            param_name = self.settable_options[row_index][0].split('\'')[1]
+
             
             for i in range(nFields):
+                print dict_name,param_name
+                # reading val
+                if nFields == 1:
+                    val = getattr(self,dict_name)[param_name]
+                if nFields > 1:
+                    val = getattr(self,dict_name)[param_name][i]
+                    
+                val = str(val)
+                
                 # converting from user input to variable format
-                if kind == 'int' or kind == 'float':
-                    val = getattr(self,self.settable_options[row_index][0])
-                    if kind == 'int':
-                        val = str(val)
-                    if kind == 'float':
-                        val = str(sp.around(val,2))
-                        
-                    row.children()[i+1].setText(val) # first child is the layout, the following are the input fields
+                if kind[i] == 'int':
+                    row.children()[i+1].setText(val) # first child is the layout, the following are the input fields                    
                     
-                    
+                if kind[i] == 'float':
+                    row.children()[i+1].setText(val) # first child is the layout, the following are the input fields                    
                         
-                if kind == 'bool':
-                    val = ['True','False'][row.children()[1].currentIndex()]
+                if kind[i] == 'bool':
+                    row.children()[1].setCurrentIndex(['True','False'].index(val))
   
-                if kind == 'string':
-                    val = choices[row.children()[1].currentIndex()]
+                if kind[i] == 'string':
+#                    val = choices[row.children()[1].currentIndex()]
                     pass
                 
-                if kind == 'path':
+                if kind[i] == 'path':
                     pass
 
                 
@@ -131,37 +141,47 @@ class Options_Object():
         
         """ iterate over rows in Options_Control """        
         
-#        for var in self.settable_options[:][0]:
+        print "fetching", self
+        
         for row_index, row in enumerate(self.Main.Options_Control.rows):
             kind = self.settable_options[row_index][3] # type
-            nFields = self.settable_options[row_index][4] # nFileds
-            choices = self.settable_options[row_index][5] # choices
+            nFields = len(kind)
+            choices = self.settable_options[row_index][4] # choices
             
-            for i in range(nFields):
-                # converting from user input to variable format
-                if kind == 'int' or kind == 'float':
-                    string = row.children()[i+1].text() # first child is the layout, the following are the input fields
+            # dirty parsing of the args for the getattr functions
+            dict_name = self.settable_options[row_index][0].split('[')[0]            
+            param_name = self.settable_options[row_index][0].split('\'')[1]
+            
+            try:
+                for i in range(nFields):
+                    # converting from user input to variable format
+                    if kind[i] == 'int' or kind[i] == 'float':
+                        string = row.children()[i+1].text() # first child is the layout, the following are the input fields
+                        string = str(string) # to convert from QString to normal string, QString causes problems upon scipy cast
+                        if kind[i] == 'int':
+                            val = sp.int32(string)
+                        if kind[i] == 'float':
+                            val = sp.float32(string)
+                            
+                    if kind[i] == 'bool':
+                        val = ['True','False'][row.children()[1].currentIndex()]
+      
+                    if kind[i] == 'string':
+                        val = choices[row.children()[1].currentIndex()]
+                        pass
                     
-                    if kind == 'int':
-                        val = sp.int32(string)
-                    if kind == 'float':
-                        val = sp.float32(string)
+                    if kind[i] == 'path':
+                        val = ''
+                        pass
+      
+                    # setting the values          
+                    if nFields == 1:
+                        getattr(self,dict_name)[param_name] = val
+                    if nFields < 1:
+                        getattr(self,dict_name)[param_name][0] = val
                         
-                if kind == 'bool':
-                    val = ['True','False'][row.children()[1].currentIndex()]
-  
-                if kind == 'string':
-                    val = choices[row.children()[1].currentIndex()]
-                    pass
-                
-                if kind == 'path':
-                    pass
-  
-                # setting the values          
-                if nFields == 1:
-                    setattr(self,self.settable_options[row_index][0],val)
-                if nFields < 1:
-                    setattr(self,self.settable_options[row_index][0][i],val)
+            except:
+                pass
             
             
         pass
@@ -175,6 +195,7 @@ class Options_Object():
                 if self.Main.verbose:
                     print "loading options file from ", self.options_filepath
                     self.load_options()
+        
 #        else:
 #            if self.Main.verbose:
 #                print "loading default options"
@@ -183,6 +204,10 @@ class Options_Object():
     def update(self):
         """ currently just executes the fetch function """
         self.fetch_options_from_Options_Control()
+        try:
+            self.Main.Data_Display.update()
+        except:
+            pass
         pass
 
 
@@ -191,6 +216,7 @@ class Options_Object():
 #==============================================================================
     def load_options(self):
         """ load options from options_filepath """
+        self.send_options_to_Options_Control()
         pass
     
     def save_options(self):
