@@ -63,7 +63,9 @@ class Options_Object(object):
                      }
                      
         self.ROI = {'type':'circle',
-                    'diameter':8}
+                    'diameter':8,
+                    'place_in_layer':'last active',
+                    'default_layer':0}
                     
         self.export = {'format':'csv',
                        'data':'dFF',
@@ -91,6 +93,8 @@ class Options_Object(object):
                                 [['view','composition_mode'],'View','image composition mode',['string'],['SourceOver','DestinationOver','Clear','Source','Destination','SourceIn','DestinationIn','SourceOut','DestinationOut','SourceAtop','DestinationAtop','Xor','Plus','Multiply','Screen','Overlay','Darken','Lighten','ColorDodge','ColorBurn','HardLight','SoftLight','Difference','Exclusion','SourceOrDestination','SourceAndDestination','SourceXorDestination','NotSourceAndNotDestination','NotSourceOrNotDestination','NotSourceXorDestination','NotSource','NotSourceAndDestination','SourceAndNotDestination']],
                                 [['ROI','diameter'],'View','ROI diameter',['float'],None],
                                 [['ROI','type'],'View','ROI type',['string'],['circle','polygon']],
+                                [['ROI','place_in_layer'],'View','place ROI in layer',['string'],['last active','default layer']],
+                                [['ROI','default_layer'],'View','ROI default layer',['int'],None],
                                 [['export','data'],'Export','Export traces from',['string'],['raw','dFF']],
                                 [['export','format'],'Export','Export format',['string'],['.csv','.gloDatamix']]
                                 ]

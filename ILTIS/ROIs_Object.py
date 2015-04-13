@@ -40,7 +40,12 @@ class ROIs_Object(object):
         kind etc. """
         
         if layer == None:
-            layer = self.Main.Options.view['last_selected']
+            if self.Main.Options.ROI['place_in_layer'] == 'last active':
+                layer = self.Main.Options.view['last_selected']
+            if self.Main.Options.ROI['place_in_layer'] == 'default layer':
+                layer = self.Main.Options.ROI['default_layer']
+            
+            
         if label == None:
             label = str(self.nROIs + 1)
         if kind == None:
@@ -84,7 +89,7 @@ class ROIs_Object(object):
         """ remove a ROI, right click from popup menu"""
         ROI = evt.sender()
         self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI)
-#        ROI.removeTimer.stop() # fix from luke campagnola (pyqtgraph mailinglist) # seems to be unnecessary now?
+        ROI.removeTimer.stop() # fix from luke campagnola (pyqtgraph mailinglist) # seems to be unnecessary now?
         self.ROI_list.remove(ROI)
         self.active_ROI_id = self.active_ROI_id - 1 ### FIXME
         self.nROIs = self.nROIs - 1

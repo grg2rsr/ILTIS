@@ -68,33 +68,46 @@ class Data_Selector_Widget(QtGui.QTableWidget):
         self.setHorizontalHeaderLabels(['select data'])
         self.horizontalHeader().setStretchLastSection(True)
         
+        
+        
         pass
     
     def init_data(self):
+                
         self.paths = self.Main.paths
         self.setRowCount(len(self.paths))
-        ### checkboxes
+        
+        # table entries
         for n,path in enumerate(self.paths):
-            checkbox = QtGui.QCheckBox(os.path.split(path)[1],self)
-            checkbox.setCheckState(QtCore.Qt.Checked)
             self.setItem(n,0,QtGui.QTableWidgetItem(path))
             
             color = self.Main.Data_Display.colors[n]
             QColor = QtGui.QColor(*color)
             QColor.setAlpha(100)
-            self.item(n,0).setBackgroundColor(QColor) # FIXME find color solutionQ
+            self.item(n,0).setBackgroundColor(QColor) # FIXME find color solution
+
+            verticalHeader = QtGui.QTableWidgetItem(str(n))            
+            verticalHeader.setBackgroundColor(QColor)
+#            verticalHeader.setBackground(QtGui.QBrush(QColor))
+            
+            QColor.setAlpha(255)
+            verticalHeader.setForeground(QColor)
+            
+            self.setVerticalHeaderItem(n,verticalHeader)
 
         # connect
         self.itemSelectionChanged.connect(self.selection_changed)
         
-        # select all at startup
-        selection = QtGui.QTableWidgetSelectionRange(1,1,len(self.paths),1)
+        # select all on startup
+        selection = QtGui.QTableWidgetSelectionRange(0,0,len(self.paths)-1,0)
         self.setRangeSelected(selection,True)
+        
+        self.verticalHeader().setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
         pass
     
-    def selection_changed(self):
+    def selection_changed(self):     
         selection = [item.row() for item in self.selectedItems()]
-        last_selected = selection[-1]
+        last_selected = selection[-1] # FIXME this sometimes throws errors
         show_flags_updated = sp.zeros(len(self.paths),dtype='bool')
         show_flags_updated[selection] = 1
         self.Main.Options.view['show_flags'] = show_flags_updated
@@ -113,7 +126,7 @@ class Data_Selector_Widget(QtGui.QTableWidget):
 
     
 
-class ROI_Manager_Widget(QtGui.QTableWidget): # has to inherit from pg.widget
+class ROI_Manager_Widget(QtGui.QTableWidget):
     def __init__(self,Main,parent):
         super(ROI_Manager_Widget,self).__init__()
         

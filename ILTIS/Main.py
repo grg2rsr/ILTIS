@@ -123,6 +123,8 @@ class Main():
         self.Options.init_data()
         self.Data_Display.init_data()
         self.Data_Selector.init_data()
+        
+        self.MainWindow.enable_actions()
         pass
     
     ### messages
