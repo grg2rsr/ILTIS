@@ -287,7 +287,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
 #            self.OptionsWindow.close()
 #            if self.BTT.Traces_Inspector_exists_flag:
 #                self.BTT.Traces_Inspector_Widget.close()
-            self.Main.cleanup()
+            self.Main.cleanup()  ### FIXME signal needed
             event.accept()
         else:
             event.ignore()

@@ -113,8 +113,8 @@ class Main():
             self.Data = None # take care that no extra references are generated and kept!
       
       # reset Data Display and Data Selector
-        self.MainWindow.Data_Display.reset()
-        self.MainWindow.Front_Control_Panel.Data_Selector.reset()
+        self.MainWindow.Data_Display.reset()  ### FIXME signal needed
+        self.MainWindow.Front_Control_Panel.Data_Selector.reset()  ### FIXME signal needed
         
         # read in new data
         self.read_Data()
@@ -124,7 +124,7 @@ class Main():
         self.Data_Display.init_data()
         self.Data_Selector.init_data()
         
-        self.MainWindow.enable_actions()
+        self.MainWindow.enable_actions()  ### FIXME signal needed
         pass
     
     ### messages

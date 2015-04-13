@@ -214,7 +214,7 @@ class Options_Object(object):
         """ currently just executes the fetch function """
         self.fetch_options_from_Options_Control()
         try:
-            self.Main.Data_Display.update()
+            self.Main.Data_Display.update()  ### FIXME signal needed
         except:
             pass
         pass
@@ -238,17 +238,17 @@ class Options_Object(object):
         self.view['show_dFF'] = not(self.view['show_dFF'])
         if self.view['show_dFF'] == True:
             if not(self.general['dFF_was_calc']): # first time display, calc dFF
-                self.Main.Data.calc_dFF()
-                self.Main.Data_Display.LUT_Controlers.reset_levels()
-            self.Main.Traces_Visualizer.plotItem.setLabel('left','dF/F')
+                self.Main.Data.calc_dFF()  ### FIXME signal needed
+                self.Main.Data_Display.LUT_Controlers.reset_levels()  ### FIXME signal needed
+            self.Main.Traces_Visualizer.plotItem.setLabel('left','dF/F')  ### FIXME signal needed
         if self.view['show_dFF'] == False:
-            self.Main.Traces_Visualizer.plotItem.setLabel('left','F [au]')
-        self.Main.MainWindow.Data_Display.update()
+            self.Main.Traces_Visualizer.plotItem.setLabel('left','F [au]')  ### FIXME signal needed
+        self.Main.MainWindow.Data_Display.update()  ### FIXME signal needed
            
     def toggle_avg_img(self):
         """ toggles display time-average image """
         self.view['show_avg'] = not(self.view['show_avg'])
-        self.Main.MainWindow.Data_Display.update()
+        self.Main.MainWindow.Data_Display.update()  ### FIXME signal needed
         
     def toggle_global_levels(self):
         """ toggles the use of global level setting """
@@ -260,16 +260,16 @@ class Options_Object(object):
         
         if self.view['show_monochrome'] == True:
             # disable all except the last selected dataset
-            self.Main.Data_Selector.clearSelection()
-            self.Main.Data_Selector.selectRow(self.view['last_selected'])
+            self.Main.Data_Selector.clearSelection()  ### FIXME signal needed
+            self.Main.Data_Selector.selectRow(self.view['last_selected'])  ### FIXME signal needed
             
             # change selection model
-            self.Main.Data_Selector.setSelectionMode(Qt.QAbstractItemView.SingleSelection)
+            self.Main.Data_Selector.setSelectionMode(Qt.QAbstractItemView.SingleSelection)  ### FIXME signal needed
 
             # set the colormaps to monochrome + glow
             for i in range(self.Main.Data.nFiles):
-                self.Main.LUT_Controlers.LUTwidgets.widget(i).item.gradient.setColorMap(self.Main.Data_Display.graymap)
-                self.Main.LUT_Controlers.LUTwidgets_dFF.widget(i).item.gradient.setColorMap(self.Main.Data_Display.heatmap)
+                self.Main.LUT_Controlers.LUTwidgets.widget(i).item.gradient.setColorMap(self.Main.Data_Display.graymap)  ### FIXME signal needed
+                self.Main.LUT_Controlers.LUTwidgets_dFF.widget(i).item.gradient.setColorMap(self.Main.Data_Display.heatmap)  ### FIXME signal needed
                         
         if self.view['show_monochrome'] == False:
             # restore colors
@@ -277,9 +277,9 @@ class Options_Object(object):
                 self.Main.LUT_Controlers.LUTwidgets.widget(i).item.gradient.setColorMap(self.Main.Data_Display.color_maps[i])
                 self.Main.LUT_Controlers.LUTwidgets_dFF.widget(i).item.gradient.setColorMap(self.Main.Data_Display.color_maps[i])
             # back to multi selection model
-            self.Main.Data_Selector.setSelectionMode(Qt.QAbstractItemView.ExtendedSelection)
+            self.Main.Data_Selector.setSelectionMode(Qt.QAbstractItemView.ExtendedSelection)  ### FIXME signal needed
 
-        self.Main.Data_Display.update()
+        self.Main.Data_Display.update()  ### FIXME signal needed
 
 if __name__ == '__main__':
     pass

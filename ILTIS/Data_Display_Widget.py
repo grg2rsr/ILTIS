@@ -268,7 +268,7 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
         if pg.graphicsItems.ViewBox.ViewBox == type(evt.currentItem): # this is the fix for the ROI in the corners bug
             if evt.button() == 1:
                 pos = self.ViewBox.mapToView(evt.pos()) # position of mouse click
-                self.Main.ROIs.add_ROI(pos=sp.array([pos.x(),pos.y()]))
+                self.Main.ROIs.add_ROI(pos=sp.array([pos.x(),pos.y()])) ### FIXME signal needed
                 self.Data_Display.update()
                 pass
             pass
@@ -469,7 +469,7 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
                     ROI = self.Main.ROIs.ROI_list[self.Main.ROIs.active_ROI_id]
                     
                     # func bool mask slicing
-                    mask, inds = self.Main.ROIs.get_ROI_mask(ROI)
+                    mask, inds = self.Main.ROIs.get_ROI_mask(ROI)  ### FIXME signal needed?
                     if self.Main.Options.view['show_dFF']:
                         sliced = self.Main.Data.dFF[mask,:,n]
                     else:
@@ -564,7 +564,7 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
                     ROI = self.Main.ROIs.ROI_list[self.Main.ROIs.active_ROI_id]
                     
                     # func bool mask slicing
-                    mask, inds = self.Main.ROIs.get_ROI_mask(ROI)
+                    mask, inds = self.Main.ROIs.get_ROI_mask(ROI)  ### FIXME signal needed?
                     
                     if self.Main.Options.view['show_dFF']:
                         sliced = self.Main.Data.dFF[mask,:,n]

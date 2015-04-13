@@ -45,13 +45,13 @@ class Data_Object(object):
         filter_size = (xy,xy,z)
         
         for n in range(self.nFiles):
-            self.Main.MainWindow.statusBar().showMessage("calculating gaussian smooth on Dataset " + str(n))
+            self.Main.MainWindow.statusBar().showMessage("calculating gaussian smooth on Dataset " + str(n))  ### FIXME signal needed
             if self.Main.Options.filter_target == 'raw':
                 self.raw[:,:,:,n] = ndimage.gaussian_filter(self.data[:,:,:,n],filter_size)
             if self.Main.Options.filter_target == 'dFF':
                 self.dFF[:,:,:,n] = ndimage.gaussian_filter(self.dFF[:,:,:,n],filter_size)
             pass
-        self.Main.MainWindow.statusBar().clearMessage()
+        self.Main.MainWindow.statusBar().clearMessage()  ### FIXME signal needed
         pass
  
     def calc_dFF(self):
@@ -102,7 +102,7 @@ class Data_Object(object):
         for n,path in enumerate(paths):
             print "loading dataset from " + path
             print "Dataset size: " + str(os.stat(path).st_size / 1000000.0) + ' MB'
-            self.Main.MainWindow.statusBar().showMessage("loading dataset: " + path)
+            self.Main.MainWindow.statusBar().showMessage("loading dataset: " + path)  ### FIXME signal needed
             t_stack = io.read_tiffstack(path)
             self.raw[:,:,:,n] = t_stack
             
@@ -110,7 +110,7 @@ class Data_Object(object):
         
         self.nFiles = len(paths)
         self.nFrames = self.raw.shape[2]
-        self.Main.MainWindow.statusBar().clearMessage()
+        self.Main.MainWindow.statusBar().clearMessage()  ### FIXME signal needed
         
         # hacking in metadata. FIXME
         self.Metadata = Metadata_Object(self.Main,self)

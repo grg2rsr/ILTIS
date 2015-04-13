@@ -80,20 +80,20 @@ class ROIs_Object(object):
 
         self.ROI_list.append(ROI)
         self.active_ROI_id = len(self.ROI_list) - 1
-        self.Main.Data_Display.Frame_Visualizer.ViewBox.addItem(ROI)
+        self.Main.Data_Display.Frame_Visualizer.ViewBox.addItem(ROI)  ### FIXME signal needed
         
         self.nROIs += 1
-        self.Main.ROI_Manager.update()
+        self.Main.ROI_Manager.update()  ### FIXME signal needed
         
     def remove_ROI(self,evt):
         """ remove a ROI, right click from popup menu"""
         ROI = evt.sender()
-        self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI)
+        self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI)  ### FIXME signal needed
         ROI.removeTimer.stop() # fix from luke campagnola (pyqtgraph mailinglist) # seems to be unnecessary now?
         self.ROI_list.remove(ROI)
         self.active_ROI_id = self.active_ROI_id - 1 ### FIXME
         self.nROIs = self.nROIs - 1
-        self.Main.ROI_Manager.update()
+        self.Main.ROI_Manager.update()  ### FIXME signal needed
         
     def get_ROI_position(self,ROI): # obsolete, never called?
         """ returns ROI position. check if it makes any sense with polygon ROIs"""
@@ -138,8 +138,8 @@ class ROIs_Object(object):
 
 #        pos = self.get_ROI_position(ROI)
         
-        self.Main.Data_Display.Traces_Visualizer.update()
-        self.Main.Data_Display.Traces_Visualizer_Stimsorted.update()
+        self.Main.Data_Display.Traces_Visualizer.update()  ### FIXME signal needed
+        self.Main.Data_Display.Traces_Visualizer_Stimsorted.update()  ### FIXME signal needed
         
     def ROI_hover(self,evt): # this one can be reimplemented
         """ on ROI hover: update traces with the ROI hovered """
@@ -148,8 +148,8 @@ class ROIs_Object(object):
         
 #        pos = self.get_ROI_position(ROI)         
         
-        self.Main.Data_Display.Traces_Visualizer.update()
-        self.Main.ROI_Manager.update()
+        self.Main.Data_Display.Traces_Visualizer.update()  ### FIXME signal needed
+        self.Main.ROI_Manager.update()  ### FIXME signal needed
     pass
 
 

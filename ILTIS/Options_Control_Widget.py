@@ -30,7 +30,7 @@ class Options_Control_Widget(QtGui.QTabWidget):
         self.setWindowTitle('Options')    
         for row_index,options_string in enumerate(self.Main.Options.settable_options):
             self.make_row(row_index,*options_string)
-        self.Main.Options.send_options_to_Options_Control()
+        self.Main.Options.send_options_to_Options_Control()  ### FIXME signal needed
          
     
     def make_row(self,row_index,var_name,page,label,kind,choices):

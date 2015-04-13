@@ -114,8 +114,8 @@ class Data_Selector_Widget(QtGui.QTableWidget):
             self.Main.Options.view['show_flags'] = show_flags_updated
             self.Main.Options.view['last_selected'] = last_selected
     
-            self.Main.LUT_Controlers.LUTwidgets.setCurrentWidget(self.Main.LUT_Controlers.LUTwidgets.widget(last_selected))
-            self.Main.LUT_Controlers.LUTwidgets_dFF.setCurrentWidget(self.Main.LUT_Controlers.LUTwidgets_dFF.widget(last_selected))
+            self.Main.LUT_Controlers.LUTwidgets.setCurrentWidget(self.Main.LUT_Controlers.LUTwidgets.widget(last_selected))  ### FIXME signal needed
+            self.Main.LUT_Controlers.LUTwidgets_dFF.setCurrentWidget(self.Main.LUT_Controlers.LUTwidgets_dFF.widget(last_selected))  ### FIXME signal needed
             
             self.Main.Data_Display.update()        
         pass
@@ -174,7 +174,7 @@ class ROI_Manager_Widget(QtGui.QTableWidget):
     def clicked(self,row,col):
         self.Main.ROIs.active_ROI_id = row
         self.update()
-        self.Main.Data_Display.Traces_Visualizer.update()
+        self.Main.Data_Display.Traces_Visualizer.update()  ### FIXME signal needed
          
     
 
