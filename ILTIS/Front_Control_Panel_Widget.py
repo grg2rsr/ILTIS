@@ -18,6 +18,10 @@ class Front_Control_Panel_Widget(QtGui.QWidget): # has to interit from some pg.w
         self.Main = Main
         self.Main.Front_Control_Panel = self
         
+        # print instantiation
+        if self.Main.verbose:
+            print type(self), ' was instantiated'        
+        
         self.MainWindow = parent
         self.Data_Selector = None
         self.ROI_Manager = None
@@ -54,7 +58,11 @@ class Data_Selector_Widget(QtGui.QTableWidget):
 
         self.Main = Main
         self.Main.Data_Selector = self
-        
+
+        # print instantiation
+        if self.Main.verbose:
+            print type(self), ' was instantiated'        
+
         self.Front_Control_Panel = parent      
         self.setColumnCount(1)
         self.setHorizontalHeaderLabels(['select data'])
@@ -76,7 +84,12 @@ class Data_Selector_Widget(QtGui.QTableWidget):
             QColor.setAlpha(100)
             self.item(n,0).setBackgroundColor(QColor) # FIXME find color solutionQ
 
+        # connect
         self.itemSelectionChanged.connect(self.selection_changed)
+        
+        # select all at startup
+        selection = QtGui.QTableWidgetSelectionRange(1,1,len(self.paths),1)
+        self.setRangeSelected(selection,True)
         pass
     
     def selection_changed(self):
@@ -106,6 +119,11 @@ class ROI_Manager_Widget(QtGui.QTableWidget): # has to inherit from pg.widget
         
         self.Main = Main
         self.Main.ROI_Manager = self
+        
+        # print instantiation
+        if self.Main.verbose:
+            print type(self), ' was instantiated'        
+
         
         self.Front_Control_Panel = parent
 #        self.setRowCount(len(self.Main.ROIs.ROI_list))

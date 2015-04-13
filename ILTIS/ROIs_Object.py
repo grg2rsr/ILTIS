@@ -7,7 +7,7 @@ Created on Wed Apr  1 13:21:29 2015
 import pyqtgraph as pg
 import scipy as sp
 
-class ROIs_Object():
+class ROIs_Object(object):
     """ top level class of all ROIs. Contains all functionality that acts upon
     all ROIs together, like calculating the extraction mask.
     
@@ -23,6 +23,11 @@ class ROIs_Object():
                 
         self.Main = Main
         self.Main.ROIs = self
+        
+        # print instantiation
+        if self.Main.verbose:
+            print type(self), ' was instantiated'        
+
         
         self.ROI_list = []
         self.nROIs = 0
@@ -79,7 +84,7 @@ class ROIs_Object():
         """ remove a ROI, right click from popup menu"""
         ROI = evt.sender()
         self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI)
-        ROI.removeTimer.stop() # fix from luke campagnola (pyqtgraph mailinglist)
+#        ROI.removeTimer.stop() # fix from luke campagnola (pyqtgraph mailinglist) # seems to be unnecessary now?
         self.ROI_list.remove(ROI)
         self.active_ROI_id = self.active_ROI_id - 1 ### FIXME
         self.nROIs = self.nROIs - 1

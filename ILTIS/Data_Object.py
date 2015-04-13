@@ -10,12 +10,17 @@ import os
 from scipy import ndimage
 from Metadata_Object import Metadata_Object
 
-class Data_Object():
+class Data_Object(object):
     """ 
     specification of a Data Object:    
     """
     def __init__(self,parent):
         self.Main = parent
+        
+        # print instantiation
+        if self.Main.verbose:
+            print type(self), ' was instantiated'
+            
         self.raw = None
         self.dFF = None
         self.Traces = None

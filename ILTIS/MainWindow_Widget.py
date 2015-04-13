@@ -13,10 +13,14 @@ from Options_Control_Widget import Options_Control_Widget
 class MainWindow_Widget(QtGui.QMainWindow):
     def __init__(self,parent):
         super(MainWindow_Widget,self).__init__()
-        
+
         # fields
         self.Main = parent
         self.Main.MainWindow = self
+
+        # print instantiation
+        if self.Main.verbose:
+            print type(self), ' was instantiated'
         
         self.MenuBar = None
         self.ToolBar = None

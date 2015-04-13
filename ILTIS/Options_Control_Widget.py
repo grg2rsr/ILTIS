@@ -15,6 +15,11 @@ class Options_Control_Widget(QtGui.QTabWidget):
         self.Main = Main
         self.Main.Options_Control = self
         
+        # print instantiation
+        if self.Main.verbose:
+            print type(self), ' was instantiated'        
+
+        
         self.rows = []
         self.initUI()
         

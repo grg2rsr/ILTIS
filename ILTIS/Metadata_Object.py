@@ -11,6 +11,10 @@ class Metadata_Object(object):
         self.Data = parent
         self.Main = Main
         
+        # print instantiation
+        if self.Main.verbose:
+            print type(self), ' was instantiated'        
+        
         self.paths = None
         self.trial_labels = None
         pass

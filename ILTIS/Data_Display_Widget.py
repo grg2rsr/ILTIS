@@ -18,6 +18,10 @@ class Data_Display_Widget(QtGui.QMainWindow):
         self.Main.Data_Display = self
         self.MainWindow = parent
         
+        # print instantiation
+        if self.Main.verbose:
+            print type(self), ' was instantiated'
+        
         self.Frame_Visualizer = None
         self.LUT_Controlers = None
         self.Traces_Visualizer = None
@@ -453,13 +457,11 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         pass        
         
     def update(self):
-#        self.last_pos = pos # needed for keeping the lines while some are removed or added
-    
-        self.stim_region.setRegion([self.Main.Options.preprocessing['stimulus_onset'], self.Main.Options.preprocessing['stimulus_offset']])
-        print self.Main.Options.preprocessing['stimulus_onset'], self.Main.Options.preprocessing['stimulus_offset']
+        """ update traces """
         
+        # do not run if no ROIs
         if self.Main.ROIs.nROIs != 0:
-                
+            
             for n in range(self.Main.Data.nFiles):
                 if self.Main.Options.view['show_flags'][n] == True: # only work on active datasets
                 
@@ -478,6 +480,9 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
                     self.traces[n].show()
                 else:
                     self.traces[n].hide()
+                    
+        # update stim marker
+        self.stim_region.setRegion([self.Main.Options.preprocessing['stimulus_onset'], self.Main.Options.preprocessing['stimulus_offset']])
     
     def reset(self):
         for trace in self.traces:

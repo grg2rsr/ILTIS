@@ -9,13 +9,18 @@ import os
 import scipy as sp
 from PyQt4 import Qt
 
-class Options_Object():
+class Options_Object(object):
     """ no gui, holds only the options! """
     def __init__(self,Main,options_filepath=None):
         """ """
         self.Main = Main
         self.Main.Options = self
         self.options_filepath = options_filepath
+        
+        # print instantiation
+        if self.Main.verbose:
+            print type(self), ' was instantiated'        
+
         
         self.general = {} # all options associated w os interaction
         self.view = {} # all options involved in data display 
@@ -76,37 +81,37 @@ class Options_Object():
         
         """
         self.settable_options = [
-                                ["general['verbose']",'General','verbose mode',['bool'],None],
-                                ["general['options_filepath']",'General','options filepath',['path'],None],
-                                ["preprocessing['stimulus_onset']",'Preprocessing','stimulus onset frame',['int'],None],
-                                ["preprocessing['stimulus_offset']",'Preprocessing','stimulus offset frame',['int'],None],
-                                ["preprocessing['dFF_frames']",'Preprocessing','frames for background calculation',['int']*2,None],
-                                ["preprocessing['filter_size']",'Preprocessing','xy t filter size',['float']*2,None],
-                                ["preprocessing['filter_target']",'Preprocessing','apply filter to',['string'],['raw','dFF']],
-                                ["view['composition_mode']",'View','image composition mode',['string'],['SourceOver','DestinationOver','Clear','Source','Destination','SourceIn','DestinationIn','SourceOut','DestinationOut','SourceAtop','DestinationAtop','Xor','Plus','Multiply','Screen','Overlay','Darken','Lighten','ColorDodge','ColorBurn','HardLight','SoftLight','Difference','Exclusion','SourceOrDestination','SourceAndDestination','SourceXorDestination','NotSourceAndNotDestination','NotSourceOrNotDestination','NotSourceXorDestination','NotSource','NotSourceAndDestination','SourceAndNotDestination']],
-                                ["ROI['diameter']",'View','ROI diameter',['float'],None],
-                                ["ROI['type']",'View','ROI type',['string'],['circle','polygon']],
-                                ["export['data']",'Export','Export traces from',['string'],['raw','dFF']],
-                                ["export['format']",'Export','Export format',['string'],['.csv','.gloDatamix']]
+                                [['general','verbose'],'General','verbose mode',['bool'],None],
+                                [['general','options_filepath'],'General','options filepath',['path'],None],
+                                [['preprocessing','stimulus_onset'],'Preprocessing','stimulus onset frame',['int'],None],
+                                [['preprocessing','stimulus_offset'],'Preprocessing','stimulus offset frame',['int'],None],
+                                [['preprocessing','dFF_frames'],'Preprocessing','frames for background calculation',['int']*2,None],
+                                [['preprocessing','filter_size'],'Preprocessing','xy t filter size',['float']*2,None],
+                                [['preprocessing','filter_target'],'Preprocessing','apply filter to',['string'],['raw','dFF']],
+                                [['view','composition_mode'],'View','image composition mode',['string'],['SourceOver','DestinationOver','Clear','Source','Destination','SourceIn','DestinationIn','SourceOut','DestinationOut','SourceAtop','DestinationAtop','Xor','Plus','Multiply','Screen','Overlay','Darken','Lighten','ColorDodge','ColorBurn','HardLight','SoftLight','Difference','Exclusion','SourceOrDestination','SourceAndDestination','SourceXorDestination','NotSourceAndNotDestination','NotSourceOrNotDestination','NotSourceXorDestination','NotSource','NotSourceAndDestination','SourceAndNotDestination']],
+                                [['ROI','diameter'],'View','ROI diameter',['float'],None],
+                                [['ROI','type'],'View','ROI type',['string'],['circle','polygon']],
+                                [['export','data'],'Export','Export traces from',['string'],['raw','dFF']],
+                                [['export','format'],'Export','Export format',['string'],['.csv','.gloDatamix']]
                                 ]
         pass
     
     def send_options_to_Options_Control(self):
         """ sets the Options_Control GUI to the values that are in this object
         this function will be needed at ini and at options loading """
-        print "sending"
+#        print "sending"
         for row_index, row in enumerate(self.Main.Options_Control.rows):
             kind = self.settable_options[row_index][3] # type
             nFields = len(kind) # nFileds
             choices = self.settable_options[row_index][4] # choices
 
-            # dirty parsing of the args for the getattr functions
-            dict_name = self.settable_options[row_index][0].split('[')[0]            
-            param_name = self.settable_options[row_index][0].split('\'')[1]
+            #  
+            dict_name = self.settable_options[row_index][0][0]
+            param_name = self.settable_options[row_index][0][1]
 
             
             for i in range(nFields):
-                print dict_name,param_name
+#                print dict_name,param_name
                 # reading val
                 if nFields == 1:
                     val = getattr(self,dict_name)[param_name]
@@ -141,16 +146,16 @@ class Options_Object():
         
         """ iterate over rows in Options_Control """        
         
-        print "fetching", self
+#        print "fetching", self
         
         for row_index, row in enumerate(self.Main.Options_Control.rows):
             kind = self.settable_options[row_index][3] # type
             nFields = len(kind)
             choices = self.settable_options[row_index][4] # choices
             
-            # dirty parsing of the args for the getattr functions
-            dict_name = self.settable_options[row_index][0].split('[')[0]            
-            param_name = self.settable_options[row_index][0].split('\'')[1]
+            # 
+            dict_name = self.settable_options[row_index][0][0]
+            param_name = self.settable_options[row_index][0][1]
             
             try:
                 for i in range(nFields):
