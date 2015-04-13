@@ -107,16 +107,17 @@ class Data_Selector_Widget(QtGui.QTableWidget):
     
     def selection_changed(self):     
         selection = [item.row() for item in self.selectedItems()]
-        last_selected = selection[-1] # FIXME this sometimes throws errors
-        show_flags_updated = sp.zeros(len(self.paths),dtype='bool')
-        show_flags_updated[selection] = 1
-        self.Main.Options.view['show_flags'] = show_flags_updated
-        self.Main.Options.view['last_selected'] = last_selected
-
-        self.Main.LUT_Controlers.LUTwidgets.setCurrentWidget(self.Main.LUT_Controlers.LUTwidgets.widget(last_selected))
-        self.Main.LUT_Controlers.LUTwidgets_dFF.setCurrentWidget(self.Main.LUT_Controlers.LUTwidgets_dFF.widget(last_selected))
-        
-        self.Main.Data_Display.update()        
+        if len(selection) > 0:
+            last_selected = selection[-1] # FIXME this sometimes throws errors
+            show_flags_updated = sp.zeros(len(self.paths),dtype='bool')
+            show_flags_updated[selection] = 1
+            self.Main.Options.view['show_flags'] = show_flags_updated
+            self.Main.Options.view['last_selected'] = last_selected
+    
+            self.Main.LUT_Controlers.LUTwidgets.setCurrentWidget(self.Main.LUT_Controlers.LUTwidgets.widget(last_selected))
+            self.Main.LUT_Controlers.LUTwidgets_dFF.setCurrentWidget(self.Main.LUT_Controlers.LUTwidgets_dFF.widget(last_selected))
+            
+            self.Main.Data_Display.update()        
         pass
     
     def reset(self):
