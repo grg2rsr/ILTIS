@@ -100,46 +100,46 @@ class Options_Object(object):
                                 ]
         pass
     
-    def send_options_to_Options_Control(self):
-        """ sets the Options_Control GUI to the values that are in this object
-        this function will be needed at ini and at options loading """
-#        print "sending"
-        for row_index, row in enumerate(self.Main.Options_Control.rows):
-            kind = self.settable_options[row_index][3] # type
-            nFields = len(kind) # nFileds
-            choices = self.settable_options[row_index][4] # choices
-
-            #  
-            dict_name = self.settable_options[row_index][0][0]
-            param_name = self.settable_options[row_index][0][1]
-
-            
-            for i in range(nFields):
-#                print dict_name,param_name
-                # reading val
-                if nFields == 1:
-                    val = getattr(self,dict_name)[param_name]
-                if nFields > 1:
-                    val = getattr(self,dict_name)[param_name][i]
-                    
-                val = str(val)
-                
-                # converting from user input to variable format
-                if kind[i] == 'int':
-                    row.children()[i+1].setText(val) # first child is the layout, the following are the input fields                    
-                    
-                if kind[i] == 'float':
-                    row.children()[i+1].setText(val) # first child is the layout, the following are the input fields                    
-                        
-                if kind[i] == 'bool':
-                    row.children()[1].setCurrentIndex(['True','False'].index(val))
-  
-                if kind[i] == 'string':
-#                    val = choices[row.children()[1].currentIndex()]
-                    pass
-                
-                if kind[i] == 'path':
-                    pass
+#    def send_options_to_Options_Control(self):
+#        """ sets the Options_Control GUI to the values that are in this object
+#        this function will be needed at ini and at options loading """
+##        print "sending"
+#        for row_index, row in enumerate(self.Main.Options_Control.rows):
+#            kind = self.settable_options[row_index][3] # type
+#            nFields = len(kind) # nFileds
+#            choices = self.settable_options[row_index][4] # choices
+#
+#            #  
+#            dict_name = self.settable_options[row_index][0][0]
+#            param_name = self.settable_options[row_index][0][1]
+#
+#            
+#            for i in range(nFields):
+##                print dict_name,param_name
+#                # reading val
+#                if nFields == 1:
+#                    val = getattr(self,dict_name)[param_name]
+#                if nFields > 1:
+#                    val = getattr(self,dict_name)[param_name][i]
+#                    
+#                val = str(val)
+#                
+#                # converting from user input to variable format
+#                if kind[i] == 'int':
+#                    row.children()[i+1].setText(val) # first child is the layout, the following are the input fields                    
+#                    
+#                if kind[i] == 'float':
+#                    row.children()[i+1].setText(val) # first child is the layout, the following are the input fields                    
+#                        
+#                if kind[i] == 'bool':
+#                    row.children()[1].setCurrentIndex(['True','False'].index(val))
+#  
+#                if kind[i] == 'string':
+##                    val = choices[row.children()[1].currentIndex()]
+#                    pass
+#                
+#                if kind[i] == 'path':
+#                    pass
 
                 
         pass
@@ -214,6 +214,7 @@ class Options_Object(object):
         """ currently just executes the fetch function """
         self.fetch_options_from_Options_Control()
         try:
+            """ fix: emit update_requested signal """
             self.Main.Data_Display.update()  ### FIXME signal needed
         except:
             pass
@@ -225,13 +226,15 @@ class Options_Object(object):
 #==============================================================================
     def load_options(self):
         """ load options from options_filepath """
-        self.send_options_to_Options_Control()
+#        self.send_options_to_Options_Control()
         pass
     
     def save_options(self):
         """ save options to options_filepath """
         pass
     
+    """ fix idea: move all togglers to the MainWindow
+    write all the changes to vars in the display widgets and request update """
     ### togglers view mode
     def toggle_dFF(self):     
         """ toggles the dFF show flag, button on the toolbar """
@@ -248,6 +251,7 @@ class Options_Object(object):
     def toggle_avg_img(self):
         """ toggles display time-average image """
         self.view['show_avg'] = not(self.view['show_avg'])
+        """ fix: emit update_requested signal """
         self.Main.MainWindow.Data_Display.update()  ### FIXME signal needed
         
     def toggle_global_levels(self):

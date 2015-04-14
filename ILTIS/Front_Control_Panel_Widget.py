@@ -113,10 +113,13 @@ class Data_Selector_Widget(QtGui.QTableWidget):
             show_flags_updated[selection] = 1
             self.Main.Options.view['show_flags'] = show_flags_updated
             self.Main.Options.view['last_selected'] = last_selected
-    
+
+
+            """ idea for fix: emit signal 'set active dataset' and LUT_Controlers have a slot that sets"""    
             self.Main.LUT_Controlers.LUTwidgets.setCurrentWidget(self.Main.LUT_Controlers.LUTwidgets.widget(last_selected))  ### FIXME signal needed
             self.Main.LUT_Controlers.LUTwidgets_dFF.setCurrentWidget(self.Main.LUT_Controlers.LUTwidgets_dFF.widget(last_selected))  ### FIXME signal needed
             
+            """ idea for fix: emit update_requested signal """
             self.Main.Data_Display.update()        
         pass
     

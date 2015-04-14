@@ -145,9 +145,8 @@ class Main():
                 os.remove(filepath)
 
 def main():
+
     # run application
-    for arg in sys.argv:
-        print arg
     app = QtGui.QApplication(sys.argv)
     Iltis = Main(verbose=True)
    

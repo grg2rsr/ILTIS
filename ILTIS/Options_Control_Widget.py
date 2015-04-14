@@ -30,7 +30,7 @@ class Options_Control_Widget(QtGui.QTabWidget):
         self.setWindowTitle('Options')    
         for row_index,options_string in enumerate(self.Main.Options.settable_options):
             self.make_row(row_index,*options_string)
-        self.Main.Options.send_options_to_Options_Control()  ### FIXME signal needed
+        self.fetch_options()
          
     
     def make_row(self,row_index,var_name,page,label,kind,choices):
@@ -45,8 +45,6 @@ class Options_Control_Widget(QtGui.QTabWidget):
         whenever something has changed, call the update function
         this one then iterates over all rows and reads the values
         has to determine what kind of row and how many fields """
-        
-        print "making row", row_index
         
         input_field = QtGui.QWidget(self)
         input_field_layout = QtGui.QHBoxLayout(input_field)        
@@ -96,6 +94,46 @@ class Options_Control_Widget(QtGui.QTabWidget):
         FormLayout.addRow(label,input_field)
 
         self.rows.append(input_field)
+        
+    def fetch_options(self):
+        """ reads the current options from the Options Object and updates the
+        GUI """
+
+        for row_index, row in enumerate(self.rows):
+            kind = self.Main.Options.settable_options[row_index][3] # type
+            nFields = len(kind) # nFileds
+            choices = self.Main.Options.settable_options[row_index][4] # choices
+
+            #  
+            dict_name = self.Main.Options.settable_options[row_index][0][0]
+            param_name = self.Main.Options.settable_options[row_index][0][1]
+
+            
+            for i in range(nFields):
+                # reading val
+                if nFields == 1:
+                    val = getattr(self.Main.Options,dict_name)[param_name]
+                if nFields > 1:
+                    val = getattr(self.Main.Options,dict_name)[param_name][i]
+                    
+                val = str(val)
+                
+                # converting from user input to variable format
+                if kind[i] == 'int':
+                    row.children()[i+1].setText(val) # first child is the layout, the following are the input fields                    
+                    
+                if kind[i] == 'float':
+                    row.children()[i+1].setText(val) # first child is the layout, the following are the input fields                    
+                        
+                if kind[i] == 'bool':
+                    row.children()[1].setCurrentIndex(['True','False'].index(val))
+  
+                if kind[i] == 'string':
+#                    val = choices[row.children()[1].currentIndex()]
+                    pass
+                
+                if kind[i] == 'path':
+                    pass
     pass
 
 if __name__ == '__main__':

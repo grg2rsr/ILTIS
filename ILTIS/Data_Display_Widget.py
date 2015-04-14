@@ -466,6 +466,7 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
                 if self.Main.Options.view['show_flags'][n] == True: # only work on active datasets
                 
                     # implementation using the pyqtgraph internal slicing
+                    """ fix idea: after this is a local copy, then the get_ROI_mask func can be put into the ROI class"""
                     ROI = self.Main.ROIs.ROI_list[self.Main.ROIs.active_ROI_id]
                     
                     # func bool mask slicing

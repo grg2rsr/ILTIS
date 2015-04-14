@@ -93,6 +93,7 @@ class ROIs_Object(object):
         self.ROI_list.remove(ROI)
         self.active_ROI_id = self.active_ROI_id - 1 ### FIXME
         self.nROIs = self.nROIs - 1
+        """ fix: emit update_requested signal """
         self.Main.ROI_Manager.update()  ### FIXME signal needed
         
     def get_ROI_position(self,ROI): # obsolete, never called?
@@ -138,6 +139,7 @@ class ROIs_Object(object):
 
 #        pos = self.get_ROI_position(ROI)
         
+        """ fix: emit update_requested signal """
         self.Main.Data_Display.Traces_Visualizer.update()  ### FIXME signal needed
         self.Main.Data_Display.Traces_Visualizer_Stimsorted.update()  ### FIXME signal needed
         
@@ -148,6 +150,7 @@ class ROIs_Object(object):
         
 #        pos = self.get_ROI_position(ROI)         
         
+        """ fix: emit update_requested signal """
         self.Main.Data_Display.Traces_Visualizer.update()  ### FIXME signal needed
         self.Main.ROI_Manager.update()  ### FIXME signal needed
     pass
