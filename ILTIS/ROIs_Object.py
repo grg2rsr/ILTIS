@@ -4,10 +4,11 @@ Created on Wed Apr  1 13:21:29 2015
 
 @author: georg
 """
+from PyQt4 import QtGui, QtCore
 import pyqtgraph as pg
 import scipy as sp
 
-class ROIs_Object(object):
+class ROIs_Object(QtCore.QObject):
     """ top level class of all ROIs. Contains all functionality that acts upon
     all ROIs together, like calculating the extraction mask.
     
@@ -27,6 +28,7 @@ class ROIs_Object(object):
         # print instantiation
         if self.Main.verbose:
             print type(self), ' was instantiated'        
+            print('%s: %s\n' % ('ROIs_Object', QtCore.QThread.currentThreadId()))
 
         
         self.ROI_list = []

@@ -5,13 +5,14 @@ Created on Wed Apr  1 13:11:53 2015
 @author: georg
 """
 
-from PyQt4 import QtGui, QtCore
-import os
+from PyQt4 import Qt, QtGui, QtCore
 import scipy as sp
 import pyqtgraph as pg
 from ROIs_Object import myCircleROI,myPolyLineROI
+from Signals import Signals
 
 class Front_Control_Panel_Widget(QtGui.QWidget): # has to interit from some pg.widget
+    
     def __init__(self,Main,parent):
         super(Front_Control_Panel_Widget,self).__init__()
         
@@ -20,14 +21,18 @@ class Front_Control_Panel_Widget(QtGui.QWidget): # has to interit from some pg.w
         
         # print instantiation
         if self.Main.verbose:
-            print type(self), ' was instantiated'        
+            print type(self), ' was instantiated' 
+            print('%s: %s\n' % (self.objectName(), QtCore.QThread.currentThreadId()))
         
         self.MainWindow = parent
         self.Data_Selector = None
         self.ROI_Manager = None
-    
-        self.initUI()
         
+        self.Signals = Signals()
+        self.initUI()
+            
+
+
     pass
 
     def initUI(self):
@@ -61,16 +66,22 @@ class Data_Selector_Widget(QtGui.QTableWidget):
 
         # print instantiation
         if self.Main.verbose:
-            print type(self), ' was instantiated'        
+            print type(self), ' was instantiated'
+            print('%s: %s\n' % (self.objectName(), QtCore.QThread.currentThreadId()))
 
         self.Front_Control_Panel = parent      
         self.setColumnCount(1)
         self.setHorizontalHeaderLabels(['select data'])
         self.horizontalHeader().setStretchLastSection(True)
         
-        
-        
-        pass
+        self.Signals = Signals()
+        slots = [self.Main.Data_Display.Frame_Visualizer.reset,
+                 self.Main.Data_Display.LUT_Controlers.reset,
+                 self.Main.Data_Display.Traces_Visualizer.reset,
+                 self.Main.Data_Display.Traces_Visualizer_Stimsorted.reset]
+
+        for slot in slots:
+            self.Signals.display_settings_changed_signal.connect(slot)
     
     def init_data(self):
                 
@@ -113,19 +124,28 @@ class Data_Selector_Widget(QtGui.QTableWidget):
             show_flags_updated[selection] = 1
             self.Main.Options.view['show_flags'] = show_flags_updated
             self.Main.Options.view['last_selected'] = last_selected
-
-
-            """ idea for fix: emit signal 'set active dataset' and LUT_Controlers have a slot that sets"""    
-            self.Main.LUT_Controlers.LUTwidgets.setCurrentWidget(self.Main.LUT_Controlers.LUTwidgets.widget(last_selected))  ### FIXME signal needed
-            self.Main.LUT_Controlers.LUTwidgets_dFF.setCurrentWidget(self.Main.LUT_Controlers.LUTwidgets_dFF.widget(last_selected))  ### FIXME signal needed
+            self.Signals.display_settings_changed_signal.emit()
             
-            """ idea for fix: emit update_requested signal """
-            self.Main.Data_Display.update()        
         pass
-    
+
+    def mode_update(self):
+        """ connected to monochrome toggler """
+        ## from monochrome toggler        
+        if self.Main.Options.view['show_monochrome'] == True:
+            # disable all except the last selected dataset
+            self.clearSelection()
+            self.selectRow(self.Main.Options.view['last_selected'])
+            self.setSelectionMode(Qt.QAbstractItemView.SingleSelection)
+
+        if self.Main.Options.view['show_monochrome'] == False:        
+            """ fix: emit set_selection_mode_signal('multicolor') """
+            self.setSelectionMode(Qt.QAbstractItemView.ExtendedSelection) 
+
     def reset(self):
         pass
-        
+    
+    
+    
     pass
 
     
@@ -139,7 +159,8 @@ class ROI_Manager_Widget(QtGui.QTableWidget):
         
         # print instantiation
         if self.Main.verbose:
-            print type(self), ' was instantiated'        
+            print type(self), ' was instantiated'     
+            print('%s: %s\n' % (self.objectName(), QtCore.QThread.currentThreadId()))
 
         
         self.Front_Control_Panel = parent

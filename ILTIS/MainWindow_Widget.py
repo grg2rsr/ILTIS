@@ -9,8 +9,10 @@ import os
 from Data_Display_Widget import Data_Display_Widget
 from Front_Control_Panel_Widget import Front_Control_Panel_Widget
 from Options_Control_Widget import Options_Control_Widget
+from Signals import Signals
 
 class MainWindow_Widget(QtGui.QMainWindow):
+
     def __init__(self,parent):
         super(MainWindow_Widget,self).__init__()
 
@@ -21,6 +23,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
         # print instantiation
         if self.Main.verbose:
             print type(self), ' was instantiated'
+            print('%s: %s\n' % (self.objectName(), QtCore.QThread.currentThreadId()))
         
         self.MenuBar = None
         self.ToolBar = None
@@ -53,10 +56,12 @@ class MainWindow_Widget(QtGui.QMainWindow):
         self.setup_MenuBar()
         self.setup_ToolBar()
         self.setup_StatusBar()
-        
 
+#        self.display_settings_changed_signal = Signals.display_settings_changed_signal
+        self.Signals = Signals()
+
+        # init
         self.initUI()
-
         pass
 
     def initUI(self):
@@ -75,9 +80,22 @@ class MainWindow_Widget(QtGui.QMainWindow):
         
 #        self.setWindowIcon(QtGui.QIcon(self.Main.graphics_path + os.path.sep + )) ### FIXME
         self.setWindowTitle('ILTIS')
+        
+        ### FIXME window size, keep following link in mind
+        # http://stackoverflow.com/questions/16280323/qt-set-size-of-qmainwindow
 
         # extra Widgets
         self.Options_Control = Options_Control_Widget(self.Main,self)
+        
+        # connect signals
+        slots = [self.Data_Display.Frame_Visualizer.update,
+                 self.Data_Display.LUT_Controlers.update,
+                 self.Data_Display.Traces_Visualizer.update,
+                 self.Data_Display.Traces_Visualizer_Stimsorted.update]
+                 
+        for slot in slots:
+            self.Signals.display_settings_changed_signal.connect(slot)
+            
         self.show()
         pass
     
@@ -189,28 +207,28 @@ class MainWindow_Widget(QtGui.QMainWindow):
                         'toggledFFAction':{'label':'Display dFF',
                                            'status_tip':'Toggles dF/F',
                                            'icon':None,
-                                           'func':self.Main.Options.toggle_dFF,
+                                           'func':self.toggle_dFF,
                                            'checkable':True,
                                            'no_data_disabled':True},
                                     
                         'toggleGlobalLevels':{'label':'use global levels',
                                               'status_tip':'toggles global levels use',
                                               'icon':None,
-                                              'func':self.Main.Options.toggle_global_levels,
+                                              'func':self.toggle_global_levels,
                                               'checkable':True,
                                               'no_data_disabled':True},
                                     
                         'toggleAvgAction':{'label':'Display time average',
                                            'status_tip':'toggles display time average use',
                                            'icon':None,
-                                           'func':self.Main.Options.toggle_avg_img,
+                                           'func':self.toggle_avg_img,
                                            'checkable':True,
                                            'no_data_disabled':True},
 
                         'toggleMonochromeAction':{'label':'Monochrome mode',
                                                   'status_tip':'toggles monochrome mode',
                                                   'icon':None,
-                                                  'func':self.Main.Options.toggle_monochrome_mode,
+                                                  'func':self.toggle_monochrome_mode,
                                                   'checkable':True,
                                                   'no_data_disabled':True},
         
@@ -274,7 +292,33 @@ class MainWindow_Widget(QtGui.QMainWindow):
         for name,settings in self.Actions.iteritems():
             if settings['no_data_disabled'] == True:
                 getattr(self,name).setEnabled(True)
-    
+
+
+    """ fix idea: move all togglers to the MainWindow
+    write all the changes to vars in the display widgets and request update """
+    ### togglers view mode
+    def toggle_dFF(self):     
+        """ toggles the dFF show flag, button on the toolbar """
+        self.view['show_dFF'] = not(self.view['show_dFF'])
+        
+        self.Signals.display_settings_changed_signal.emit()
+           
+    def toggle_avg_img(self):
+        """ toggles display time-average image """
+        self.view['show_avg'] = not(self.view['show_avg'])
+        self.Signals.display_settings_changed_signal.emit()
+#        
+    def toggle_global_levels(self):
+        """ toggles the use of global level setting """
+        self.view['use_global_levels'] = not(self.view['use_global_levels'])
+#        
+    def toggle_monochrome_mode(self):
+        """ toggles display in color merges or only one in monochrome 1 trial """
+        self.view['show_monochrome'] = not(self.view['show_monochrome']) # the toggle
+        """ fix: emit set_selection_mode_signal('monochrome') """
+        self.Signals.display_settings_changed_signal.emit()
+        
+
     def OpenOptionsWidget(self):
         self.Options_Control.show()
         self.Options_Control.raise_()
@@ -283,11 +327,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
     def closeEvent(self,event): # reimplementation
         reply=QtGui.QMessageBox.question(self,'Message',"Are you sure to quit?",QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
         if reply==QtGui.QMessageBox.Yes:
-#            self.OptionsWindow.write_options_file(self.OptionsWindow.options_filepath)
-#            self.OptionsWindow.close()
-#            if self.BTT.Traces_Inspector_exists_flag:
-#                self.BTT.Traces_Inspector_Widget.close()
-            self.Main.cleanup()  ### FIXME signal needed
+            ### FIXME add cleanup!
             event.accept()
         else:
             event.ignore()

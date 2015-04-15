@@ -14,10 +14,22 @@ from Data_Object import Data_Object
 from MainWindow_Widget import MainWindow_Widget
 from ROIs_Object import ROIs_Object
 import scipy as sp
+from Signals import Signals
 
 pg.setConfigOptions(antialias=True)
 
-class Main():
+
+""" note: cleanup functionality is commented out. reimplement as soon as signal/
+slot mechanism is running """
+
+class Main(QtCore.QObject):
+    # debug signals block
+    threadInfo = QtCore.pyqtSignal(object, object)
+    
+    @QtCore.pyqtSlot()
+    def emitInfo(self):
+        self.threadInfo.emit(self.string, QtCore.QThread.currentThreadId())
+    
     def __init__(self,verbose=False):
         # fields
         self.cwd = None
@@ -33,10 +45,32 @@ class Main():
         self.initialize_paths()
         self.print_startup_msg()
 
-        self.Options = Options_Object(self)
-        self.ROIs = ROIs_Object(self)
-        self.MainWindow = MainWindow_Widget(self)
+        self.Options = Options_Object(self) # this should live in it's own thread
+        self.ROIs = ROIs_Object(self) # this should live in it's own thread
+        self.MainWindow = MainWindow_Widget(self) # this should live in it's own thread
+        
+        print('%s: %s\n' % ('Main', QtCore.QThread.currentThreadId()))
+        ## Signals
+        self.Signals = Signals()
 
+        # reset Signal        
+        slots = [self.MainWindow.Data_Display.Frame_Visualizer.reset,
+                 self.MainWindow.Data_Display.LUT_Controlers.reset,
+                 self.MainWindow.Data_Display.Traces_Visualizer.reset,
+                 self.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.reset,
+                 self.MainWindow.Front_Control_Panel.Data_Selector.reset]
+                 
+        for slot in slots:
+            self.Signals.reset_signal.connect(slot)
+        
+        ## update signal
+        slots = [self.Data_Display.Frame_Visualizer.update,
+                 self.Data_Display.LUT_Controlers.update,
+                 self.Data_Display.Traces_Visualizer.update,
+                 self.Data_Display.Traces_Visualizer_Stimsorted.update]
+                 
+        for slot in slots:
+            self.Signals.display_settings_changed_signal.connect(slot)
 
     ### File Dialogs
     def OpenFileDialog(self,title=None,default_dir=None,extension='*'):
@@ -112,10 +146,10 @@ class Main():
         if self.Data != None:
             self.Data = None # take care that no extra references are generated and kept!
       
-      # reset Data Display and Data Selector
-        self.MainWindow.Data_Display.reset()  ### FIXME signal needed
-        self.MainWindow.Front_Control_Panel.Data_Selector.reset()  ### FIXME signal needed
-        
+        # reset Data Display and Data Selector
+        print "emitting reset"
+        self.Signals.reset_signal.emit()
+
         # read in new data
         self.read_Data()
         
@@ -124,7 +158,9 @@ class Main():
         self.Data_Display.init_data()
         self.Data_Selector.init_data()
         
-        self.MainWindow.enable_actions()  ### FIXME signal needed
+#        self.MainWindow.enable_actions()  ### FIXME signal needed
+        print "emitting update"
+        self.Signals.display_settings_changed_signal.emit()
         pass
     
     ### messages
@@ -135,14 +171,14 @@ class Main():
         print "Process ID: ", os.getpid()
 
             
-    def cleanup(self):
-        """ remove tmp files """
-        for dirpath, dirnames, filenames in os.walk(self.tmp_path):
-            for filename in [f for f in filenames if f.endswith('.npa')]:
-                filepath = os.path.join(dirpath, filename)
-                if self.Options.general['verbose']:
-                    print "removing file: ",filepath
-                os.remove(filepath)
+#    def cleanup(self):
+#        """ remove tmp files """
+#        for dirpath, dirnames, filenames in os.walk(self.tmp_path):
+#            for filename in [f for f in filenames if f.endswith('.npa')]:
+#                filepath = os.path.join(dirpath, filename)
+#                if self.Options.general['verbose']:
+#                    print "removing file: ",filepath
+#                os.remove(filepath)
 
 def main():
 

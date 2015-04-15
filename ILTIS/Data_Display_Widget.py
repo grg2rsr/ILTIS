@@ -9,6 +9,7 @@ import pyqtgraph as pg
 import weakref
 import scipy as sp
 from scipy import random
+#from Signals import Signals
 
 class Data_Display_Widget(QtGui.QMainWindow):
     def __init__(self,Main,parent):
@@ -21,6 +22,7 @@ class Data_Display_Widget(QtGui.QMainWindow):
         # print instantiation
         if self.Main.verbose:
             print type(self), ' was instantiated'
+            print('%s: %s\n' % (self.objectName(), QtCore.QThread.currentThreadId()))
         
         self.Frame_Visualizer = None
         self.LUT_Controlers = None
@@ -82,18 +84,18 @@ class Data_Display_Widget(QtGui.QMainWindow):
         self.Traces_Dock.setFloating(False)
         self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.Traces_Dock)
         
-    def reset(self):
-        self.Frame_Visualizer.reset()
-        self.LUT_Controlers.reset()
-        self.Traces_Visualizer.reset()
-        pass
+#    def reset(self):
+#        self.Frame_Visualizer.reset()
+#        self.LUT_Controlers.reset()
+#        self.Traces_Visualizer.reset()
+#        pass
     
     def init_data(self):
         # weakref to data and Options. Needed?
-        self.data = weakref.ref(self.Main.Data)()
-        self.Main.Options = weakref.ref(self.Main.Options)()
+#        self.data = weakref.ref(self.Main.Data)()
+#        self.Main.Options = weakref.ref(self.Main.Options)()
         
-        self.colors,self.color_maps = self.calc_colormaps(self.data.nFiles)
+        self.colors,self.color_maps = self.calc_colormaps(self.Main.Data.nFiles)
         self.Frame_Visualizer.init_data()
         self.LUT_Controlers.init_data()
         self.Traces_Visualizer.init_data()
@@ -102,12 +104,12 @@ class Data_Display_Widget(QtGui.QMainWindow):
         self.Frame_Visualizer.update()
         pass
     
-    def update(self):
-        self.Frame_Visualizer.update()
-        
-        # here is a possible entry point for avoiding costly multiple slicing
-        self.Traces_Visualizer.update()
-        self.Traces_Visualizer_Stimsorted.update()
+#    def update(self):
+#        self.Frame_Visualizer.update()
+#        
+#        # here is a possible entry point for avoiding costly multiple slicing
+#        self.Traces_Visualizer.update()
+#        self.Traces_Visualizer_Stimsorted.update()
     
     def calc_colormaps(self,nColors,hot=False):
         """ generate evenly spaced colors on the HSV wheel """
@@ -178,8 +180,6 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
         if only one channel is active:        
         raw is in grayscale, dFF is in glow color map
         """
-        ### for implementation of global lut mod
-#        current_lut = self.LUTwidgets.currentIndex()
 
         # work only on those that are active
         for n in range(self.data.nFiles):
@@ -209,6 +209,7 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
                     self.ImageItems_dFF[n].show()
                     
                 else: # when showing raw
+                    print n
                     self.ImageItems_dFF[n].hide() # no dFF
                     if self.Main.Options.view['show_avg']:
                         self.ImageItems[n].setImage(sp.average(self.data.raw[:,:,:,n],axis=2))
@@ -239,9 +240,16 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
         
         self.ViewBox.autoRange()
         self.set_composition_mode(12)
-#        self.update()
+        self.update()
         
         pass
+
+
+    def display_settings_changed(self):
+        """ connected to display changed signal requesting changed display
+        settings """
+        self.update()
+
         
     def set_composition_mode(self,n):
         """ set the composition mode for different blending properties """
@@ -260,7 +268,7 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
             self.ViewBox.removeItem(item)
         self.ImageItems_dFF = []
         pass
-    
+
     def mouseClicked(self, evt):
         """ for ROI placement
         add functionality: watch for ROI placing toggle/switch        
@@ -357,7 +365,34 @@ class LUT_Controlers_Widget(QtGui.QWidget):
                 
         self.update()
         pass
+
+
+    def display_settings_changed(self):
+        """ connected to ... """
+        # set the colormaps to monochrome + glow
+        if self.view['show_monochrome'] == True:
+            for i in range(self.Main.Data.nFiles):
+                self.LUTwidgets.widget(i).item.gradient.setColorMap(self.Main.Data_Display.graymap)
+                self.LUTwidgets_dFF.widget(i).item.gradient.setColorMap(self.Main.Data_Display.heatmap)
+                    
+        if self.view['show_monochrome'] == False:
+            # restore colors
+            for i in range(self.Main.Data.nFiles):
+                self.LUTwidgets.widget(i).item.gradient.setColorMap(self.Main.Data_Display.color_maps[i])
+                self.LUTwidgets_dFF.widget(i).item.gradient.setColorMap(self.Main.Data_Display.color_maps[i])
         
+        # actions from selection_changed
+        self.LUTwidgets.setCurrentWidget(self.LUTwidgets.widget(self.Options.view['last_selected']))
+        self.LUTwidgets_dFF.setCurrentWidget(self.LUTwidgets_dFF.widget(self.Options.view['last_selected']))
+        
+        self.update()
+
+
+    def update(self):
+        """ empty function? """
+
+        pass   
+     
     def calc_levels(self,data,fraction=(0.1,0.9),nbins=100,samples=None):
         """ fraction is a tuple with (low, high) in the range of 0 to 1 
         nbins is the number of bins for the histogram resolution
@@ -393,8 +428,6 @@ class LUT_Controlers_Widget(QtGui.QWidget):
                 self.LUTwidgets_dFF.widget(n).item.setLevels(levels[0],levels[1])                
                 pass
 
-        
-        
     def reset(self):
         """ reset function """
         self.raw_levels = []
@@ -455,7 +488,18 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         self.vline.setValue(evt.pos().x())
         self.Data_Display.Frame_Visualizer.update()
         pass        
+
+    def display_settings_changed(self):
+        """ connected to display_settings_changed_signal"""
         
+        if self.Main.Options.view['show_dFF'] == True:
+            self.plotItem.setLabel('left','dF/F')
+            
+        if self.view['show_dFF'] == False:
+            self.Main.Traces_Visualizer.plotItem.setLabel('left','F [au]')
+        
+        self.update()
+    
     def update(self):
         """ update traces """
         
@@ -507,6 +551,9 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         self.plotWidget = pg.GraphicsLayoutWidget()    
         self.Data_Display = parent
         self.Main = Main
+        
+        self.plotItems = []
+        self.traces = []
 
     def init_data(self):
         # some preparations
@@ -517,9 +564,6 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         self.nRepetitions = self.trial_labels.count(self.trial_labels[0]) # FIXME: this imposes a fixed number of repetitions per trial. this should be changed into a vector holding values for each stim
 
         # generating the UI
-        self.plotItems = []
-        self.traces = []
-
         # looping over StimClasses
         for i,StimClass in enumerate(range(self.nStimClasses)):
             plot = self.plotWidget.addPlot(title=self.trial_labels_unique[StimClass]) # for inheriting from QWidget
@@ -577,6 +621,13 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
                     self.traces[n].show()
                 else:
                     self.traces[n].hide()
+
+    def reset(self):
+        for trace in self.traces:
+            trace.clear()
+        self.traces = []
+        
+        pass
                     
 
 if __name__ == '__main__':

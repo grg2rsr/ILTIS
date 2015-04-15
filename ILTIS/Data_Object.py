@@ -9,8 +9,13 @@ import scipy as sp
 import os
 from scipy import ndimage
 from Metadata_Object import Metadata_Object
+from PyQt4 import QtCore
+from Signals import Signals
 
-class Data_Object(object):
+""" note: communication with statusBar is just commented out. no signal provided
+yet, waiting for stackoverlow answer """
+
+class Data_Object(QtCore.QObject):
     """ 
     specification of a Data Object:    
     """
@@ -20,6 +25,7 @@ class Data_Object(object):
         # print instantiation
         if self.Main.verbose:
             print type(self), ' was instantiated'
+            print('%s: %s\n' % (self.objectName(), QtCore.QThread.currentThreadId()))
             
         self.raw = None
         self.dFF = None
@@ -27,6 +33,11 @@ class Data_Object(object):
         self.extraction_mask = None
         self.Metadata_Object = None
         self.nFiles = None # number of files = number of trials
+        
+        #  signals
+        self.Signals = Signals()
+        self.Signals.reset_levels_signal.connect(self.Main.LUT_Controlers.reset_levels)
+        
         pass
     
     ### calculations
@@ -45,14 +56,27 @@ class Data_Object(object):
         filter_size = (xy,xy,z)
         
         for n in range(self.nFiles):
-            self.Main.MainWindow.statusBar().showMessage("calculating gaussian smooth on Dataset " + str(n))  ### FIXME signal needed
+#            self.Main.MainWindow.statusBar().showMessage("calculating gaussian smooth on Dataset " + str(n))  ### FIXME signal needed
             if self.Main.Options.filter_target == 'raw':
                 self.raw[:,:,:,n] = ndimage.gaussian_filter(self.data[:,:,:,n],filter_size)
             if self.Main.Options.filter_target == 'dFF':
                 self.dFF[:,:,:,n] = ndimage.gaussian_filter(self.dFF[:,:,:,n],filter_size)
             pass
-        self.Main.MainWindow.statusBar().clearMessage()  ### FIXME signal needed
+#        self.Main.MainWindow.statusBar().clearMessage()  ### FIXME signal needed
         pass
+    
+    def first_time_dFF(self):
+        """ is connected to ... and executed upon dFF toggle. If dFF is zeros,
+        then calc it now. """
+        ## from dFF toggler
+        if self.Main.Options.view['show_dFF'] == True:
+            # if no dFF has been calculated, do so now. 
+            if not(self.Main.Options.general['dFF_was_calc']):
+                self.calc_dFF()
+        
+        self.Signals.reset_levels_signal.emit()
+        """ called upon first time dFF """
+        self.Main.Data_Display.LUT_Controlers.reset_levels()  ### FIXME signal needed
  
     def calc_dFF(self):
         """ calculates:
@@ -102,7 +126,7 @@ class Data_Object(object):
         for n,path in enumerate(paths):
             print "loading dataset from " + path
             print "Dataset size: " + str(os.stat(path).st_size / 1000000.0) + ' MB'
-            self.Main.MainWindow.statusBar().showMessage("loading dataset: " + path)  ### FIXME signal needed
+#            self.Main.MainWindow.statusBar().showMessage("loading dataset: " + path)  ### FIXME signal needed
             t_stack = io.read_tiffstack(path)
             self.raw[:,:,:,n] = t_stack
             
@@ -110,7 +134,7 @@ class Data_Object(object):
         
         self.nFiles = len(paths)
         self.nFrames = self.raw.shape[2]
-        self.Main.MainWindow.statusBar().clearMessage()  ### FIXME signal needed
+#        self.Main.MainWindow.statusBar().clearMessage()  ### FIXME signal needed
         
         # hacking in metadata. FIXME
         self.Metadata = Metadata_Object(self.Main,self)

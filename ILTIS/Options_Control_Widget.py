@@ -18,6 +18,7 @@ class Options_Control_Widget(QtGui.QTabWidget):
         # print instantiation
         if self.Main.verbose:
             print type(self), ' was instantiated'        
+            print('%s: %s\n' % (self.objectName(), QtCore.QThread.currentThreadId()))
 
         
         self.rows = []
