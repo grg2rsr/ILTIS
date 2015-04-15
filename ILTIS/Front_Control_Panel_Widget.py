@@ -162,9 +162,7 @@ class ROI_Manager_Widget(QtGui.QTableWidget):
             print type(self), ' was instantiated'     
             print('%s: %s\n' % (self.objectName(), QtCore.QThread.currentThreadId()))
 
-        
         self.Front_Control_Panel = parent
-#        self.setRowCount(len(self.Main.ROIs.ROI_list))
         self.setColumnCount(1)
         self.setHorizontalHeaderLabels(['ROI label'])
         self.itemChanged.connect(self.Main.ROIs.ROI_label_change)
