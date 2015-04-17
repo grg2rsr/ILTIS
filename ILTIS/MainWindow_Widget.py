@@ -67,6 +67,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
         self.Splitter.addWidget(self.Data_Display)
         self.Splitter.addWidget(self.Front_Control_Panel)
         
+#        self.Splitter = QtGui.QWidget(self)
         self.setCentralWidget(self.Splitter)
         
 #        self.setWindowIcon(QtGui.QIcon(self.Main.graphics_path + os.path.sep + )) ### FIXME
@@ -132,6 +133,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                                       'status_tip':'Read data from disk',
                                       'icon':None,
                                       'func':self.Main.IO.init_data,
+#                                      'func':None,
                                       'checkable':False,
                                       'no_data_disabled':False},
                                     
@@ -241,7 +243,10 @@ class MainWindow_Widget(QtGui.QMainWindow):
         # programatically generate Actions from self.Actions
         def setup_action(self,name,settings):
             """ helper functtion """
-            Action = QtGui.QAction(QtGui.QIcon(settings['icon']), settings['label'],self)
+            if settings['icon']:
+                Action = QtGui.QAction(QtGui.QIcon(settings['icon']), settings['label'],self)
+            else:
+                Action = QtGui.QAction(settings['label'],self)
             Action.setStatusTip(settings['status_tip'])
             if settings['func']:
                 Action.triggered.connect(settings['func'])
@@ -252,6 +257,8 @@ class MainWindow_Widget(QtGui.QMainWindow):
         for name,settings in self.Actions.iteritems():
             Action = setup_action(self,name,settings)
             setattr(self,name,Action)
+
+
 
         ### Apply Filter    
 #        self.ApplyFilterAction = QtGui.QAction('Filter data set',self)
