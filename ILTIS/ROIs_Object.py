@@ -158,7 +158,7 @@ class ROIs_Object(QtCore.QObject):
         
         """ fix: emit update_requested signal """
         self.Main.Data_Display.Traces_Visualizer.update()  ### FIXME signal needed
-        self.Main.ROI_Manager.update()  ### FIXME signal needed
+        self.Main.Front_Control_Panel.ROI_Manager.update()  ### FIXME signal needed
     pass
 
 

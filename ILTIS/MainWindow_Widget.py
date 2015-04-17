@@ -61,8 +61,8 @@ class MainWindow_Widget(QtGui.QMainWindow):
         self.Data_Display = Data_Display_Widget(self.Main,self)
         self.Front_Control_Panel = Front_Control_Panel_Widget(self.Main,self)
         self.Container = QtGui.QWidget()
-        
-        # splitter variant
+#        
+#        # splitter variant
         self.Splitter = QtGui.QSplitter(QtCore.Qt.Horizontal)
         self.Splitter.addWidget(self.Data_Display)
         self.Splitter.addWidget(self.Front_Control_Panel)
@@ -74,8 +74,11 @@ class MainWindow_Widget(QtGui.QMainWindow):
         
         ### FIXME window size, keep following link in mind
         # http://stackoverflow.com/questions/16280323/qt-set-size-of-qmainwindow
-
-        self.show()
+        
+        # app crashes on windows at this call.
+        # http://stackoverflow.com/questions/29626948/pyqt-crashes-and-thread-safety
+        # apparently not a thread safety issue ... 
+        self.show() 
         pass
     
     def setup_MenuBar(self):

@@ -10,7 +10,8 @@ from PyQt4 import QtCore
 class Signals(QtCore.QObject):
  
    # global signals
-    updateSignal = QtCore.pyqtSignal() # can have 'all','traces','frame'
+    updateSignal = QtCore.pyqtSignal()
+    updateTracesSignal = QtCore.pyqtSignal()
     resetSignal = QtCore.pyqtSignal()
     initUISignal = QtCore.pyqtSignal()
     initDataSignal= QtCore.pyqtSignal()
