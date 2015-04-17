@@ -11,18 +11,13 @@ from PyQt4 import Qt,QtCore
 
 class Options_Object(QtCore.QObject):
     """ no gui, holds only the options! """
-    def __init__(self,Main,options_filepath=None):
+    def __init__(self,Main):
         """ """
         self.Main = Main
-        self.Main.Options = self
-        self.options_filepath = options_filepath
+#        self.Main.Options = self
+        self.options_filepath = None
         
-        # print instantiation
-        if self.Main.verbose:
-            print type(self), ' was instantiated'        
-            print('%s: %s\n' % ('Options_Object', QtCore.QThread.currentThreadId()))
-
-        
+        # emtpy dicts for all the options
         self.general = {} # all options associated w os interaction
         self.view = {} # all options involved in data display 
         self.preprocessing = {} # all options that actually metadata but needed for vis (stimulus frame)
@@ -31,16 +26,48 @@ class Options_Object(QtCore.QObject):
         self.export = {} # all export options
         self.ROI = {} # all ROI related options
         
+        # colormaps, in view?
+        # colormaps - integrate colormaps here? calculated in processing, stored in options        
+        
+        # temporarily included hack, removed later
         self.load_default_options()
+        
+        # define user access for automatic generation of the Options_Control GUI
         self.make_settable_options()
-             
-
+            
         pass
     pass
+
+    def init_data(self):
+        """ IO reads the options_file from disk """
+        self.load_default_options()
+        
+        # for future implementation
+#        self.Main.IO.load_options() 
+
+#        and this code is then moved to IO        
+#        if self.Main.options_filepath != None:
+#            if os.path.exists(self.options_filepath):
+#                if self.Main.verbose:
+#                    print "loading options file from ", self.options_filepath
+#                    self.Main.IO.load_options()
+    
+    def update(self):
+        """ currently just executes the fetch function """
+        print type(self), ' update called'
+        self.fetch_options_from_Options_Control()
+#        self.Main.Signal.updateSignal.emit('all') # implement OptionsChangedSignal, makes no sense to emit update again
+        pass
+
+    def reset(self):
+        """ resets the object"""
+        self.load_default_options()
+        pass
 
     def load_default_options(self):
         self.general = {'verbose':True,
                         'options_filepath':None,
+                        'cwd':None,
                         'lst_was_read':False,
                         'dFF_was_calc':False
                         }
@@ -60,9 +87,18 @@ class Options_Object(QtCore.QObject):
                      'show_dFF':False,
                      'show_avg':False,
                      'show_monochrome':False,
-                     'use_global_levels':False
+                     'use_global_levels':False,
+                     'color_maps':None,
+                     'colors':None,
+                     'heatmap':None,
+                     'graymap':None
                      }
                      
+                     
+
+
+
+
         self.ROI = {'type':'circle',
                     'diameter':8,
                     'place_in_layer':'last active',
@@ -76,16 +112,13 @@ class Options_Object(QtCore.QObject):
     
     def make_settable_options(self):
         """ 
-        var, page, label, kind, nfields=1,choices=None
-        kind: bool, int, float, string, path
-        for string, choices must be set
-        for path, path selector needed
-        note: for fetchers, string and path are equal
+        this one needs a good doc
         
         """
         self.settable_options = [
                                 [['general','verbose'],'General','verbose mode',['bool'],None],
                                 [['general','options_filepath'],'General','options filepath',['path'],None],
+                                [['general','cwd'],'General','current working directory',['path'],None],
                                 [['preprocessing','stimulus_onset'],'Preprocessing','stimulus onset frame',['int'],None],
                                 [['preprocessing','stimulus_offset'],'Preprocessing','stimulus offset frame',['int'],None],
                                 [['preprocessing','dFF_frames'],'Preprocessing','frames for background calculation',['int']*2,None],
@@ -146,50 +179,14 @@ class Options_Object(QtCore.QObject):
                         getattr(self,dict_name)[param_name] = val
                     if nFields < 1:
                         getattr(self,dict_name)[param_name][0] = val
-                        
-            except:
+            except: # this is because '' cant be converted to int etc. FIXME
                 pass
-            
-            
         pass
     
-    def init_data(self):
-        """ resets the options object. Look for one attached to the dataset, and
-        if not, load defaults.
-        For future: can also load from .ids"""
-        if self.options_filepath != None:
-            if os.path.exists(self.options_filepath):
-                if self.Main.verbose:
-                    print "loading options file from ", self.options_filepath
-                    self.load_options()
-        
-#        else:
-#            if self.Main.verbose:
-#                print "loading default options"
-#                self.load_default_options()
-    
-    def update(self):
-        """ currently just executes the fetch function """
-        self.fetch_options_from_Options_Control()
-        try:
-            """ fix: emit update_requested signal """
-            self.Main.Data_Display.update()  ### FIXME signal needed
-        except:
-            pass
-        pass
 
 
-#==============================================================================
-    ### IO        
-#==============================================================================
-    def load_options(self):
-        """ load options from options_filepath """
-#        self.send_options_to_Options_Control()
-        pass
-    
-    def save_options(self):
-        """ save options to options_filepath """
-        pass
+
+
     
 
 

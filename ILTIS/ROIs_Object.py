@@ -23,19 +23,23 @@ class ROIs_Object(QtCore.QObject):
     def __init__(self,Main):
                 
         self.Main = Main
-        self.Main.ROIs = self
-        
-        # print instantiation
-        if self.Main.verbose:
-            print type(self), ' was instantiated'        
-            print('%s: %s\n' % ('ROIs_Object', QtCore.QThread.currentThreadId()))
-
-        
+#        self.Main.ROIs = self
+                
         self.ROI_list = []
         self.nROIs = 0
         self.proxies = []
         
         pass
+    
+    def request_ROI_placement(self, evt):
+        """ for ROI placement
+        add functionality: watch for ROI placing toggle/switch        
+        """
+        if pg.graphicsItems.ViewBox.ViewBox == type(evt.currentItem): # this is the fix for the ROI in the corners bug
+            if evt.button() == 1:
+                # get correct position of mouse click
+                pos = self.Main.Data_Display.Frame_Visualizer.ViewBox.mapToView(evt.pos())
+                self.add_ROI(pos=sp.array([pos.x(),pos.y()]))
     
     def add_ROI(self,label=None,layer=None,kind=None,pos=None,ROI_diameter=None,pos_list=None):
         """ this function is called and takes care of the proper ROI instantiation 
@@ -46,7 +50,6 @@ class ROIs_Object(QtCore.QObject):
                 layer = self.Main.Options.view['last_selected']
             if self.Main.Options.ROI['place_in_layer'] == 'default layer':
                 layer = self.Main.Options.ROI['default_layer']
-            
             
         if label == None:
             label = str(self.nROIs + 1)
@@ -59,7 +62,7 @@ class ROIs_Object(QtCore.QObject):
             ROI_diameter = self.Main.Options.ROI['diameter']
         
         # color the ROI according to the "active" dataset
-        current_pen = pg.mkPen(self.Main.Data_Display.colors[layer],width=1.8)
+        current_pen = pg.mkPen(self.Main.Options.view['colors'][layer],width=1.8)
 
         if kind == 'circle':
             pos = pos - ROI_diameter / 2 # empirically determined - not understood - minus is correct ... 
@@ -98,7 +101,7 @@ class ROIs_Object(QtCore.QObject):
         """ fix: emit update_requested signal """
         self.Main.ROI_Manager.update()  ### FIXME signal needed
         
-    def get_ROI_position(self,ROI): # obsolete, never called?
+    def get_ROI_position(self,ROI): # obsolete?
         """ returns ROI position. check if it makes any sense with polygon ROIs"""
         pos = ROI.getState()['pos']
         pos = sp.array([pos.x(),pos.y()])
@@ -115,6 +118,7 @@ class ROIs_Object(QtCore.QObject):
         calculates a boolean mask containing true if pixel inside ROI """
         mask = sp.zeros((self.Main.Data.raw.shape[0],self.Main.Data.raw.shape[1]),dtype='bool')
         
+        # getArraySlice gets 1) array to slice 2) ImageItem
         inds = ROI.getArraySlice(self.Main.Data.raw[:,:,0,0], self.Main.Data_Display.Frame_Visualizer.ImageItems[0], returnSlice=False)[0]
         valinds = sp.where(ROI.getArrayRegion(self.Main.Data.raw[:,:,0,0], self.Main.Data_Display.Frame_Visualizer.ImageItems[0]) != 0)
         inds = sp.array([inds[0],inds[1]])

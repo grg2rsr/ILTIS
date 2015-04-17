@@ -15,16 +15,10 @@ class MainWindow_Widget(QtGui.QMainWindow):
 
     def __init__(self,parent):
         super(MainWindow_Widget,self).__init__()
-
         # fields
         self.Main = parent
-        self.Main.MainWindow = self
+#        self.Main.MainWindow = self
 
-        # print instantiation
-        if self.Main.verbose:
-            print type(self), ' was instantiated'
-            print('%s: %s\n' % (self.objectName(), QtCore.QThread.currentThreadId()))
-        
         self.MenuBar = None
         self.ToolBar = None
         self.StatusBar = None
@@ -33,19 +27,19 @@ class MainWindow_Widget(QtGui.QMainWindow):
         self.Options_Control = None
 
         # actions
-        self.toggleMonochromeAction = None
-        self.ReadCoorAction = None
-        self.toggleGlobalLevels = None
-        self.WriteTracesAction = None
-        self.WriteROIAction = None
-        self.WriteMovieAction = None
-        self.WriteTracesAction = None
-        self.OpenAction = None
-        self.ReadCoorAction = None
-        self.ReadLSTAction = None
-        self.ReadTrialLabelsAction = None
-        self.toggleAvgAction = None
-        self.toggleMonochromeAction = None
+#        self.toggleMonochromeAction = None
+#        self.ReadCoorAction = None
+#        self.toggleGlobalLevels = None
+#        self.WriteTracesAction = None
+#        self.WriteROIAction = None
+#        self.WriteMovieAction = None
+#        self.WriteTracesAction = None
+#        self.OpenAction = None
+#        self.ReadCoorAction = None
+#        self.ReadLSTAction = None
+#        self.ReadTrialLabelsAction = None
+#        self.toggleAvgAction = None
+#        self.toggleMonochromeAction = None
         
         # layout
         self.Container = None
@@ -57,14 +51,11 @@ class MainWindow_Widget(QtGui.QMainWindow):
         self.setup_ToolBar()
         self.setup_StatusBar()
 
-#        self.display_settings_changed_signal = Signals.display_settings_changed_signal
-        self.Signals = Signals()
-
         # init
-        self.initUI()
+        self.init_UI()
         pass
 
-    def initUI(self):
+    def init_UI(self):
         """ """
         # ini
         self.Data_Display = Data_Display_Widget(self.Main,self)
@@ -84,18 +75,6 @@ class MainWindow_Widget(QtGui.QMainWindow):
         ### FIXME window size, keep following link in mind
         # http://stackoverflow.com/questions/16280323/qt-set-size-of-qmainwindow
 
-        # extra Widgets
-        self.Options_Control = Options_Control_Widget(self.Main,self)
-        
-        # connect signals
-        slots = [self.Data_Display.Frame_Visualizer.update,
-                 self.Data_Display.LUT_Controlers.update,
-                 self.Data_Display.Traces_Visualizer.update,
-                 self.Data_Display.Traces_Visualizer_Stimsorted.update]
-                 
-        for slot in slots:
-            self.Signals.display_settings_changed_signal.connect(slot)
-            
         self.show()
         pass
     
@@ -149,7 +128,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                         'OpenAction':{'label':'load data',
                                       'status_tip':'Read data from disk',
                                       'icon':None,
-                                      'func':self.Main.initialize_dataset,
+                                      'func':self.Main.IO.init_data,
                                       'checkable':False,
                                       'no_data_disabled':False},
                                     
@@ -239,7 +218,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                         'OpenOptionsAction':{'label':'Options',
                                              'status_tip':'Edit options',
                                              'icon':None,
-                                             'func':self.OpenOptionsWidget,
+                                             'func':self.open_Options_Widget,
                                              'checkable':False,
                                              'no_data_disabled':False},
                                              
@@ -301,12 +280,12 @@ class MainWindow_Widget(QtGui.QMainWindow):
         """ toggles the dFF show flag, button on the toolbar """
         self.view['show_dFF'] = not(self.view['show_dFF'])
         
-        self.Signals.display_settings_changed_signal.emit()
+        self.Main.Signals.updateSignal.emit()
            
     def toggle_avg_img(self):
         """ toggles display time-average image """
         self.view['show_avg'] = not(self.view['show_avg'])
-        self.Signals.display_settings_changed_signal.emit()
+        self.Main.Signals.updateSignal.emit()
 #        
     def toggle_global_levels(self):
         """ toggles the use of global level setting """
@@ -316,12 +295,12 @@ class MainWindow_Widget(QtGui.QMainWindow):
         """ toggles display in color merges or only one in monochrome 1 trial """
         self.view['show_monochrome'] = not(self.view['show_monochrome']) # the toggle
         """ fix: emit set_selection_mode_signal('monochrome') """
-        self.Signals.display_settings_changed_signal.emit()
+        self.Main.Signals.updateSignal.emit()
         
 
-    def OpenOptionsWidget(self):
-        self.Options_Control.show()
-        self.Options_Control.raise_()
+    def open_Options_Widget(self):
+        self.Main.Options_Control.show()
+        self.Main.Options_Control.raise_()
         pass
         
     def closeEvent(self,event): # reimplementation

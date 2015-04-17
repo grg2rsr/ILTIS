@@ -9,30 +9,19 @@ import os
 
 class Options_Control_Widget(QtGui.QTabWidget):
     """ the GUI widget to set the options, possibly one with tabs """
-    def __init__(self,Main,parent):
+    def __init__(self,Main):
         super(Options_Control_Widget,self).__init__()
-        self.MainWindow = parent
-        self.Main = Main
-        self.Main.Options_Control = self
         
-        # print instantiation
-        if self.Main.verbose:
-            print type(self), ' was instantiated'        
-            print('%s: %s\n' % (self.objectName(), QtCore.QThread.currentThreadId()))
-
+        self.Main = Main
+#        self.Main.Options_Control = self
         
         self.rows = []
-        self.initUI()
         
-        """ note: options object exists at time of instantiation """
-        pass
-
-    def initUI(self):
+    def init_UI(self):
         self.setWindowTitle('Options')    
         for row_index,options_string in enumerate(self.Main.Options.settable_options):
             self.make_row(row_index,*options_string)
         self.fetch_options()
-         
     
     def make_row(self,row_index,var_name,page,label,kind,choices):
         """ programatically generates the whole options_control GUI from a list
@@ -105,10 +94,8 @@ class Options_Control_Widget(QtGui.QTabWidget):
             nFields = len(kind) # nFileds
             choices = self.Main.Options.settable_options[row_index][4] # choices
 
-            #  
             dict_name = self.Main.Options.settable_options[row_index][0][0]
             param_name = self.Main.Options.settable_options[row_index][0][1]
-
             
             for i in range(nFields):
                 # reading val
@@ -127,10 +114,10 @@ class Options_Control_Widget(QtGui.QTabWidget):
                     row.children()[i+1].setText(val) # first child is the layout, the following are the input fields                    
                         
                 if kind[i] == 'bool':
-                    row.children()[1].setCurrentIndex(['True','False'].index(val))
+                    row.children()[i+1].setCurrentIndex(['True','False'].index(val))
   
                 if kind[i] == 'string':
-#                    val = choices[row.children()[1].currentIndex()]
+                    row.children()[i+1].setCurrentIndex(choices.index(val))
                     pass
                 
                 if kind[i] == 'path':
