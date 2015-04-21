@@ -100,7 +100,7 @@ class IO_Object(object):
             # FIXME hacked in for now, initialize empty metadata object 
             self.Main.Data.Metadata = Metadata_Object(self.Main,self.Main.Data)
             self.Main.Data.Metadata.paths = paths
-            self.Main.Data.Metadata.trial_labels = paths
+            self.Main.Data.Metadata.trial_labels = [os.path.basename(path) for path in paths]
             
             # FIXME think about where this will fit best
             self.Main.Data.nTrials = len(paths)

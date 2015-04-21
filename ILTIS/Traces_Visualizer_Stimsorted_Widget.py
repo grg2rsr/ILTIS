@@ -21,7 +21,10 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         self.Main = Main
         
         self.plotItems = []
+#        self.plotWidgets = []
         self.traces = []
+        self.stim_regions = []
+        self.vlines = []
         
         self.init_UI()
 
@@ -44,8 +47,12 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         # generating the UI
         # looping over StimClasses
         for i,StimClass in enumerate(range(self.nStimClasses)):
-            plot = self.plotWidget.addPlot(title=self.trial_labels_unique[StimClass]) # for inheriting from QWidget
-#            plot = self.addPlot(title=self.trial_labels_unique[StimClass]) # for inheriting form pg.GraphicsLayoutWidget directly
+            if self.Main.Options.view['trial_labels_on_traces_vis']:
+                print self.Main.Options.view['trial_labels_on_traces_vis']
+                print "in here???"
+                plot = self.plotWidget.addPlot(title=self.trial_labels_unique[StimClass])
+            else:
+                plot = self.plotWidget.addPlot(title=None) # for inheriting from QWidget
             plot.setLabel('left','F')
             plot.setLabel('bottom','frame #')
             plot.showGrid(x=True,y=True,alpha=0.5)
@@ -61,15 +68,11 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
                 line.hide()
             stim_region.setZValue(-1000)
             plot.addItem(stim_region)
-            
-            # making the plot shrinkable
-#            plot.setMinimumSizeHint(QtCore.QSize(1,1))
-            
-            import pdb
-            pdb.set_trace()
-            
+            self.stim_regions.append(stim_region)
+                
             # add the plot to the list of plots
             self.plotItems.append(plot)
+#            self.plotWidgets.append(self.plotWidget)
 
 
         for trial in self.trial_indices:
@@ -98,10 +101,17 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             for n,ind in enumerate(active_inds):
                     self.traces[ind].setData(Traces[:,n])
                     self.traces[ind].show()
+            
+        for i,StimClass in enumerate(range(self.nStimClasses)):
+            if self.Main.Options.view['trial_labels_on_traces_vis']:
+                self.plotItems[i].setTitle(self.trial_labels_unique[StimClass])
+            else:
+                self.plotItems[i].setTitle(None)
         
                     
         # update stim marker
-#        self.stim_region.setRegion([self.Main.Options.preprocessing['stimulus_onset'], self.Main.Options.preprocessing['stimulus_offset']])
+        for stim_region in self.stim_regions:
+            stim_region.setRegion([self.Main.Options.preprocessing['stimulus_onset'], self.Main.Options.preprocessing['stimulus_offset']])
     
         # plot labels
 #        if self.Main.Options.view['show_dFF'] == True:

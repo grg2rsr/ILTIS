@@ -135,7 +135,6 @@ class LUT_Controlers_Widget(QtGui.QWidget):
         calculation
         """
         
-        print " calc levels called "
         if samples:
 #            data = data.flatten()[random.permutation(sp.arange(sp.prod(data.shape)))[:samples]]
             data = data.flatten()[random.randint(sp.prod(data.shape),size=samples)]

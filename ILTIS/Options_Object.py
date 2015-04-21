@@ -14,8 +14,6 @@ class Options_Object(QtCore.QObject):
     def __init__(self,Main):
         """ """
         self.Main = Main
-#        self.Main.Options = self
-        self.options_filepath = None
         
         # emtpy dicts for all the options
         self.general = {} # all options associated w os interaction
@@ -26,11 +24,9 @@ class Options_Object(QtCore.QObject):
         self.export = {} # all export options
         self.ROI = {} # all ROI related options
         
-        # colormaps, in view?
-        # colormaps - integrate colormaps here? calculated in processing, stored in options        
-        
         # temporarily included hack, removed later
-        self.load_default_options()
+        self.options_filepath = None
+        self.load_default_options() ### FIXME
         
         # define user access for automatic generation of the Options_Control GUI
         self.make_settable_options()
@@ -54,9 +50,9 @@ class Options_Object(QtCore.QObject):
     
     def update(self):
         """ currently just executes the fetch function """
-        print type(self), ' update called'
-        self.fetch_options_from_Options_Control()
-#        self.Main.Signal.updateSignal.emit('all') # implement OptionsChangedSignal, makes no sense to emit update again
+        print "options update called"
+        self.get_options_from_UI_and_set()
+        self.Main.Signals.updateDisplaySettingsSignal.emit()
         pass
 
     def reset(self):
@@ -88,6 +84,7 @@ class Options_Object(QtCore.QObject):
                      'show_avg':False,
                      'show_monochrome':False,
                      'use_global_levels':False,
+                     'trial_labels_on_traces_vis':False,
                      'color_maps':None,
                      'colors':None,
                      'heatmap':None,
@@ -100,7 +97,7 @@ class Options_Object(QtCore.QObject):
                     'default_layer':0,
                     'active_ROI_id':None}
                     
-        self.export = {'format':'csv',
+        self.export = {'format':'.csv',
                        'data':'dFF',
                        }
                        
@@ -111,6 +108,7 @@ class Options_Object(QtCore.QObject):
         this one needs a good doc
         
         """
+        
         self.settable_options = [
                                 [['general','verbose'],'General','verbose mode',['bool'],None],
                                 [['general','options_filepath'],'General','options filepath',['path'],None],
@@ -121,6 +119,7 @@ class Options_Object(QtCore.QObject):
                                 [['preprocessing','filter_size'],'Preprocessing','xy t filter size',['float']*2,None],
                                 [['preprocessing','filter_target'],'Preprocessing','apply filter to',['string'],['raw','dFF']],
                                 [['view','composition_mode'],'View','image composition mode',['string'],['SourceOver','DestinationOver','Clear','Source','Destination','SourceIn','DestinationIn','SourceOut','DestinationOut','SourceAtop','DestinationAtop','Xor','Plus','Multiply','Screen','Overlay','Darken','Lighten','ColorDodge','ColorBurn','HardLight','SoftLight','Difference','Exclusion','SourceOrDestination','SourceAndDestination','SourceXorDestination','NotSourceAndNotDestination','NotSourceOrNotDestination','NotSourceXorDestination','NotSource','NotSourceAndDestination','SourceAndNotDestination']],
+                                [['view','trial_labels_on_traces_vis'],'View','show trial labels on stim sorted traces',['bool'],None],
                                 [['ROI','diameter'],'View','ROI diameter',['float'],None],
                                 [['ROI','type'],'View','ROI type',['string'],['circle','polygon']],
                                 [['ROI','place_in_layer'],'View','place ROI in layer',['string'],['last active','default layer']],
@@ -131,7 +130,7 @@ class Options_Object(QtCore.QObject):
         pass
     
     
-    def fetch_options_from_Options_Control(self):
+    def get_options_from_UI_and_set(self):
         """ reads from the Options_Control widget the currently present user
         defined values for the variables """
         
@@ -144,23 +143,28 @@ class Options_Object(QtCore.QObject):
             nFields = len(kind)
             choices = self.settable_options[row_index][4] # choices
             
-            # 
             dict_name = self.settable_options[row_index][0][0]
             param_name = self.settable_options[row_index][0][1]
             
             try:
                 for i in range(nFields):
                     # converting from user input to variable format
-                    if kind[i] == 'int' or kind[i] == 'float':
+                    if kind[i] == 'int':
                         string = row.children()[i+1].text() # first child is the layout, the following are the input fields
                         string = str(string) # to convert from QString to normal string, QString causes problems upon scipy cast
-                        if kind[i] == 'int':
-                            val = sp.int32(string)
-                        if kind[i] == 'float':
-                            val = sp.float32(string)
-                            
+                        val = sp.int32(string)
+    
+                    if kind[i] == 'float':
+                        string = row.children()[i+1].text() # first child is the layout, the following are the input fields
+                        string = str(string) # to convert from QString to normal string, QString causes problems upon scipy cast
+                        val = sp.float32(string)
+                        
                     if kind[i] == 'bool':
                         val = ['True','False'][row.children()[1].currentIndex()]
+                        if val == 'True':                        
+                            val = True
+                        elif val == 'False':
+                            val = False
       
                     if kind[i] == 'string':
                         val = choices[row.children()[1].currentIndex()]
@@ -174,7 +178,7 @@ class Options_Object(QtCore.QObject):
                     if nFields == 1:
                         getattr(self,dict_name)[param_name] = val
                     if nFields < 1:
-                        getattr(self,dict_name)[param_name][0] = val
+                        getattr(self,dict_name)[param_name][i] = val
             except: # this is because '' cant be converted to int etc. FIXME
                 pass
         pass
@@ -187,4 +191,6 @@ class Options_Object(QtCore.QObject):
 
 
 if __name__ == '__main__':
+    import Main
+    Main.main()
     pass
