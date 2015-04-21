@@ -36,7 +36,7 @@ class ROI_Manager_Widget(QtGui.QTableWidget):
         for i,ROI in enumerate(self.Main.ROIs.ROI_list):
             self.setItem(i,0,QtGui.QTableWidgetItem(ROI.label))
 
-            if i == self.Main.ROIs.active_ROI_id:
+            if i == self.Main.Options.ROI['active_ROI_id']:
                 if type(ROI) == myCircleROI:
                     ROI.setPen(pg.mkPen(pg.mkColor('y'),width=1.8)) ### FIXME layer pen and highlight pen
                 if type(ROI) == myPolyLineROI:
@@ -48,14 +48,15 @@ class ROI_Manager_Widget(QtGui.QTableWidget):
                 if type(ROI) == myPolyLineROI:
                     for segment in ROI.segments:
                         segment.setPen(pg.mkPen(self.Main.Options.view['colors'][ROI.layer],width=1.8))
-                    
-        self.selectRow(self.Main.ROIs.active_ROI_id)
+        
+        if self.Main.Options.ROI['active_ROI_id'] != None:
+            self.selectRow(self.Main.Options.ROI['active_ROI_id'])
         
     def reset(self):
         pass
 
     def clicked(self,row,col):
-        self.Main.ROIs.active_ROI_id = row
+        self.Main.Options.ROI['active_ROI_id'] = row
         self.update()
         self.Main.Data_Display.Traces_Visualizer.update()  ### FIXME signal needed
          

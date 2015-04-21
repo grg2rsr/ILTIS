@@ -37,7 +37,9 @@ class IO_Object(object):
         self.Main.Signals.initDataSignal.emit()
         
         # and emit an update Signal
-        self.Main.Signals.updateSignal.emit()        
+        self.Main.Signals.updateSignal.emit()      
+        
+
         pass
 
     def reset(self):

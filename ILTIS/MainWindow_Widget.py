@@ -8,8 +8,6 @@ from PyQt4 import QtGui, QtCore
 import os
 from Data_Display_Widget import Data_Display_Widget
 from Front_Control_Panel_Widget import Front_Control_Panel_Widget
-from Options_Control_Widget import Options_Control_Widget
-from Signals import Signals
 
 class MainWindow_Widget(QtGui.QMainWindow):
 
@@ -17,7 +15,6 @@ class MainWindow_Widget(QtGui.QMainWindow):
         super(MainWindow_Widget,self).__init__()
         # fields
         self.Main = parent
-#        self.Main.MainWindow = self
 
         self.MenuBar = None
         self.ToolBar = None
@@ -26,21 +23,6 @@ class MainWindow_Widget(QtGui.QMainWindow):
         self.Front_Control_Panel = None
         self.Options_Control = None
 
-        # actions
-#        self.toggleMonochromeAction = None
-#        self.ReadCoorAction = None
-#        self.toggleGlobalLevels = None
-#        self.WriteTracesAction = None
-#        self.WriteROIAction = None
-#        self.WriteMovieAction = None
-#        self.WriteTracesAction = None
-#        self.OpenAction = None
-#        self.ReadCoorAction = None
-#        self.ReadLSTAction = None
-#        self.ReadTrialLabelsAction = None
-#        self.toggleAvgAction = None
-#        self.toggleMonochromeAction = None
-        
         # layout
         self.Container = None
         self.Splitter = None
@@ -57,6 +39,14 @@ class MainWindow_Widget(QtGui.QMainWindow):
 
     def init_UI(self):
         """ """
+        # own layout
+        DesktopWidget = QtGui.QDesktopWidget()
+        qrect = DesktopWidget.screenGeometry()
+        height, width = qrect.height(), qrect.width()
+
+        self.resize(width*0.7,height*0.7)
+        self.move(width/15,height/15)
+        
         # ini
         self.Data_Display = Data_Display_Widget(self.Main,self)
         self.Front_Control_Panel = Front_Control_Panel_Widget(self.Main,self)
@@ -73,6 +63,8 @@ class MainWindow_Widget(QtGui.QMainWindow):
 #        self.setWindowIcon(QtGui.QIcon(self.Main.graphics_path + os.path.sep + )) ### FIXME
         self.setWindowTitle('ILTIS')
         
+        frac = 0.8
+        self.Splitter.setSizes([int(self.Splitter.size().height() * frac), int(self.Splitter.size().height() * (1-frac))])
         ### FIXME window size, keep following link in mind
         # http://stackoverflow.com/questions/16280323/qt-set-size-of-qmainwindow
         
@@ -80,6 +72,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
         # http://stackoverflow.com/questions/29626948/pyqt-crashes-and-thread-safety
         # apparently not a thread safety issue ... 
         self.show() 
+
         pass
     
     def setup_MenuBar(self):
@@ -111,7 +104,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
         pass
     
     def setup_ToolBar(self):
-        self.ToolBar = self.addToolBar('Exit')
+        self.ToolBar = self.addToolBar('Hide')
         self.ToolBar.addAction(self.toggledFFAction)
         self.ToolBar.addAction(self.toggleMonochromeAction)
         self.ToolBar.addAction(self.toggleAvgAction)
@@ -288,24 +281,30 @@ class MainWindow_Widget(QtGui.QMainWindow):
     ### togglers view mode
     def toggle_dFF(self):     
         """ toggles the dFF show flag, button on the toolbar """
-        self.view['show_dFF'] = not(self.view['show_dFF'])
-        
-        self.Main.Signals.updateSignal.emit()
+        self.Main.Options.view['show_dFF'] = not(self.Main.Options.view['show_dFF'])
+        self.Main.Signals.updateDisplaySettingsSignal.emit()
+        self.Main.Data_Display.Traces_Visualizer.update_traces()
+        self.Main.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
            
     def toggle_avg_img(self):
         """ toggles display time-average image """
-        self.view['show_avg'] = not(self.view['show_avg'])
-        self.Main.Signals.updateSignal.emit()
+        self.Main.Options.view['show_avg'] = not(self.Main.Options.view['show_avg'])
+        self.Main.Signals.updateDisplaySettingsSignal.emit()
 #        
     def toggle_global_levels(self):
         """ toggles the use of global level setting """
-        self.view['use_global_levels'] = not(self.view['use_global_levels'])
+        self.Main.Options.view['use_global_levels'] = not(self.Main.Options.view['use_global_levels'])
 #        
     def toggle_monochrome_mode(self):
         """ toggles display in color merges or only one in monochrome 1 trial """
-        self.view['show_monochrome'] = not(self.view['show_monochrome']) # the toggle
-        """ fix: emit set_selection_mode_signal('monochrome') """
-        self.Main.Signals.updateSignal.emit()
+        self.Main.Options.view['show_monochrome'] = not(self.Main.Options.view['show_monochrome']) # the toggle
+
+        # this should have a signal
+        self.Main.MainWindow.Front_Control_Panel.Data_Selector.update_selection()
+        self.Main.Signals.updateDisplaySettingsSignal.emit()
+        
+        self.Main.Data_Display.Traces_Visualizer.update_traces()
+        self.Main.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
         
 
     def open_Options_Widget(self):

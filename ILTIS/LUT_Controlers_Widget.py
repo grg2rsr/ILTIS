@@ -66,8 +66,10 @@ class LUT_Controlers_Widget(QtGui.QWidget):
             self.LUTwidgets_dFF.widget(n).item.sigLevelsChanged.connect(self.LUT_changed)
             pass
         pass
-    
     def update(self):
+        pass
+    
+    def update_display_settings(self):
         # set the colormaps to monochrome + glow
         if self.Main.Options.view['show_monochrome'] == True:
             for i in range(self.Main.Data.nTrials):
@@ -97,13 +99,13 @@ class LUT_Controlers_Widget(QtGui.QWidget):
     def LUT_changed(self):
         # if global levels: take LUT levels from active LUT widget and write it to all
         if self.Main.Options.view['use_global_levels']:
-            current_lut = self.LUTwidgets.currentIndex()
+            current_ind = self.LUTwidgets.currentIndex()
             for n in range(self.Main.Data.nTrials):
-                levels = self.LUTwidgets.widget(current_lut).item.getLevels()
+                levels = self.LUTwidgets.widget(current_ind).item.getLevels()
                 self.raw_levels[n] = levels
                 self.LUTwidgets.widget(n).item.setLevels(levels[0],levels[1])
                 
-                dFF_levels = self.LUTwidgets_dFF.widget(current_lut).item.getLevels()
+                dFF_levels = self.LUTwidgets_dFF.widget(current_ind).item.getLevels()
                 self.dFF_levels[n] = dFF_levels
                 self.LUTwidgets_dFF.widget(n).item.setLevels(dFF_levels[0],dFF_levels[1])
                 
@@ -117,8 +119,10 @@ class LUT_Controlers_Widget(QtGui.QWidget):
                 dFF_levels = self.LUTwidgets_dFF.widget(n).item.getLevels()
                 self.dFF_levels[n] = dFF_levels
                 self.LUTwidgets_dFF.widget(n).item.setLevels(dFF_levels[0],dFF_levels[1])
-                
-        self.Main.Signals.LUTchangedSignal.emit()
+        
+        """ deviating from signal / slot only communication for performance reasons """
+        self.Main.Data_Display.Frame_Visualizer.update_levels()
+
         pass
 
      
@@ -130,6 +134,8 @@ class LUT_Controlers_Widget(QtGui.QWidget):
         if samples: draw this number of samples (random inds) for faster
         calculation
         """
+        
+        print " calc levels called "
         if samples:
 #            data = data.flatten()[random.permutation(sp.arange(sp.prod(data.shape)))[:samples]]
             data = data.flatten()[random.randint(sp.prod(data.shape),size=samples)]
@@ -157,6 +163,6 @@ class LUT_Controlers_Widget(QtGui.QWidget):
                 self.dFF_levels[n] = levels
                 self.LUTwidgets_dFF.widget(n).item.setLevels(levels[0],levels[1])                
                 pass
-
+        self.Main.Signals.updateDisplaySettingsSignal.emit()
 
     pass

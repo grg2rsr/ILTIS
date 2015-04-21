@@ -21,6 +21,7 @@ class ROIs_Object(QtCore.QObject):
     method missing: conversion binary mask - parametric mask
     """
     def __init__(self,Main):
+        super(ROIs_Object,self).__init__()
                 
         self.Main = Main
 #        self.Main.ROIs = self
@@ -78,17 +79,21 @@ class ROIs_Object(QtCore.QObject):
         # link signals
         ROI.sigRemoveRequested.connect(self.remove_ROI)
         ROI.sigRegionChanged.connect(self.ROI_region_changed)        
-        ROI.sigHoverEvent.connect(self.ROI_hover) # also her needs to be the ROI_manager clicked thing
+        ROI.sigHoverEvent.connect(self.ROI_hover)
         
         # rate limit movement
         self.proxies.append(pg.SignalProxy(ROI.sigRegionChanged, rateLimit=30, slot=self.ROI_region_changed)) # FIXME this creates more and more proxies which are never destroyed
 
         self.ROI_list.append(ROI)
-        self.active_ROI_id = len(self.ROI_list) - 1
+        self.Main.Options.ROI['active_ROI_id'] = len(self.ROI_list) - 1
         self.Main.Data_Display.Frame_Visualizer.ViewBox.addItem(ROI)  ### FIXME signal needed
         
         self.nROIs += 1
-        self.Main.ROI_Manager.update()  ### FIXME signal needed
+        
+        self.Main.MainWindow.Front_Control_Panel.ROI_Manager.update()
+        self.Main.MainWindow.Data_Display.Traces_Visualizer.update_traces()
+        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
+
         
     def remove_ROI(self,evt):
         """ remove a ROI, right click from popup menu"""
@@ -96,10 +101,11 @@ class ROIs_Object(QtCore.QObject):
         self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI)  ### FIXME signal needed
         ROI.removeTimer.stop() # fix from luke campagnola (pyqtgraph mailinglist) # seems to be unnecessary now?
         self.ROI_list.remove(ROI)
-        self.active_ROI_id = self.active_ROI_id - 1 ### FIXME
+        self.Main.Options.ROI['active_ROI_id'] = self.Main.Options.ROI['active_ROI_id'] - 1 # decrements to last active ROI. Problem: Traces are not updated, better is to set to none and in TracesVisualizer remove traces
         self.nROIs = self.nROIs - 1
+        
         """ fix: emit update_requested signal """
-        self.Main.ROI_Manager.update()  ### FIXME signal needed
+        self.Main.Signals.updateSignal.emit()
         
     def get_ROI_position(self,ROI): # obsolete?
         """ returns ROI position. check if it makes any sense with polygon ROIs"""
@@ -109,7 +115,7 @@ class ROIs_Object(QtCore.QObject):
         return pos
         
 
-    def ROI_label_change(self,evt):
+    def ROI_label_change(self,evt): # find out where this stub is from and why it is needed
         self.ROI_list[evt.row()].label = evt.text()
         
                     
@@ -134,31 +140,19 @@ class ROIs_Object(QtCore.QObject):
             return None
 
         ROI = evt[0]
-        self.active_ROI_id = self.ROI_list.index(ROI)
+        self.Main.Options.ROI['active_ROI_id'] = self.ROI_list.index(ROI)
         
-#        if ROI == pg.graphicsItems.ROI.CircleROI:
-#            print self.OptionsWindow.O
-#            diameter = ROI.getState()['size'].x()
-#            self.OptionsWindow.Options['ROI_diameter'] = diameter
-#            self.OptionsWindow.ROI_diameter_edit.setText(str(sp.around(diameter,decimals=2)))
-#            self.OptionsWindow.update_options()
-
-#        pos = self.get_ROI_position(ROI)
-        
-        """ fix: emit update_requested signal """
-        self.Main.Data_Display.Traces_Visualizer.update()  ### FIXME signal needed
-        self.Main.Data_Display.Traces_Visualizer_Stimsorted.update()  ### FIXME signal needed
+        self.Main.MainWindow.Data_Display.Traces_Visualizer.update_traces()
+        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
         
     def ROI_hover(self,evt): # this one can be reimplemented
         """ on ROI hover: update traces with the ROI hovered """
         ROI = evt.sender()
-        self.active_ROI_id = self.ROI_list.index(ROI)        
+        self.Main.Options.ROI['active_ROI_id'] = self.ROI_list.index(ROI)        
         
-#        pos = self.get_ROI_position(ROI)         
-        
-        """ fix: emit update_requested signal """
-        self.Main.Data_Display.Traces_Visualizer.update()  ### FIXME signal needed
-        self.Main.Front_Control_Panel.ROI_Manager.update()  ### FIXME signal needed
+        self.Main.MainWindow.Front_Control_Panel.ROI_Manager.update()
+        self.Main.MainWindow.Data_Display.Traces_Visualizer.update_traces()
+        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
     pass
 
 

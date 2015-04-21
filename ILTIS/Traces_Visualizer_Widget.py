@@ -52,32 +52,14 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         self.stim_region.setZValue(-1000)
         self.plotItem.addItem(self.stim_region)
         pass
-
-    def update(self):
-        """ update traces """
-        
-        # do not run if no ROIs
-        if self.Main.ROIs.nROIs != 0:
-            
-            for n in range(self.Main.Data.nTrials):
-                if self.Main.Options.view['show_flags'][n] == True: # only work on active datasets
-                
-                    # implementation using the pyqtgraph internal slicing
-                    """ fix idea: after this is a local copy, then the get_ROI_mask func can be put into the ROI class"""
-                    ROI = self.Main.ROIs.ROI_list[self.Main.ROIs.active_ROI_id]
-                    
-                    # func bool mask slicing
-                    mask, inds = self.Main.ROIs.get_ROI_mask(ROI)  ### FIXME signal needed?
-                    if self.Main.Options.view['show_dFF']:
-                        sliced = self.Main.Data.dFF[mask,:,n]
-                    else:
-                        sliced = self.Main.Data.raw[mask,:,n]
     
-                    Trace = sp.average(sliced,axis=0)
-                    self.traces[n].setData(Trace)
-                    self.traces[n].show()
-                else:
-                    self.traces[n].hide()
+    def update_display_settings(self):
+        """ this is handled via signal/slot mechanism"""
+        for n,val in enumerate(self.Main.Options.view['show_flags']):
+            if val == True:
+                self.traces[n].show()
+            else:
+                self.traces[n].hide()
                     
         # update stim marker
         self.stim_region.setRegion([self.Main.Options.preprocessing['stimulus_onset'], self.Main.Options.preprocessing['stimulus_offset']])
@@ -88,6 +70,36 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
             
         if self.Main.Options.view['show_dFF'] == False:
             self.plotItem.setLabel('left','F [au]')
+        
+        pass
+    
+    def update_traces(self):
+        """ update traces - for speed reasons via direct call"""
+        
+        # do not run if no ROIs
+
+        if (self.Main.ROIs.nROIs > 0 and self.Main.Options.ROI['active_ROI_id'] != None):
+            active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
+            # sp.where(self.Main.Options.view['show_flags'] # this should work for the slicing and actually contains inds
+                
+            # implementation using the pyqtgraph internal slicing
+            """ fix idea: after this is a local copy, then the get_ROI_mask func can be put into the ROI class"""
+            ROI = self.Main.ROIs.ROI_list[self.Main.Options.ROI['active_ROI_id']]
+            
+            # func bool mask slicing
+            mask, inds = self.Main.ROIs.get_ROI_mask(ROI)  ### FIXME signal needed?
+            
+            if self.Main.Options.view['show_dFF']:
+                sliced = self.Main.Data.dFF[mask,:,:][:,:,active_inds]
+            else:
+                sliced = self.Main.Data.raw[mask,:,:][:,:,active_inds]
+    
+            Traces = sp.average(sliced,axis=0)
+
+            
+            for n,ind in enumerate(active_inds):
+                self.traces[ind].setData(Traces[:,n])
+            
             
     def reset(self):
         for trace in self.traces:
@@ -97,9 +109,7 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
     def vlinePosChanged(self,evt):
         """ updater for the zlayer change caused by the vline """
         self.Main.Data_Display.Frame_Visualizer.frame = int(evt.pos().x())
-        self.vline.setValue(evt.pos().x())
-        
-        self.Main.Signals.updateSignal.emit()
-        
+        self.Main.Data_Display.Frame_Visualizer.update_frame() # direct call for speed reasons
+        self.vline.setValue(evt.pos().x()) # this is for the keypress event
 
     pass

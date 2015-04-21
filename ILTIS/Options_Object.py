@@ -94,15 +94,11 @@ class Options_Object(QtCore.QObject):
                      'graymap':None
                      }
                      
-                     
-
-
-
-
         self.ROI = {'type':'circle',
                     'diameter':8,
                     'place_in_layer':'last active',
-                    'default_layer':0}
+                    'default_layer':0,
+                    'active_ROI_id':None}
                     
         self.export = {'format':'csv',
                        'data':'dFF',

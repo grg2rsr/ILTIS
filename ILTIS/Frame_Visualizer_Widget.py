@@ -21,6 +21,7 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
         self.ImageItems_dFF = [] # list with the image items
 
         self.frame = 0
+        self.active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
         
         # weakrefs to data object and Options object
         self.init_UI()
@@ -51,65 +52,65 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
         self.ViewBox.autoRange()
         pass    
         
-    def update(self):
-        """ former set image data."""
-        """ 
-        has to check: -is average? -is dFF? -flag to show? -only one?
-       
-        average behaviour: take all that are active, average and overlay
+    def update_display_settings(self):
+        """ is a slot. called via/connected to: selection changed signal of 
+        ROI_manager, all togglers """
         
-        dFF behaviour: if multiple channels are active, the dFF are over
-        layed and colored according to their channel
-
-        if only one channel is active:        
-        raw is in grayscale, dFF is in glow color map
-        """
-
-        for n in range(self.Main.Data.nTrials):
+        self.active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
+        
+        # hide inactive
+        for ind,val in enumerate(self.Main.Options.view['show_flags']):
             
-            # hide inactive
-            if self.Main.Options.view['show_flags'][n] == False: 
-                self.ImageItems[n].hide()
-                self.ImageItems_dFF[n].hide()
-
-            # work only on those that are active
-            if self.Main.Options.view['show_flags'][n] == True: 
+            # hide all inactive
+            if val == False: 
+                self.ImageItems[ind].hide()
+                self.ImageItems_dFF[ind].hide()
                 
-                # when showing dFF
-                if self.Main.Options.view['show_dFF']: 
-                
-                    # when in monochrome mode show
-                    if self.Main.Options.view['show_monochrome']: 
-                        self.ImageItems[n].show()
-                    else:
-                        self.ImageItems[n].hide()
-                        
-                    # when showing dFF avg
-                    if self.Main.Options.view['show_avg']: 
-                        self.ImageItems_dFF[n].setImage(sp.average(self.Main.Data.dFF[:,:,:,n],axis=2))
-                        self.ImageItems[n].setImage(sp.average(self.Main.Data.raw[:,:,:,n],axis=2))
-                    else: 
-                        self.ImageItems_dFF[n].setImage(self.Main.Data.dFF[:,:,self.frame,n])
-                        self.ImageItems[n].setImage(self.Main.Data.raw[:,:,self.frame,n])
+            # for the active ones, show depending on show flags
+            if val == True:
+                if not(self.Main.Options.view['show_monochrome']) and not(self.Main.Options.view['show_dFF']):
+                    self.ImageItems_dFF[ind].hide()
+                    self.ImageItems[ind].show()
 
-                    self.ImageItems_dFF[n].show()
+                if self.Main.Options.view['show_monochrome'] and not(self.Main.Options.view['show_dFF']):
+                    self.ImageItems_dFF[ind].hide()
+                    self.ImageItems[ind].show()
+
+                if not(self.Main.Options.view['show_monochrome']) and self.Main.Options.view['show_dFF']:
+                    self.ImageItems_dFF[ind].show()
+                    self.ImageItems[ind].hide()
+
+                if self.Main.Options.view['show_monochrome'] and self.Main.Options.view['show_dFF']:
+                    self.ImageItems_dFF[ind].show()
+                    self.ImageItems[ind].show()
                     
-                else: # when showing raw
-                    self.ImageItems_dFF[n].hide()
-                    # when showing raw avg
-                    if self.Main.Options.view['show_avg']:
-                        self.ImageItems[n].setImage(sp.average(self.Main.Data.raw[:,:,:,n],axis=2))
-                    else:
-                        self.ImageItems[n].setImage(self.Main.Data.raw[:,:,self.frame,n])
-                        
-                    self.ImageItems[n].show()
-                
-                # setting the corresponding levels
-                self.ImageItems[n].setLevels(self.Main.Data_Display.LUT_Controlers.raw_levels[n])
-                self.ImageItems_dFF[n].setLevels(self.Main.Data_Display.LUT_Controlers.dFF_levels[n])        
-        
+                pass
+            pass
+
+        # set composition mode      
         self.set_composition_mode(12) ### FIXME
+        self.update_frame()
         pass
+    
+    def update_levels(self):
+        """ called from LUT_Controlers when it has levels changed """
+        for ind in self.active_inds:
+            self.ImageItems[ind].setLevels(self.Main.Data_Display.LUT_Controlers.raw_levels[ind])
+            self.ImageItems_dFF[ind].setLevels(self.Main.Data_Display.LUT_Controlers.dFF_levels[ind])   
+            pass
+        
+    def update_frame(self):
+        for ind in self.active_inds:
+            if self.Main.Options.view['show_avg']:
+                self.ImageItems_dFF[ind].setImage(sp.average(self.Main.Data.dFF[:,:,:,ind],axis=2))
+                self.ImageItems[ind].setImage(sp.average(self.Main.Data.raw[:,:,:,ind],axis=2))
+            else: 
+                self.ImageItems_dFF[ind].setImage(self.Main.Data.dFF[:,:,self.frame,ind])
+                self.ImageItems[ind].setImage(self.Main.Data.raw[:,:,self.frame,ind])
+        
+        self.update_levels()
+        pass
+    
     
     def reset(self):
         ### clearing the GUI if it has been initialized before

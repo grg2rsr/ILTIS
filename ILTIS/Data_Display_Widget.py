@@ -57,20 +57,34 @@ class Data_Display_Widget(QtGui.QMainWindow): # needs to be a QMainWindow to hav
         self.FrameWidget.setLayout(self.FrameLayout)
 
         self.setCentralWidget(self.FrameWidget)
-
-        self.Traces_Dock = QtGui.QDockWidget(self)
-        self.Traces_Tabbed = QtGui.QTabWidget(self)
         
-        self.Traces_Tabbed.addTab(self.Traces_Visualizer,'common timebase')
-        self.Traces_Tabbed.addTab(self.Traces_Visualizer_Stimsorted,'sorted to stimulus class')
+        # Traces Visualizers as tabbed in a dockable
+        self.Traces_Dock = QtGui.QDockWidget(self)
+        self.Traces_Tabbed = Sized_Tab(self)        
+        self.Traces_Tabbed.addTab(self.Traces_Visualizer,'overlay')
+        self.Traces_Tabbed.addTab(self.Traces_Visualizer_Stimsorted,'sorted')
+        
         tabBar = self.Traces_Tabbed.tabBar()
+        self.Traces_Tabbed.setTabPosition(2) # the 'west'
         for i in range(2):
             tabBar.setTabTextColor(i,QtGui.QColor(0,0,0,255)) # no idea why, but it defaults to white ... 
             
         self.Traces_Dock.setWidget(self.Traces_Tabbed)
         self.Traces_Dock.setFloating(False)
+#        self.Traces_Dock.setWindowTitle('rudel')
+#        self.Traces_Dock.setFeatures(QtGui.QDockWidget.DockWidgetVerticalTitleBar and QtGui.QDockWidget.DockWidgetMovable and QtGui.QDockWidget.DockWidgetClosable)
+#        self.Traces_Dock.setFeatures(QtGui.QDockWidget.DockWidgetVerticalTitleBar)
+
         self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.Traces_Dock)
-           
+        
+
+class Sized_Tab(QtGui.QTabWidget):
+    # from http://stackoverflow.com/a/13715893/4749250
+    def sizeHint(self):
+        return QtCore.QSize(200, 200)
+        
 
 if __name__ == '__main__':
+    import Main
+    Main.main()
     pass

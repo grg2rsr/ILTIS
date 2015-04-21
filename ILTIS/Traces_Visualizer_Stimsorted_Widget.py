@@ -26,7 +26,11 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         self.init_UI()
 
     def init_UI(self):
-        self.plotWidget = pg.GraphicsLayoutWidget()    
+        self.plotWidget = pg.GraphicsLayoutWidget(self)
+        self.Layout = QtGui.QHBoxLayout(self)
+        self.Layout.setMargin(0)
+        self.Layout.setSpacing(0)
+        self.setLayout(self.Layout)
         pass
     
     def init_data(self):
@@ -58,48 +62,82 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             stim_region.setZValue(-1000)
             plot.addItem(stim_region)
             
+            # making the plot shrinkable
+#            plot.setMinimumSizeHint(QtCore.QSize(1,1))
+            
+            import pdb
+            pdb.set_trace()
+            
             # add the plot to the list of plots
             self.plotItems.append(plot)
 
 
         for trial in self.trial_indices:
-            # draw the trace in the correct panel with the correct pen
-            # in the correct panel
+            # draw the trace in the correct panel
             stimClass = self.trial_labels[trial]
             correct_panel_index = sp.where(self.trial_labels_unique == stimClass)[0]
             
-            # correct pen
+            # with the correct pen
             pen = pg.mkPen(self.Main.Options.view['colors'][trial],width=2)
 
             self.traces.append(self.plotItems[correct_panel_index].plot(pen=pen))
                                         
         # set the layout
-        layout = QtGui.QHBoxLayout()
-        layout.addWidget(self.plotWidget)
-        self.setLayout(layout)
+        self.Layout.addWidget(self.plotWidget)
+
         
-    def update(self):
-        if self.Main.ROIs.nROIs != 0:
-            for n in range(self.Main.Data.nTrials):
-                # only work on active datasets
-                if self.Main.Options.view['show_flags'][n] == True: 
-                
-                    # implementation using the pyqtgraph internal slicing
-                    ROI = self.Main.ROIs.ROI_list[self.Main.ROIs.active_ROI_id]
-                    
-                    # func bool mask slicing
-                    mask, inds = self.Main.ROIs.get_ROI_mask(ROI)  ### FIXME signal needed?
-                    
-                    if self.Main.Options.view['show_dFF']:
-                        sliced = self.Main.Data.dFF[mask,:,n]
-                    else:
-                        sliced = self.Main.Data.raw[mask,:,n]
+    def update_display_settings(self):
+        """ this is handled via signal/slot mechanism"""
+        if (self.Main.ROIs.nROIs > 0 and self.Main.Options.ROI['active_ROI_id'] != None):
+            active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
+            Traces = self.get_traces()
             
-                    Trace = sp.average(sliced,axis=0)
-                    self.traces[n].setData(Trace)
-                    self.traces[n].show()
-                else:
-                    self.traces[n].hide()
+            for trace in self.traces:
+                trace.hide()
+                
+            for n,ind in enumerate(active_inds):
+                    self.traces[ind].setData(Traces[:,n])
+                    self.traces[ind].show()
+        
+                    
+        # update stim marker
+#        self.stim_region.setRegion([self.Main.Options.preprocessing['stimulus_onset'], self.Main.Options.preprocessing['stimulus_offset']])
+    
+        # plot labels
+#        if self.Main.Options.view['show_dFF'] == True:
+#            self.plotItem.setLabel('left','dF/F')
+#            
+#        if self.Main.Options.view['show_dFF'] == False:
+#            self.plotItem.setLabel('left','F [au]')
+#        
+#        pass
+    def get_traces(self):
+        """ helper for calculating the traces matrix """
+        active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
+                
+        # implementation using the pyqtgraph internal slicing
+        ROI = self.Main.ROIs.ROI_list[self.Main.Options.ROI['active_ROI_id']]
+        
+        # func bool mask slicing
+        mask, inds = self.Main.ROIs.get_ROI_mask(ROI)  ### FIXME signal needed?
+        
+        if self.Main.Options.view['show_dFF']:
+            sliced = self.Main.Data.dFF[mask,:,:][:,:,active_inds]
+        else:
+            sliced = self.Main.Data.raw[mask,:,:][:,:,active_inds]
+
+        Traces = sp.average(sliced,axis=0)
+        
+        return Traces
+        
+    def update_traces(self):
+
+        if (self.Main.ROIs.nROIs > 0 and self.Main.Options.ROI['active_ROI_id'] != None):
+            active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
+            Traces = self.get_traces()
+
+            for n,ind in enumerate(active_inds):
+                self.traces[ind].setData(Traces[:,n])
 
     def reset(self):
         for trace in self.traces:
@@ -107,3 +145,9 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         self.traces = []
         
         pass
+    
+    
+if __name__ == '__main__':
+    import Main
+    Main.main()
+    pass

@@ -1,1 +1,3 @@
 *.pyc
+./testdata/*
+local_2do.md

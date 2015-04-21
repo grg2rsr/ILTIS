@@ -56,11 +56,14 @@ class Data_Selector_Widget(QtGui.QTableWidget):
         pass
     
     def update(self):
-        # from monochrome toggler        
+        pass
+    
+    def update_selection(self):
+        # from monochrome toggler
         if self.Main.Options.view['show_monochrome'] == True:
             # disable all except the last selected dataset
             self.clearSelection()
-            self.selectRow(self.Main.Options.view['last_selected'])
+            self.selectRow(self.Main.Options.view['last_selected']) # this should emit a selectionChanged
             self.setSelectionMode(Qt.QAbstractItemView.SingleSelection)
 
         if self.Main.Options.view['show_monochrome'] == False:        
@@ -81,7 +84,7 @@ class Data_Selector_Widget(QtGui.QTableWidget):
             show_flags_updated[selection] = 1
             self.Main.Options.view['show_flags'] = show_flags_updated
             self.Main.Options.view['last_selected'] = last_selected
-            self.Main.Signals.updateSignal.emit()
+            self.Main.Signals.updateDisplaySettingsSignal.emit()
             
         pass
 
