@@ -103,7 +103,6 @@ class Options_Control_Widget(QtGui.QTabWidget):
             dict_name = self.Main.Options.settable_options[row_index][0][0]
             param_name = self.Main.Options.settable_options[row_index][0][1]
 
-            print "row iteration ",row_index , param_name
             for i in range(nFields):
                 # reading val
                 if nFields == 1:

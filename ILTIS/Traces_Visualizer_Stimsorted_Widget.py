@@ -69,7 +69,12 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             stim_region.setZValue(-1000)
             plot.addItem(stim_region)
             self.stim_regions.append(stim_region)
-                
+
+            # vlines
+            vline = plot.addLine(x=self.Data_Display.Frame_Visualizer.frame,movable=True)
+            vline.sigPositionChanged.connect(self.update_vlines) # add interactivity
+            self.vlines.append(vline)
+            
             # add the plot to the list of plots
             self.plotItems.append(plot)
 #            self.plotWidgets.append(self.plotWidget)
@@ -153,10 +158,24 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         for trace in self.traces:
             trace.clear()
         self.traces = []
-        
         pass
-    
-    
+
+    def update_vlines(self,evt):
+        """  """
+        vline = evt
+        pos = int(vline.pos().x())
+        self.Main.Data_Display.Frame_Visualizer.frame = pos
+        self.Main.Data_Display.Frame_Visualizer.update_frame()    
+
+        # update all other lines in this widget as well
+        for vline in self.vlines:
+            vline.blockSignals(True)
+            vline.setValue(pos)
+            vline.blockSignals(False)
+            
+        # update the line of the other traces widget
+        self.Main.Data_Display.Traces_Visualizer.vline.setValue(pos) # set vline of the other, should be a signal    
+        
 if __name__ == '__main__':
     import Main
     Main.main()

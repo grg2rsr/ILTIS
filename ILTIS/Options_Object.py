@@ -52,7 +52,6 @@ class Options_Object(QtCore.QObject):
     
     def update(self):
         """ currently just executes the fetch function """
-        print "options update called"
         self.get_options_from_UI_and_set()
         self.Main.Signals.updateDisplaySettingsSignal.emit()
         pass

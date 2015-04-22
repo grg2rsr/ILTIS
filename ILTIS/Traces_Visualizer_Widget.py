@@ -30,7 +30,7 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         self.plotItem.showGrid(x=True,y=True,alpha=0.5)
                 
         self.vline = self.plotItem.addLine(x=self.Data_Display.Frame_Visualizer.frame,movable=True)
-        self.vline.sigPositionChanged.connect(self.vlinePosChanged) # add interactivity
+        self.vline.sigPositionChanged.connect(self.update_vline) # add interactivity
 
         pass
     
@@ -106,10 +106,22 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
             trace.clear()
         self.traces = []
 
-    def vlinePosChanged(self,evt):
+    def update_vline(self,evt):
         """ updater for the zlayer change caused by the vline """
-        self.Main.Data_Display.Frame_Visualizer.frame = int(evt.pos().x())
-        self.Main.Data_Display.Frame_Visualizer.update_frame() # direct call for speed reasons
-        self.vline.setValue(evt.pos().x()) # this is for the keypress event
+        vline = evt
+        pos = int(vline.pos().x())
+        self.Main.Data_Display.Frame_Visualizer.frame = pos
+        self.Main.Data_Display.Frame_Visualizer.update_frame()    
+#        self.vline.setValue(evt.pos().x()) # this is for the keypress event
+        
+        # update all lines of Traces_Visualizer_Stimsorted
+        for vline in self.Main.Data_Display.Traces_Visualizer_Stimsorted.vlines:
+            vline.blockSignals(True)
+            vline.setValue(pos)
+            vline.blockSignals(False)
+#        for vline in self.Main.Data_Display.Traces_Visualizer_Stimsorted.vlines:
+#            vline.setValue(pos)
+        
+        
 
     pass

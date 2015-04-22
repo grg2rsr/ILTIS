@@ -89,8 +89,8 @@ class MainWindow_Widget(QtGui.QMainWindow):
         Save.addAction(self.WriteMovieAction)
         Save.addAction(self.WriteTracesAction)
         
-        Options = self.Menubar.addMenu('&Options')
-        Options.addAction(self.OpenOptionsAction)
+#        Options = self.Menubar.addMenu('&Options')
+#        Options.addAction(self.OpenOptionsAction)
         
         Process = self.Menubar.addMenu('&Process')
         Process.addAction(self.ApplyFilterAction)
@@ -109,6 +109,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
         self.ToolBar.addAction(self.toggleMonochromeAction)
         self.ToolBar.addAction(self.toggleAvgAction)
         self.ToolBar.addAction(self.toggleGlobalLevels)
+        self.ToolBar.addAction(self.OpenOptionsAction)
         pass
     
     def setup_StatusBar(self):
@@ -126,7 +127,6 @@ class MainWindow_Widget(QtGui.QMainWindow):
                                       'status_tip':'Read data from disk',
                                       'icon':None,
                                       'func':self.Main.IO.init_data,
-#                                      'func':None,
                                       'checkable':False,
                                       'no_data_disabled':False},
                                     
@@ -183,14 +183,14 @@ class MainWindow_Widget(QtGui.QMainWindow):
 
                         'toggledFFAction':{'label':'Display dFF',
                                            'status_tip':'Toggles dF/F',
-                                           'icon':None,
+                                           'icon':'/home/georg/python/ILTIS/ILTIS/icons/calc_dFF.png',
                                            'func':self.toggle_dFF,
                                            'checkable':True,
                                            'no_data_disabled':True},
                                     
                         'toggleGlobalLevels':{'label':'use global levels',
                                               'status_tip':'toggles global levels use',
-                                              'icon':None,
+                                              'icon':'/home/georg/python/ILTIS/ILTIS/icons/globe-alt.svg',
                                               'func':self.toggle_global_levels,
                                               'checkable':True,
                                               'no_data_disabled':True},
@@ -204,7 +204,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
 
                         'toggleMonochromeAction':{'label':'Monochrome mode',
                                                   'status_tip':'toggles monochrome mode',
-                                                  'icon':None,
+                                                  'icon':'/home/georg/python/ILTIS/ILTIS/icons/adjust.svg',
                                                   'func':self.toggle_monochrome_mode,
                                                   'checkable':True,
                                                   'no_data_disabled':True},
@@ -215,7 +215,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
 
                         'OpenOptionsAction':{'label':'Options',
                                              'status_tip':'Edit options',
-                                             'icon':None,
+                                             'icon':'/home/georg/python/ILTIS/ILTIS/icons/sliders.svg',
                                              'func':self.open_Options_Widget,
                                              'checkable':False,
                                              'no_data_disabled':False},
