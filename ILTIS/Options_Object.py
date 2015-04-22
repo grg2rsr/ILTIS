@@ -24,6 +24,8 @@ class Options_Object(QtCore.QObject):
         self.export = {} # all export options
         self.ROI = {} # all ROI related options
         
+        self.QtCompositionModes = ['SourceOver','DestinationOver','Clear','Source','Destination','SourceIn','DestinationIn','SourceOut','DestinationOut','SourceAtop','DestinationAtop','Xor','Plus','Multiply','Screen','Overlay','Darken','Lighten','ColorDodge','ColorBurn','HardLight','SoftLight','Difference','Exclusion','SourceOrDestination','SourceAndDestination','SourceXorDestination','NotSourceAndNotDestination','NotSourceOrNotDestination','NotSourceXorDestination','NotSource','NotSourceAndDestination','SourceAndNotDestination']
+        
         # temporarily included hack, removed later
         self.options_filepath = None
         self.load_default_options() ### FIXME
@@ -118,7 +120,7 @@ class Options_Object(QtCore.QObject):
                                 [['preprocessing','dFF_frames'],'Preprocessing','frames for background calculation',['int']*2,None],
                                 [['preprocessing','filter_size'],'Preprocessing','xy t filter size',['float']*2,None],
                                 [['preprocessing','filter_target'],'Preprocessing','apply filter to',['string'],['raw','dFF']],
-                                [['view','composition_mode'],'View','image composition mode',['string'],['SourceOver','DestinationOver','Clear','Source','Destination','SourceIn','DestinationIn','SourceOut','DestinationOut','SourceAtop','DestinationAtop','Xor','Plus','Multiply','Screen','Overlay','Darken','Lighten','ColorDodge','ColorBurn','HardLight','SoftLight','Difference','Exclusion','SourceOrDestination','SourceAndDestination','SourceXorDestination','NotSourceAndNotDestination','NotSourceOrNotDestination','NotSourceXorDestination','NotSource','NotSourceAndDestination','SourceAndNotDestination']],
+                                [['view','composition_mode'],'View','image composition mode',['string'],self.QtCompositionModes],
                                 [['view','trial_labels_on_traces_vis'],'View','show trial labels on stim sorted traces',['bool'],None],
                                 [['ROI','diameter'],'View','ROI diameter',['float'],None],
                                 [['ROI','type'],'View','ROI type',['string'],['circle','polygon']],

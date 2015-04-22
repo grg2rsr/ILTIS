@@ -88,7 +88,9 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
             pass
 
         # set composition mode      
-        self.set_composition_mode(12) ### FIXME
+#        import pdb
+#        pdb.set_trace()
+        self.set_composition_mode(self.Main.Options.QtCompositionModes.index(self.Main.Options.view['composition_mode'])) ### FIXME
         self.update_frame()
         pass
     
