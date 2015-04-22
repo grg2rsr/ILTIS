@@ -23,7 +23,7 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         self.plotItems = []
 #        self.plotWidgets = []
         self.traces = []
-        self.stim_regions = []
+        self.stim_regions = [] # is 2d in this case, first dim labels second dim stimulus
         self.vlines = []
         
         self.init_UI()
@@ -61,14 +61,18 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             if i != 0:
                 plot.setYLink(self.plotItems[0])
                 plot.setXLink(self.plotItems[0])
-                
-            # add the stimulus time marker
-            stim_region = pg.LinearRegionItem(values=[self.Main.Options.preprocessing['stimulus_onset'],self.Main.Options.preprocessing['stimulus_offset']],movable=False,brush=pg.mkBrush([50,50,50,100]))
-            for line in stim_region.lines:
-                line.hide()
-            stim_region.setZValue(-1000)
-            plot.addItem(stim_region)
-            self.stim_regions.append(stim_region)
+            
+            
+            # color stimulus regions
+            self.stim_regions.append([])
+            for stim_id in range(self.Main.Options.preprocessing['nStimuli']):
+                stim_frames = self.Main.Options.preprocessing['stimulus'+str(stim_id+1)]
+                stim_region = pg.LinearRegionItem(values=stim_frames,movable=False,brush=pg.mkBrush([50,50,50,100]))
+                for line in stim_region.lines:
+                    line.hide()
+                stim_region.setZValue(-1000)
+                plot.addItem(stim_region)
+                self.stim_regions[i].append(stim_region)
 
             # vlines
             vline = plot.addLine(x=self.Data_Display.Frame_Visualizer.frame,movable=True)
@@ -77,8 +81,6 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             
             # add the plot to the list of plots
             self.plotItems.append(plot)
-#            self.plotWidgets.append(self.plotWidget)
-
 
         for trial in self.trial_indices:
             # draw the trace in the correct panel
@@ -113,19 +115,19 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             else:
                 self.plotItems[i].setTitle(None)
         
-                    
-        # update stim marker
-        for stim_region in self.stim_regions:
-            stim_region.setRegion([self.Main.Options.preprocessing['stimulus_onset'], self.Main.Options.preprocessing['stimulus_offset']])
-    
-        # plot labels
-#        if self.Main.Options.view['show_dFF'] == True:
-#            self.plotItem.setLabel('left','dF/F')
-#            
-#        if self.Main.Options.view['show_dFF'] == False:
-#            self.plotItem.setLabel('left','F [au]')
-#        
-#        pass
+            # update stim marker
+            for stim_id in range(self.Main.Options.preprocessing['nStimuli']):
+                stim_frames = self.Main.Options.preprocessing['stimulus'+str(stim_id+1)]
+                self.stim_regions[i][stim_id].setRegion(stim_frames)
+
+            # plot labels
+            if self.Main.Options.view['show_dFF'] == True:
+                self.plotItems[i].setLabel('left','dF/F')
+                
+            if self.Main.Options.view['show_dFF'] == False:
+                self.plotItems[i].setLabel('left','F [au]')    
+            
+
     def get_traces(self):
         """ helper for calculating the traces matrix """
         active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
@@ -146,7 +148,7 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         return Traces
         
     def update_traces(self):
-
+        """ is called upon all ROI and Dataset changes """
         if (self.Main.ROIs.nROIs > 0 and self.Main.Options.ROI['active_ROI_id'] != None):
             active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
             Traces = self.get_traces()
@@ -161,7 +163,7 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         pass
 
     def update_vlines(self,evt):
-        """  """
+        """ handles sigPositionChanged """
         vline = evt
         pos = int(vline.pos().x())
         self.Main.Data_Display.Frame_Visualizer.frame = pos
@@ -174,7 +176,7 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             vline.blockSignals(False)
             
         # update the line of the other traces widget
-        self.Main.Data_Display.Traces_Visualizer.vline.setValue(pos) # set vline of the other, should be a signal    
+        self.Main.Data_Display.Traces_Visualizer.vline.setValue(pos)
         
 if __name__ == '__main__':
     import Main

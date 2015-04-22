@@ -18,7 +18,7 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         
         self.plotWidget = []        
         self.traces = []
-        
+        self.stim_regions = []
         self.init_UI()
 
 
@@ -46,12 +46,16 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
             
         self.plotItem.setRange(xRange=[0, self.Main.Data.nFrames], disableAutoRange=False)
         
-        self.stim_region = pg.LinearRegionItem(values=[self.Main.Options.preprocessing['stimulus_onset'], self.Main.Options.preprocessing['stimulus_offset']],movable=False,brush=pg.mkBrush([50,50,50,100]))
-        for line in self.stim_region.lines:
-            line.hide()
-        self.stim_region.setZValue(-1000)
-        self.plotItem.addItem(self.stim_region)
-        pass
+        # color stimulus regions
+        for stim_id in range(self.Main.Options.preprocessing['nStimuli']):
+            stim_frames = self.Main.Options.preprocessing['stimulus'+str(stim_id+1)]
+            stim_region = pg.LinearRegionItem(values=stim_frames,movable=False,brush=pg.mkBrush([50,50,50,100]))
+            for line in stim_region.lines:
+                line.hide()
+            stim_region.setZValue(-1000)
+            self.plotItem.addItem(stim_region)
+            self.stim_regions.append(stim_region)
+            pass
     
     def update_display_settings(self):
         """ this is handled via signal/slot mechanism"""
@@ -62,7 +66,9 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
                 self.traces[n].hide()
                     
         # update stim marker
-        self.stim_region.setRegion([self.Main.Options.preprocessing['stimulus_onset'], self.Main.Options.preprocessing['stimulus_offset']])
+        for i,stim_region in enumerate(self.stim_regions):
+            stim_frames = self.Main.Options.preprocessing['stimulus'+str(i+1)]
+            stim_region.setRegion(stim_frames)
     
         # plot labels
         if self.Main.Options.view['show_dFF'] == True:

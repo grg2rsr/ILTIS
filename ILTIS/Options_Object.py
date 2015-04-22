@@ -24,13 +24,16 @@ class Options_Object(QtCore.QObject):
         self.export = {} # all export options
         self.ROI = {} # all ROI related options
         
+        # needed to be visible
         self.QtCompositionModes = ['SourceOver','DestinationOver','Clear','Source','Destination','SourceIn','DestinationIn','SourceOut','DestinationOut','SourceAtop','DestinationAtop','Xor','Plus','Multiply','Screen','Overlay','Darken','Lighten','ColorDodge','ColorBurn','HardLight','SoftLight','Difference','Exclusion','SourceOrDestination','SourceAndDestination','SourceXorDestination','NotSourceAndNotDestination','NotSourceOrNotDestination','NotSourceXorDestination','NotSource','NotSourceAndDestination','SourceAndNotDestination']
+        self.nStimuli_old = None        
         
         # temporarily included hack, removed later
         self.options_filepath = None
         self.load_default_options() ### FIXME
         
         # define user access for automatic generation of the Options_Control GUI
+        self.settable_options = []
         self.make_settable_options()
             
         pass
@@ -51,8 +54,24 @@ class Options_Object(QtCore.QObject):
 #                    self.Main.IO.load_options()
     
     def update(self):
-        """ currently just executes the fetch function """
-        self.get_options_from_UI_and_set()
+        """ checks if nStimuli has changed , if yes 1) expand self.preprocessing
+        and settable_options, always gets the values from the Options
+        Control and emits the updateD splaySettingsSignal """
+
+        # check if number of stim has changed        
+#        self.nStimuli_old = self.preprocessing['nStimuli']
+#        if self.preprocessing['nStimuli'] != self.nStimuli_old:
+#            # expand self.preprocessing
+#            for i in range(2,self.preprocessing['nStimuli']+1):
+#                last_stim = self.preprocessing['stimulus'+str(i-1)]
+#                stim_length = last_stim[1] - last_stim[0]
+#                ISI = self.preprocessing['stimulus1'][0]
+#                self.preprocessing['stimulus'+str(i+1)] = [dOnset]
+#            self.nStimuli_old = self.preprocessing['nStimuli']
+#            self.Main.Options_Control.reset_UI()
+
+
+        self.get_options_from_UI_and_set()            
         self.Main.Signals.updateDisplaySettingsSignal.emit()
         pass
 
@@ -69,8 +88,8 @@ class Options_Object(QtCore.QObject):
                         'dFF_was_calc':False
                         }
                         
-        self.preprocessing = {'stimulus_onset':25,
-                              'stimulus_offset':75,
+        self.preprocessing = {'stimuli':sp.array([[20,22]]),
+                              'nStimuli':1,
                               'dFF_frames':(0,20),
                               'filter_xy':0.8,
                               'filter_t':1,
@@ -114,8 +133,8 @@ class Options_Object(QtCore.QObject):
                                 [['general','verbose'],'General','verbose mode',['bool'],None],
                                 [['general','options_filepath'],'General','options filepath',['path'],None],
                                 [['general','cwd'],'General','current working directory',['path'],None],
-                                [['preprocessing','stimulus_onset'],'Preprocessing','stimulus onset frame',['int'],None],
-                                [['preprocessing','stimulus_offset'],'Preprocessing','stimulus offset frame',['int'],None],
+                                [['preprocessing','nStimuli'],'Preprocessing','Number of stimuli per trial',['int'],None],
+                                [['preprocessing','nStimuli'],'Preprocessing','Stimulus # and on/offset',['array'],(2,self.preprocessing['nStimuli'])],
                                 [['preprocessing','dFF_frames'],'Preprocessing','frames for background calculation',['int']*2,None],
                                 [['preprocessing','filter_size'],'Preprocessing','xy t filter size',['float']*2,None],
                                 [['preprocessing','filter_target'],'Preprocessing','apply filter to',['string'],['raw','dFF']],
@@ -128,6 +147,14 @@ class Options_Object(QtCore.QObject):
                                 [['export','data'],'Export','Export traces from',['string'],['raw','dFF']],
                                 [['export','format'],'Export','Export format',['string'],['.csv','.gloDatamix']]
                                 ]
+                                
+        # multi stim support
+        
+        
+        for i in range(self.preprocessing['nStimuli']):
+            stim_list = [['preprocessing','stimulus'+str(i+1)],'Preprocessing','stimulus '+str(i)+' onset/offset frame',['int']*2,None]
+            self.settable_options.append(stim_list)            
+
         pass
     
     
@@ -178,8 +205,9 @@ class Options_Object(QtCore.QObject):
                     # setting the values          
                     if nFields == 1:
                         getattr(self,dict_name)[param_name] = val
-                    if nFields < 1:
+                    if nFields > 1:
                         getattr(self,dict_name)[param_name][i] = val
+                        
             except: # this is because '' cant be converted to int etc. FIXME
                 pass
         pass

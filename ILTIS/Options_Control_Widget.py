@@ -12,7 +12,8 @@ class Options_Control_Widget(QtGui.QTabWidget):
     def __init__(self,Main):
         super(Options_Control_Widget,self).__init__()
         
-        self.Main = Main        
+        self.Main = Main
+        self.parent = Main
         self.rows = []
         
     def init_UI(self):
@@ -91,10 +92,12 @@ class Options_Control_Widget(QtGui.QTabWidget):
         """ reads the current options from the Options Object and updates the
         GUI """
 
+        # deactivate signals, because this function is called in a circular manner from Options_Object
         for widget in self.rows:
             for child in widget.children():
                 child.blockSignals(True)
-                
+
+        
         for row_index, row in enumerate(self.rows):
             kind = self.Main.Options.settable_options[row_index][3] # type
             nFields = len(kind) # nFileds
@@ -129,11 +132,24 @@ class Options_Control_Widget(QtGui.QTabWidget):
                 if kind[i] == 'path':
                     pass
 
-
+        # reactivate signals
         for widget in self.rows:
             for child in widget.children():
                 child.blockSignals(False)
     pass
+
+    def reset_UI(self):
+        """ if number of stim changes, then a) change the settable_options b)
+        redo the whole UI with the new settable ones """
+
+        for tab_ind in range(self.count()):
+            self.removeTab(tab_ind)
+
+        import pdb
+        pdb.set_trace()
+        
+        self.init_UI()
+        pass
 
 if __name__ == '__main__':
     import Main
