@@ -4,6 +4,7 @@ Created on Wed Apr  1 13:23:18 2015
 
 @author: georg
 """
+from PyQt4 import QtGui
 import sys
 import os
 import scipy as sp
@@ -71,7 +72,7 @@ class Options_Object(QtCore.QObject):
 #            self.Main.Options_Control.reset_UI()
 
 
-        self.get_options_from_UI_and_set()            
+        self.get_options_from_UI_and_set()
         self.Main.Signals.updateDisplaySettingsSignal.emit()
         pass
 
@@ -88,13 +89,13 @@ class Options_Object(QtCore.QObject):
                         'dFF_was_calc':False
                         }
                         
-        self.preprocessing = {'stimuli':sp.array([[20,22]]),
-                              'nStimuli':1,
-                              'dFF_frames':(0,20),
+        self.preprocessing = {'stimuli':[[20,22],[25,27]],
+                              'nStimuli':2,
+                              'dFF_frames':[0,20],
                               'filter_xy':0.8,
                               'filter_t':1,
                               'filter_target':'raw',
-                              'filter_size':(0.8,1)
+                              'filter_size':[0.8,1]
                               }
                               
         self.view = {'show_flags':[0],
@@ -126,34 +127,39 @@ class Options_Object(QtCore.QObject):
     def make_settable_options(self):
         """ 
         this one needs a good doc
-        
+        kind can be: infer,choices,path
         """
-        
         self.settable_options = [
-                                [['general','verbose'],'General','verbose mode',['bool'],None],
-                                [['general','options_filepath'],'General','options filepath',['path'],None],
-                                [['general','cwd'],'General','current working directory',['path'],None],
-                                [['preprocessing','nStimuli'],'Preprocessing','Number of stimuli per trial',['int'],None],
-                                [['preprocessing','nStimuli'],'Preprocessing','Stimulus # and on/offset',['array'],(2,self.preprocessing['nStimuli'])],
-                                [['preprocessing','dFF_frames'],'Preprocessing','frames for background calculation',['int']*2,None],
-                                [['preprocessing','filter_size'],'Preprocessing','xy t filter size',['float']*2,None],
-                                [['preprocessing','filter_target'],'Preprocessing','apply filter to',['string'],['raw','dFF']],
-                                [['view','composition_mode'],'View','image composition mode',['string'],self.QtCompositionModes],
-                                [['view','trial_labels_on_traces_vis'],'View','show trial labels on stim sorted traces',['bool'],None],
-                                [['ROI','diameter'],'View','ROI diameter',['float'],None],
-                                [['ROI','type'],'View','ROI type',['string'],['circle','polygon']],
-                                [['ROI','place_in_layer'],'View','place ROI in layer',['string'],['last active','default layer']],
-                                [['ROI','default_layer'],'View','ROI default layer',['int'],None],
-                                [['export','data'],'Export','Export traces from',['string'],['raw','dFF']],
-                                [['export','format'],'Export','Export format',['string'],['.csv','.gloDatamix']]
-                                ]
+                                {'dict_name':'general','param_name':'verbose','tab_label':'General','row_label':'verbose mode','kind':'choices','choices':['True','False']},
+                                {'dict_name':'general','param_name':'options_filepath','tab_label':'General','row_label':'options filepath','kind':'path'},
+                                {'dict_name':'general','param_name':'cwd','tab_label':'General','row_label':'current working directory','kind':'path'},
+        
+                                {'dict_name':'preprocessing','param_name':'nStimuli','tab_label':'Preprocessing','row_label':'Number of stimuli per trial','kind':'infer'},
+                                {'dict_name':'preprocessing','param_name':'stimuli','tab_label':'Preprocessing','row_label':'start/stop frame of stimuli','kind':'infer'},
+                                {'dict_name':'preprocessing','param_name':'dFF_frames','tab_label':'Preprocessing','row_label':'frames for background calculation','kind':'infer'},
+                                {'dict_name':'preprocessing','param_name':'filter_size','tab_label':'Preprocessing','row_label':'xy t filter size','kind':'infer'},
                                 
+                                {'dict_name':'preprocessing','param_name':'filter_target','tab_label':'General','row_label':'apply filter to','kind':'choices','choices':['raw','dFF']},
+                                {'dict_name':'view','param_name':'composition_mode','tab_label':'View','row_label':'image composition mode','kind':'choices','choices':self.QtCompositionModes},
+                                
+                                {'dict_name':'view','param_name':'trial_labels_on_traces_vis','tab_label':'View','row_label':'show trial labels on stim sorted traces','kind':'choices','choices':['True','False']},
+                                
+                                {'dict_name':'ROI','param_name':'diameter','tab_label':'View','row_label':'ROI diameter','kind':'infer'},
+                                {'dict_name':'ROI','param_name':'type','tab_label':'View','row_label':'ROI type','kind':'choices','choices':['circle','polygon']},
+                                {'dict_name':'ROI','param_name':'place_in_layer','tab_label':'View','row_label':'place ROI in layer','kind':'infer'},
+                                {'dict_name':'ROI','param_name':'default_layer','tab_label':'View','row_label':'ROI default layer','kind':'infer'},
+                                
+                                {'dict_name':'export','param_name':'data','tab_label':'Export','row_label':'Export traces from','kind':'choices','choices':['raw','dFF']},
+                                {'dict_name':'export','param_name':'format','tab_label':'Export','row_label':'Export format','kind':'choices','choices':['.csv','.gloDatamix']}
+                                ]
+
+                                        
         # multi stim support
         
-        
-        for i in range(self.preprocessing['nStimuli']):
-            stim_list = [['preprocessing','stimulus'+str(i+1)],'Preprocessing','stimulus '+str(i)+' onset/offset frame',['int']*2,None]
-            self.settable_options.append(stim_list)            
+#        
+#        for i in range(self.preprocessing['nStimuli']):
+#            stim_list = [['preprocessing','stimulus'+str(i+1)],'Preprocessing','stimulus '+str(i)+' onset/offset frame',['int']*2,None]
+#            self.settable_options.append(stim_list)            
 
         pass
     
@@ -164,53 +170,87 @@ class Options_Object(QtCore.QObject):
         
         """ iterate over rows in Options_Control """        
         
-#        print "fetching", self
+
+        widgets = [row[2] for row in self.Main.Options_Control.rows]
         
-        for row_index, row in enumerate(self.Main.Options_Control.rows):
-            kind = self.settable_options[row_index][3] # type
-            nFields = len(kind)
-            choices = self.settable_options[row_index][4] # choices
+        for i,widget in enumerate(widgets):
+            dict_name = self.Main.Options_Control.rows[i][0]
+            param_name = self.Main.Options_Control.rows[i][1]
             
-            dict_name = self.settable_options[row_index][0][0]
-            param_name = self.settable_options[row_index][0][1]
-            
-            try:
-                for i in range(nFields):
-                    # converting from user input to variable format
-                    if kind[i] == 'int':
-                        string = row.children()[i+1].text() # first child is the layout, the following are the input fields
-                        string = str(string) # to convert from QString to normal string, QString causes problems upon scipy cast
-                        val = sp.int32(string)
-    
-                    if kind[i] == 'float':
-                        string = row.children()[i+1].text() # first child is the layout, the following are the input fields
-                        string = str(string) # to convert from QString to normal string, QString causes problems upon scipy cast
-                        val = sp.float32(string)
-                        
-                    if kind[i] == 'bool':
-                        val = ['True','False'][row.children()[1].currentIndex()]
-                        if val == 'True':                        
-                            val = True
-                        elif val == 'False':
-                            val = False
-      
-                    if kind[i] == 'string':
-                        val = choices[row.children()[1].currentIndex()]
-                        pass
-                    
-                    if kind[i] == 'path':
-                        val = ''
-                        pass
-      
-                    # setting the values          
-                    if nFields == 1:
-                        getattr(self,dict_name)[param_name] = val
-                    if nFields > 1:
-                        getattr(self,dict_name)[param_name][i] = val
-                        
-            except: # this is because '' cant be converted to int etc. FIXME
-                pass
-        pass
+            # QComboBox            
+            if type(widget) == QtGui.QComboBox:
+                getattr(self,dict_name)[param_name] = self.settable_options[i]['choices'][widget.currentIndex()]
+
+            # QTableWidget            
+            if type(widget) == QtGui.QTableWidget:
+                var = sp.array(getattr(self,dict_name)[param_name])
+                dtype = var.dtype.kind # needs np dtype!
+                dim = var.shape
+                nDim = len(dim)
+                                
+                if nDim == 0:
+                    getattr(self,dict_name)[param_name] = sp.array(str(widget.item(0,0).text())).astype(dtype)
+                    pass
+                
+                if nDim == 1:
+                    for c in range(widget.columnCount()):
+                        getattr(self,dict_name)[param_name][c] = sp.array(str(widget.item(0,c).text())).astype(dtype)
+                if nDim == 2:
+                    for r in range(widget.rowCount()):
+                        for c in range(widget.columnCount()):
+#                            import pdb
+#                            pdb.set_trace()
+                            getattr(self,dict_name)[param_name][r][c] = sp.array(str(widget.item(r,c).text())).astype(dtype)
+
+
+
+
+        
+#        for row_index, row in enumerate(self.Main.Options_Control.rows):
+#            kind = self.settable_options[row_index][3] # type
+#            nFields = len(kind)
+#            choices = self.settable_options[row_index][4] # choices
+#            
+#            dict_name = self.settable_options[row_index][0][0]
+#            param_name = self.settable_options[row_index][0][1]
+#            
+#            try:
+#                for i in range(nFields):
+#                    # converting from user input to variable format
+#                    if kind[i] == 'int':
+#                        string = row.children()[i+1].text() # first child is the layout, the following are the input fields
+#                        string = str(string) # to convert from QString to normal string, QString causes problems upon scipy cast
+#                        val = sp.int32(string)
+#    
+#                    if kind[i] == 'float':
+#                        string = row.children()[i+1].text() # first child is the layout, the following are the input fields
+#                        string = str(string) # to convert from QString to normal string, QString causes problems upon scipy cast
+#                        val = sp.float32(string)
+#                        
+#                    if kind[i] == 'bool':
+#                        val = ['True','False'][row.children()[1].currentIndex()]
+#                        if val == 'True':                        
+#                            val = True
+#                        elif val == 'False':
+#                            val = False
+#      
+#                    if kind[i] == 'string':
+#                        val = choices[row.children()[1].currentIndex()]
+#                        pass
+#                    
+#                    if kind[i] == 'path':
+#                        val = ''
+#                        pass
+#      
+#                    # setting the values          
+#                    if nFields == 1:
+#                        getattr(self,dict_name)[param_name] = val
+#                    if nFields > 1:
+#                        getattr(self,dict_name)[param_name][i] = val
+#                        
+#            except: # this is because '' cant be converted to int etc. FIXME
+#                pass
+#        pass
     
 
 

@@ -66,7 +66,7 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             # color stimulus regions
             self.stim_regions.append([])
             for stim_id in range(self.Main.Options.preprocessing['nStimuli']):
-                stim_frames = self.Main.Options.preprocessing['stimulus'+str(stim_id+1)]
+                stim_frames = self.Main.Options.preprocessing['stimuli'][stim_id]
                 stim_region = pg.LinearRegionItem(values=stim_frames,movable=False,brush=pg.mkBrush([50,50,50,100]))
                 for line in stim_region.lines:
                     line.hide()
@@ -117,7 +117,7 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         
             # update stim marker
             for stim_id in range(self.Main.Options.preprocessing['nStimuli']):
-                stim_frames = self.Main.Options.preprocessing['stimulus'+str(stim_id+1)]
+                stim_frames = self.Main.Options.preprocessing['stimuli'][stim_id]
                 self.stim_regions[i][stim_id].setRegion(stim_frames)
 
             # plot labels

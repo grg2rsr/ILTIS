@@ -48,7 +48,7 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         
         # color stimulus regions
         for stim_id in range(self.Main.Options.preprocessing['nStimuli']):
-            stim_frames = self.Main.Options.preprocessing['stimulus'+str(stim_id+1)]
+            stim_frames = self.Main.Options.preprocessing['stimuli'][stim_id]
             stim_region = pg.LinearRegionItem(values=stim_frames,movable=False,brush=pg.mkBrush([50,50,50,100]))
             for line in stim_region.lines:
                 line.hide()
@@ -67,7 +67,7 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
                     
         # update stim marker
         for i,stim_region in enumerate(self.stim_regions):
-            stim_frames = self.Main.Options.preprocessing['stimulus'+str(i+1)]
+            stim_frames = self.Main.Options.preprocessing['stimuli'][i]
             stim_region.setRegion(stim_frames)
     
         # plot labels

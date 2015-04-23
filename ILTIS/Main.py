@@ -95,9 +95,7 @@ def main():
     # run application
     app = QtGui.QApplication(sys.argv)
     Iltis = Main(verbose=True)
-   
     return_code = app.exec_()
-    
     
     if return_code != 0:
         print "exiting with return code: ", return_code
