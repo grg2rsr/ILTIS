@@ -59,6 +59,10 @@ class Options_Control_Widget(QtGui.QTabWidget):
 #        stimuli
 #        dff Frames
 #        filter_size
+        FormLayout.addRow('start/stop frames for background calculation',VectorWidget(self,'preprocessing','dFF_frames',2,'i'))
+        FormLayout.addRow('[xy,t] filter size',VectorWidget(self,'preprocessing','filter_size',2,'f'))
+#{'dict_name':'preprocessing','param_name':'dFF_frames','tab_label':'Preprocessing','row_label':'frames for background calculation','kind':'infer'},
+#{'dict_name':'preprocessing','param_name':'filter_size','tab_label':'Preprocessing','row_label':'xy t filter size','kind':'infer'},        
         ### view
         FormLayout = self.make_tab('View')
         FormLayout.addRow('image composition mode',StringChoiceWidget(self,'view','composition_mode',choices=self.Main.Options.QtCompositionModes))
@@ -75,6 +79,8 @@ class Options_Control_Widget(QtGui.QTabWidget):
         FormLayout.addRow('Export format',StringChoiceWidget(self,'export','format',choices=['.csv','.gloDatamix']))
 
         self.get_options()
+        for row in self.get_rows():
+            row[1].connect()
         
     def reset_UI(self):
         """ if number of stim changes, redo the whole UI with the new settable 
@@ -113,8 +119,6 @@ class Options_Control_Widget(QtGui.QTabWidget):
         FormLayout.setLabelAlignment(QtCore.Qt.AlignRight)
         tab_widget.setLayout(FormLayout)
         return FormLayout
-        
-     
 
     def UI_changed(self):
         self.set_options()
@@ -147,6 +151,8 @@ class StringChoiceWidget(QtGui.QComboBox):
         self.parent = parent
         for choice in self.choices:
             self.addItem(choice)
+        
+    def connect(self):
         self.currentIndexChanged.connect(self.parent.UI_changed)
         
     def get_value(self):
@@ -165,6 +171,8 @@ class BooleanChoiceWidget(QtGui.QComboBox):
         self.parent = parent
         for choice in self.choices:
             self.addItem(choice)
+        
+    def connect(self):
         self.currentIndexChanged.connect(self.parent.UI_changed)
         
     def get_value(self):
@@ -187,8 +195,11 @@ class SingleValueWidget(QtGui.QLineEdit):
         self.dict_name = dict_name
         self.param_name = param_name
         self.dtype = dtype
-        self.editingFinished.connect(self.parent.UI_changed)
+
     
+    def connect(self):
+        self.editingFinished.connect(self.parent.UI_changed)
+        
     def get_value(self):
         return sp.array(str(self.text())).astype(self.dtype)
     
@@ -202,10 +213,11 @@ class SingleValueWidget(QtGui.QLineEdit):
 class VectorWidget(QtGui.QTableWidget):
     def __init__(self,parent,dict_name,param_name,columns,dtype):
         super(VectorWidget,self).__init__(1,columns,parent=parent)
+        self.parent = parent
         self.dict_name = dict_name
         self.param_name = param_name
         self.dtype = dtype
-        self.cellChanged.connect(self.parent.UI_changed)
+
         self.parent = parent
         self.verticalHeader().hide()
         self.horizontalHeader().hide()
@@ -215,7 +227,10 @@ class VectorWidget(QtGui.QTableWidget):
         
         for col_ind in range(self.columnCount()):
             self.setItem(0,col_ind,QtGui.QTableWidgetItem(''))
-    
+
+    def connect(self):
+        self.cellChanged.connect(self.parent.UI_changed)
+        
     def get_value(self):
         value = sp.zeros(self.columnCount(),dtype=self.dtype)
         for col_ind in range(self.columnCount()):
@@ -225,7 +240,7 @@ class VectorWidget(QtGui.QTableWidget):
     
     def set_value(self,value):
         value = sp.array(value)
-        if value.dype == self.dtype:
+        if value.dtype == self.dtype:
             raise ValueError('trying to set a Options_Control UI field with the wrong datatype!')
         for col_ind in range(self.columnCount()):
             self.item(0,col_ind).setText(str(value[col_ind]))
@@ -248,7 +263,10 @@ class ArrayWidget(QtGui.QTableWidget):
         for row_ind in range(self.rowCoutn()):
             for col_ind in range(self.columnCount()):
                 self.setItem(row_ind,col_ind,QtGui.QTableWidgetItem(''))
-    
+
+    def connect(self):
+        self.cellChanged.connect(self.parent.UI_changed)
+        
     def get_value(self):
         value = sp.zeros((self.rowCount(),self.columnCount()),dtype=self.dtype)
         for row_ind in range(self.rowCoutn()):
@@ -280,9 +298,12 @@ class PathSelectWidget(QtGui.QWidget):
         layout.addWidget(self.Button)
         layout.addWidget(self.PathDisplay)
         
-        self.Button.clicked.connect(self.clicked)
+        
         
         self.path = None
+
+    def connect(self):
+        self.Button.clicked.connect(self.clicked)
         
     def clicked(self):
 #        path = self.Main.IO.OpenFileDialog(self.FileDialogOptions)
@@ -295,12 +316,6 @@ class PathSelectWidget(QtGui.QWidget):
         
     def set_value(self,value):
         self.PathDisplay.setText(value)
-
-
-    
-    
-    
-    
 
 
 if __name__ == '__main__':
