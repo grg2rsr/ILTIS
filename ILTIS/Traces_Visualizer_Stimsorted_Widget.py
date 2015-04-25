@@ -63,16 +63,16 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
                 plot.setXLink(self.plotItems[0])
             
             
-            # color stimulus regions
-            self.stim_regions.append([])
-            for stim_id in range(self.Main.Options.preprocessing['nStimuli']):
-                stim_frames = self.Main.Options.preprocessing['stimuli'][stim_id]
-                stim_region = pg.LinearRegionItem(values=stim_frames,movable=False,brush=pg.mkBrush([50,50,50,100]))
-                for line in stim_region.lines:
-                    line.hide()
-                stim_region.setZValue(-1000)
-                plot.addItem(stim_region)
-                self.stim_regions[i].append(stim_region)
+#            # color stimulus regions
+#            self.stim_regions.append([])
+#            for stim_id in range(self.Main.Options.preprocessing['nStimuli']):
+#                stim_frames = self.Main.Options.preprocessing['stimuli'][stim_id]
+#                stim_region = pg.LinearRegionItem(values=stim_frames,movable=False,brush=pg.mkBrush([50,50,50,100]))
+#                for line in stim_region.lines:
+#                    line.hide()
+#                stim_region.setZValue(-1000)
+#                plot.addItem(stim_region)
+#                self.stim_regions[i].append(stim_region)
 
             # vlines
             vline = plot.addLine(x=self.Data_Display.Frame_Visualizer.frame,movable=True)
@@ -93,8 +93,28 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             self.traces.append(self.plotItems[correct_panel_index].plot(pen=pen))
                                         
         # set the layout
+        self.update_stim_regions()
         self.Layout.addWidget(self.plotWidget)
 
+    def update_stim_regions(self):
+        """ delete all possibly present stimulus regions and draw new ones """
+        # delete preset
+        for plotItem in self.plotItems:
+            for item in plotItem.items:
+                if type(item) == pg.graphicsItems.LinearRegionItem.LinearRegionItem:
+                    plotItem.items.remove(item)
+        
+        # draw new ones
+        for i,StimClass in enumerate(range(self.nStimClasses)):
+            self.stim_regions.append([])
+            for stim_id in range(self.Main.Options.preprocessing['nStimuli']):
+                stim_frames = self.Main.Options.preprocessing['stimuli'][stim_id]
+                stim_region = pg.LinearRegionItem(values=stim_frames,movable=False,brush=pg.mkBrush([50,50,50,100]))
+                for line in stim_region.lines:
+                    line.hide()
+                stim_region.setZValue(-1000)
+                self.plotItems[i].addItem(stim_region)
+                self.stim_regions[i].append(stim_region)
         
     def update_display_settings(self):
         """ this is handled via signal/slot mechanism"""

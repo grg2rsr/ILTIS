@@ -15,162 +15,292 @@ class Options_Control_Widget(QtGui.QTabWidget):
         
         self.Main = Main
         self.parent = Main
-        self.rows = []
-    
 
     ### UI generation
     def init_UI(self):
         """ deactivate all Qt Signals from this object during init_UI 
         definition of options_string: row_label"""
         self.setWindowTitle('Options')    
-        self.make_rows()
-        self.get_options_and_set_UI()
+#        self.make_rows()
+
+
+#        self.settable_options = [
+#                                {'dict_name':'general','param_name':'verbose','tab_label':'General','row_label':'verbose mode','kind':'choices','choices':['True','False']},
+#                                {'dict_name':'general','param_name':'options_filepath','tab_label':'General','row_label':'options filepath','kind':'path'},
+#                                {'dict_name':'general','param_name':'cwd','tab_label':'General','row_label':'current working directory','kind':'path'},
+#        
+#                                {'dict_name':'preprocessing','param_name':'nStimuli','tab_label':'Preprocessing','row_label':'Number of stimuli per trial','kind':'infer'},
+#                                {'dict_name':'preprocessing','param_name':'stimuli','tab_label':'Preprocessing','row_label':'start/stop frame of stimuli','kind':'infer'},
+#                                {'dict_name':'preprocessing','param_name':'dFF_frames','tab_label':'Preprocessing','row_label':'frames for background calculation','kind':'infer'},
+#                                {'dict_name':'preprocessing','param_name':'filter_size','tab_label':'Preprocessing','row_label':'xy t filter size','kind':'infer'},
+#                                
+#                                {'dict_name':'preprocessing','param_name':'filter_target','tab_label':'General','row_label':'apply filter to','kind':'choices','choices':['raw','dFF']},
+#                                {'dict_name':'view','param_name':'composition_mode','tab_label':'View','row_label':'image composition mode','kind':'choices','choices':self.QtCompositionModes},
+#                                
+#                                {'dict_name':'view','param_name':'trial_labels_on_traces_vis','tab_label':'View','row_label':'show trial labels on stim sorted traces','kind':'choices','choices':['True','False']},
+#                                
+#                                {'dict_name':'ROI','param_name':'diameter','tab_label':'View','row_label':'ROI diameter','kind':'infer'},
+#                                {'dict_name':'ROI','param_name':'type','tab_label':'View','row_label':'ROI type','kind':'choices','choices':['circle','polygon']},
+#                                {'dict_name':'ROI','param_name':'place_in_layer','tab_label':'View','row_label':'place ROI in layer','kind':'infer'},
+#                                {'dict_name':'ROI','param_name':'default_layer','tab_label':'View','row_label':'ROI default layer','kind':'infer'},
+#                                
+
+#                                ]
+
+        ### general
+        FormLayout = self.make_tab('General')
+        FormLayout.addRow('verbose mode',BooleanChoiceWidget(self,'general','verbose'))
+#        FormLayout.addRow('options filepath',self.BooleanChoiceWidget(self))
+#        options filepath
+#        cwd
+        ### preprocessing
+        FormLayout = self.make_tab('Preprocessing')
+#        nStimuli
+#        stimuli
+#        dff Frames
+#        filter_size
+        ### view
+        FormLayout = self.make_tab('View')
+        FormLayout.addRow('image composition mode',StringChoiceWidget(self,'view','composition_mode',choices=self.Main.Options.QtCompositionModes))
+        FormLayout.addRow('show trial labels on stim-sorted traces',BooleanChoiceWidget(self,'view','trial_labels_on_traces_vis'))
+        ### ROI
+        FormLayout = self.make_tab('ROI')
+        FormLayout.addRow('ROI default diameter',SingleValueWidget(self,'ROI','diameter','i'))
+        FormLayout.addRow('ROI type',StringChoiceWidget(self,'ROI','type',choices=['circle','polygon']))
+#        place in layer
+#        default_layer
+        ### export
+        FormLayout = self.make_tab('Export')
+        FormLayout.addRow('Export traces from',StringChoiceWidget(self,'export','data',choices=['raw','dFF']))
+        FormLayout.addRow('Export format',StringChoiceWidget(self,'export','format',choices=['.csv','.gloDatamix']))
+
+        self.get_options()
         
     def reset_UI(self):
-        """ if number of stim changes, then a) change the settable_options b)
-        redo the whole UI with the new settable ones """
+        """ if number of stim changes, redo the whole UI with the new settable 
+        ones """
         
         for tab_ind in range(self.count()):
-            self.removeTab(tab_ind)
+            self.removeTab(0) # removes all ... 
+        self.rows = []
+
         
         self.init_UI()
         pass
     
-
-    
-    def make_row(self,widget=None,dict_name=None,param_name=None,row_label=None,tab_label=None,**kwargs):
-        """ generates a single row based on label and widget, and adds it to the 
-        specified tab """
-        
-        # current tab labels
-        tab_labels = [self.tabText(i) for i in range(self.count())]
-
-        # if tab_label is first time, make the tab with a form layout inside
-        if not(tab_label in tab_labels):
-            tab_widget = QtGui.QWidget(self)
-            self.addTab(tab_widget,tab_label)
-            FormLayout = QtGui.QFormLayout(tab_widget)
-            FormLayout.setVerticalSpacing(10)
-            FormLayout.setLabelAlignment(QtCore.Qt.AlignRight)
-            tab_widget.setLayout(FormLayout)
-        
-        # updated tab labels
-        tab_labels = [self.tabText(i) for i in range(self.count())]
-        self.setCurrentIndex(tab_labels.index(tab_label))
-        
-        # get QFormLayout ... 
-        FormLayout = self.widget(tab_labels.index(tab_label)).layout()
-        
-        # .. and add row
-        FormLayout.addRow(row_label,widget)
-        self.rows.append([dict_name,param_name,widget]) # to be able to iterate over it, better: write a get_all_rows function
-        pass
-    
-    def make_rows(self):
-        """ iterate over settable_options """
-        for row_index,options_dict in enumerate(self.Main.Options.settable_options):
-            if options_dict['kind'] == 'infer':
-                widget = self.infer_widget(**options_dict)
-            if options_dict['kind'] == 'choices':
-                widget = self.make_comboBox_widget(**options_dict)
-            if options_dict['kind'] == 'path':
-                widget = self.make_path_select_widget()
-                pass
+    def get_rows(self):
+        """ helper, generates a list with [label,widget] of all settables 
+        over all tabs """
+        rows = []
+        # iterate over tabs
+        for tab_ind in range(self.count()):
+#            tab = self.setCurrentIndex(tab_ind)
+            tab = self.widget(tab_ind)
+            FormLayout = tab.layout()
+            for row_ind in range(FormLayout.rowCount()):
+                label = FormLayout.itemAt(row_ind,0)
+                widget = FormLayout.itemAt(row_ind,1).widget()
+                rows.append([label,widget])
+        return rows
                 
-            self.make_row(widget=widget,**options_dict)
+        # iterate over rows
+    def make_tab(self,tab_label):
+        """ helper: makes a tab page, pace QFormLayout inside and return it """
+        tab_widget = QtGui.QWidget(self)
+        self.addTab(tab_widget,tab_label)
+        FormLayout = QtGui.QFormLayout(tab_widget)
+        FormLayout.setVerticalSpacing(10)
+        FormLayout.setLabelAlignment(QtCore.Qt.AlignRight)
+        tab_widget.setLayout(FormLayout)
+        return FormLayout
+        
+     
+
+    def UI_changed(self):
+        self.set_options()
+        self.Main.Signals.updateDisplaySettingsSignal.emit()
         pass
-
-    def infer_widget(self,dict_name=None,param_name=None,**kwargs):
-        """ infers the correct input type widget, based on data type and dimensionality """
-
-        var = sp.array(getattr(self.Main.Options,dict_name)[param_name])
-        dtype = var.dtype.kind # needs np dtype!
-        dim = var.shape
-        nDim = len(dim)
-        
-        if nDim == 0:
-            InputWidget = QtGui.QTableWidget(1,1,parent=self)
-
-        if nDim == 1:
-            InputWidget = QtGui.QTableWidget(1,dim[0],parent=self)
-        if nDim == 2:
-            InputWidget = QtGui.QTableWidget(dim[0],dim[1],parent=self)
-        InputWidget.cellChanged.connect(self.Main.Options.update)
-        InputWidget.horizontalHeader().hide()
-        
-        InputWidget.setFixedHeight(InputWidget.rowHeight(0) * InputWidget.rowCount())
-        InputWidget.horizontalHeader().setResizeMode(QtGui.QHeaderView.Stretch) 
-
-#        InputWidget.resizeColumnsToContents()
-        
-        InputWidget.verticalHeader().hide()
-        
-
-        return InputWidget
     
-    ### makers - put all custom widgets in here    
-    def make_comboBox_widget(self,dict_name=None,param_name=None,choices=None,**kwargs):
-        ComboBox = QtGui.QComboBox(parent=self)
-        for choice in choices:
-            ComboBox.addItem(choice)
-        ComboBox.currentIndexChanged.connect(self.Main.Options.update)
-        return ComboBox
-        
-    def make_path_select_widget(self):
-        Button = QtGui.QPushButton('select path',parent=self)
-        Button.clicked.connect(self.Main.IO.OpenFileDialog) # stub with dialogoptions
-        return Button
+    def get_options(self):
+        for row in self.get_rows():
+            widget = row[1]
+            widget.blockSignals(True)
+            widget.set_value(getattr(self.Main.Options,widget.dict_name)[widget.param_name])
+            widget.blockSignals(False)
     
-    ### interaction w Option_Object    
-    def get_options_and_set_UI(self):
-        """ reads the current options from the Options Object and updates the
-        GUI """
+    def set_options(self):
+        for row in self.get_rows():
+            widget = row[1]
+            getattr(self.Main.Options,widget.dict_name)[widget.param_name] = widget.get_value()
+            
 
-        widgets = [row[2] for row in self.rows]
-        # deactivate signals, because this function is called in a circular manner from Options_Object
-        [widget.blockSignals(True) for widget in widgets]
+#==============================================================================
+# Custom Widgets
+#==============================================================================
+
+class StringChoiceWidget(QtGui.QComboBox):
+    def __init__(self,parent,dict_name,param_name,choices):
+        super(StringChoiceWidget,self).__init__(parent=parent)
+        self.dict_name = dict_name
+        self.param_name = param_name
+        self.choices = choices
+        self.parent = parent
+        for choice in self.choices:
+            self.addItem(choice)
+        self.currentIndexChanged.connect(self.parent.UI_changed)
         
-        for i,widget in enumerate(widgets):
-            dict_name = self.rows[i][0]
-            param_name = self.rows[i][1]
-            # QComboBox            
-            if type(widget) == QtGui.QComboBox:
-                choices = self.Main.Options.settable_options[i]['choices']
-                # hack for boolean
-                if choices == ['True','False']:
-                    choices = [True,False]
-                val = getattr(self.Main.Options,dict_name)[param_name]
-                widget.setCurrentIndex(choices.index(val))
+    def get_value(self):
+        return self.choices[self.currentIndex()]
+    
+    def set_value(self,value):
+        self.setCurrentIndex(self.choices.index(value))
+        
+        
+class BooleanChoiceWidget(QtGui.QComboBox):
+    def __init__(self,parent,dict_name,param_name,choices=['Yes','No']):
+        super(BooleanChoiceWidget,self).__init__(parent=parent)
+        self.dict_name = dict_name
+        self.param_name = param_name
+        self.choices = choices
+        self.parent = parent
+        for choice in self.choices:
+            self.addItem(choice)
+        self.currentIndexChanged.connect(self.parent.UI_changed)
+        
+    def get_value(self):
+        if self.choices[self.currentIndex()] == 'Yes':
+            return True
+        else:
+            return False
+    
+    def set_value(self,value):
+        if value == True:
+            self.setCurrentIndex(0)
+        else:
+            self.setCurrentIndex(1)
+     
+       
+class SingleValueWidget(QtGui.QLineEdit):
+    def __init__(self,parent,dict_name,param_name,dtype):
+        super(SingleValueWidget,self).__init__(parent=parent)
+        self.parent = parent
+        self.dict_name = dict_name
+        self.param_name = param_name
+        self.dtype = dtype
+        self.editingFinished.connect(self.parent.UI_changed)
+    
+    def get_value(self):
+        return sp.array(str(self.text())).astype(self.dtype)
+    
+    def set_value(self,value):
+        value = sp.array(value)
+        if value.dtype == self.dtype:
+            raise ValueError('trying to set a Options_Control UI field with the wrong datatype!')
+        self.setText(str(value)) # rounding?
+        
+        
+class VectorWidget(QtGui.QTableWidget):
+    def __init__(self,parent,dict_name,param_name,columns,dtype):
+        super(VectorWidget,self).__init__(1,columns,parent=parent)
+        self.dict_name = dict_name
+        self.param_name = param_name
+        self.dtype = dtype
+        self.cellChanged.connect(self.parent.UI_changed)
+        self.parent = parent
+        self.verticalHeader().hide()
+        self.horizontalHeader().hide()
+        
+        self.setFixedHeight(self.rowHeight(0) * self.rowCount())
+        self.horizontalHeader().setResizeMode(QtGui.QHeaderView.Stretch) 
+        
+        for col_ind in range(self.columnCount()):
+            self.setItem(0,col_ind,QtGui.QTableWidgetItem(''))
+    
+    def get_value(self):
+        value = sp.zeros(self.columnCount(),dtype=self.dtype)
+        for col_ind in range(self.columnCount()):
+            value[col_ind] = sp.array(str(self.item(0,col_ind).text())).astype(self.dtype)
+            
+        return value
+    
+    def set_value(self,value):
+        value = sp.array(value)
+        if value.dype == self.dtype:
+            raise ValueError('trying to set a Options_Control UI field with the wrong datatype!')
+        for col_ind in range(self.columnCount()):
+            self.item(0,col_ind).setText(str(value[col_ind]))
+    
+    
+class ArrayWidget(QtGui.QTableWidget):
+    def __init__(self,parent,dict_name,param_name,rows,columns,dtype):
+        super(ArrayWidget,self).__init__(1,rows,columns,parent=parent)
+        self.dict_name = dict_name
+        self.param_name = param_name
+        self.dtype = dtype
+        self.cellChanged.connect(self.parent.UI_changed)
 
-            # QTableWidget            
-            if type(widget) == QtGui.QTableWidget:
-                var = sp.array(getattr(self.Main.Options,dict_name)[param_name])
-                dtype = var.dtype.kind # needs np dtype!
-                dim = var.shape
-                nDim = len(dim)
-#                import pdb
-#                pdb.set_trace()
-                if nDim == 0:
-                    widget.setItem(0,0,QtGui.QTableWidgetItem(str(var)))
-                    pass
-                if nDim == 1:
-                    for c in range(widget.columnCount()):
-                        widget.setItem(0,c,QtGui.QTableWidgetItem(str(var[c])))
-                    pass
-                if nDim == 2:
-                    for r in range(widget.rowCount()):
-                        for c in range(widget.columnCount()):
-                            widget.setItem(r,c,QtGui.QTableWidgetItem(str(var[r,c])))
+        self.verticalHeader().hide()
+        self.horizontalHeader().hide()
+        
+        self.setFixedHeight(self.rowHeight(0) * self.rowCount())
+        self.horizontalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
+
+        for row_ind in range(self.rowCoutn()):
+            for col_ind in range(self.columnCount()):
+                self.setItem(row_ind,col_ind,QtGui.QTableWidgetItem(''))
+    
+    def get_value(self):
+        value = sp.zeros((self.rowCount(),self.columnCount()),dtype=self.dtype)
+        for row_ind in range(self.rowCoutn()):
+            for col_ind in range(self.columnCount()):
+                value[row_ind,col_ind] = sp.array(str(self.item(row_ind,col_ind).text())).astype(self.dtype)
+        return value
+    
+    def set_value(self,value):
+        value = sp.array(value)
+        if value.dype == self.dtype:
+            raise ValueError('trying to set a Options_Control UI field with the wrong datatype!')
+        for row_ind in range(self.rowCoutn()):
+            for col_ind in range(self.columnCount()):
+                self.item(row_ind,col_ind).setText(str(value[row_ind,col_ind]))
+                
+class PathSelectWidget(QtGui.QWidget):
+    def __init__(self,parent,dict_name,param_name,label='select path',FileDialogOptions=None):
+        super(PathSelectWidget,self).__init__(parent=parent)
+        self.dict_name = dict_name
+        self.param_name = param_name
+
+        self.parent = parent
+        self.FileDialogOptions = FileDialogOptions
+        
+        self.Button = QtGui.QPushButton(self,label)
+        self.PathDisplay = QtGui.QLineEdit(self)
+        
+        layout = QtGui.QHBoxLayout(self)
+        layout.addWidget(self.Button)
+        layout.addWidget(self.PathDisplay)
+        
+        self.Button.clicked.connect(self.clicked)
+        
+        self.path = None
+        
+    def clicked(self):
+#        path = self.Main.IO.OpenFileDialog(self.FileDialogOptions)
+        self.path = self.Main.IO.OpenFileDialog() # FIXME
+        self.set_value(self.path)
+        self.parent.UI_changed()
+        
+    def get_value(self):
+        return self.path
+        
+    def set_value(self,value):
+        self.PathDisplay.setText(value)
 
 
-        # reactivate signals
-        [widget.blockSignals(False) for widget in widgets]
-#        for row in self.rows:
-#            widget = row[2]
-#            for child in widget.children():
-#                child.blockSignals(False)
-    pass
-
+    
+    
+    
+    
 
 
 if __name__ == '__main__':

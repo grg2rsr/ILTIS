@@ -131,3 +131,8 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         
 
     pass
+
+if __name__ == '__main__':
+    import Main
+    Main.main()
+    pass

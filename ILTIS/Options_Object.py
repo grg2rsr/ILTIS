@@ -32,6 +32,7 @@ class Options_Object(QtCore.QObject):
         # temporarily included hack, removed later
         self.options_filepath = None
         self.load_default_options() ### FIXME
+        self.nStimuli_old = self.preprocessing['nStimuli']
         
         # define user access for automatic generation of the Options_Control GUI
         self.settable_options = []
@@ -43,6 +44,8 @@ class Options_Object(QtCore.QObject):
     def init_data(self):
         """ IO reads the options_file from disk """
         self.load_default_options()
+        print 'data default'
+        self.nStimuli_old = self.preprocessing['nStimuli']
         
         # for future implementation
 #        self.Main.IO.load_options() 
@@ -55,25 +58,30 @@ class Options_Object(QtCore.QObject):
 #                    self.Main.IO.load_options()
     
     def update(self):
-        """ checks if nStimuli has changed , if yes 1) expand self.preprocessing
-        and settable_options, always gets the values from the Options
-        Control and emits the updateD splaySettingsSignal """
-
-        # check if number of stim has changed        
-#        self.nStimuli_old = self.preprocessing['nStimuli']
+#        """ checks if nStimuli has changed , if yes 1) expand self.preprocessing
+#        and settable_options, always gets the values from the Options
+#        Control and emits the updateD splaySettingsSignal """
+#
+#        self.get_options_from_UI_and_set()
+#        # check if number of stim has changed        
 #        if self.preprocessing['nStimuli'] != self.nStimuli_old:
-#            # expand self.preprocessing
-#            for i in range(2,self.preprocessing['nStimuli']+1):
-#                last_stim = self.preprocessing['stimulus'+str(i-1)]
-#                stim_length = last_stim[1] - last_stim[0]
-#                ISI = self.preprocessing['stimulus1'][0]
-#                self.preprocessing['stimulus'+str(i+1)] = [dOnset]
-#            self.nStimuli_old = self.preprocessing['nStimuli']
-#            self.Main.Options_Control.reset_UI()
-
-
-        self.get_options_from_UI_and_set()
-        self.Main.Signals.updateDisplaySettingsSignal.emit()
+#            # iterate over nStim
+#            if self.preprocessing['nStimuli'] == 1:
+#                self.preprocessing['stimuli'] = self.preprocessing['stimuli'][0,:]
+#            if self.preprocessing['nStimuli'] > 1:
+#                for i in range(1,self.preprocessing['nStimuli']):
+#                    new_stim = sp.zeros((self.preprocessing['nStimuli'],2),dtype='int32')
+#                    new_stim[i,0] = self.preprocessing['stimuli'][0,0] * i
+#                    new_stim[i,1] = self.preprocessing['stimuli'][0,1] * i
+#                self.preprocessing['stimuli'] = new_stim
+#            
+#            self.Main.Options_Control.reset_UI()            
+#            self.nStimuli_old = self.preprocessing['nStimuli'] # set n stim
+#
+#
+#
+#        
+#        self.Main.Signals.updateDisplaySettingsSignal.emit()
         pass
 
     def reset(self):
@@ -89,7 +97,7 @@ class Options_Object(QtCore.QObject):
                         'dFF_was_calc':False
                         }
                         
-        self.preprocessing = {'stimuli':[[20,22],[25,27]],
+        self.preprocessing = {'stimuli':sp.array([[20,22],[25,27]]),
                               'nStimuli':2,
                               'dFF_frames':[0,20],
                               'filter_xy':0.8,
@@ -179,7 +187,11 @@ class Options_Object(QtCore.QObject):
             
             # QComboBox            
             if type(widget) == QtGui.QComboBox:
-                getattr(self,dict_name)[param_name] = self.settable_options[i]['choices'][widget.currentIndex()]
+                if self.settable_options[i]['choices'] == ['True','False']:
+                    choices = [True,False]
+                else:
+                    choices = self.settable_options[i]['choices']
+                getattr(self,dict_name)[param_name] = choices[widget.currentIndex()]
 
             # QTableWidget            
             if type(widget) == QtGui.QTableWidget:
@@ -200,7 +212,7 @@ class Options_Object(QtCore.QObject):
                         for c in range(widget.columnCount()):
 #                            import pdb
 #                            pdb.set_trace()
-                            getattr(self,dict_name)[param_name][r][c] = sp.array(str(widget.item(r,c).text())).astype(dtype)
+                            getattr(self,dict_name)[param_name][r,c] = sp.array(str(widget.item(r,c).text())).astype(dtype)
 
 
 
