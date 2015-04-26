@@ -27,16 +27,16 @@ class Options_Object(QtCore.QObject):
         
         # needed to be visible
         self.QtCompositionModes = ['SourceOver','DestinationOver','Clear','Source','Destination','SourceIn','DestinationIn','SourceOut','DestinationOut','SourceAtop','DestinationAtop','Xor','Plus','Multiply','Screen','Overlay','Darken','Lighten','ColorDodge','ColorBurn','HardLight','SoftLight','Difference','Exclusion','SourceOrDestination','SourceAndDestination','SourceXorDestination','NotSourceAndNotDestination','NotSourceOrNotDestination','NotSourceXorDestination','NotSource','NotSourceAndDestination','SourceAndNotDestination']
-        self.nStimuli_old = None        
+#        self.nStimuli_old = None        
         
         # temporarily included hack, removed later
         self.options_filepath = None
         self.load_default_options() ### FIXME
-        self.nStimuli_old = self.preprocessing['nStimuli']
+#        self.nStimuli_old = self.preprocessing['nStimuli']
         
         # define user access for automatic generation of the Options_Control GUI
-        self.settable_options = []
-        self.make_settable_options()
+#        self.settable_options = []
+#        self.make_settable_options()
             
         pass
     pass
@@ -62,21 +62,7 @@ class Options_Object(QtCore.QObject):
 #        and settable_options, always gets the values from the Options
 #        Control and emits the updateD splaySettingsSignal """
 #
-#        self.get_options_from_UI_and_set()
-#        # check if number of stim has changed        
-#        if self.preprocessing['nStimuli'] != self.nStimuli_old:
-#            # iterate over nStim
-#            if self.preprocessing['nStimuli'] == 1:
-#                self.preprocessing['stimuli'] = self.preprocessing['stimuli'][0,:]
-#            if self.preprocessing['nStimuli'] > 1:
-#                for i in range(1,self.preprocessing['nStimuli']):
-#                    new_stim = sp.zeros((self.preprocessing['nStimuli'],2),dtype='int32')
-#                    new_stim[i,0] = self.preprocessing['stimuli'][0,0] * i
-#                    new_stim[i,1] = self.preprocessing['stimuli'][0,1] * i
-#                self.preprocessing['stimuli'] = new_stim
-#            
-#            self.Main.Options_Control.reset_UI()            
-#            self.nStimuli_old = self.preprocessing['nStimuli'] # set n stim
+
 #
 #
 #
@@ -132,87 +118,87 @@ class Options_Object(QtCore.QObject):
                        
         pass
     
-    def make_settable_options(self):
-        """ 
-        this one needs a good doc
-        kind can be: infer,choices,path
-        """
-        self.settable_options = [
-                                {'dict_name':'general','param_name':'verbose','tab_label':'General','row_label':'verbose mode','kind':'choices','choices':['True','False']},
-                                {'dict_name':'general','param_name':'options_filepath','tab_label':'General','row_label':'options filepath','kind':'path'},
-                                {'dict_name':'general','param_name':'cwd','tab_label':'General','row_label':'current working directory','kind':'path'},
-        
-                                {'dict_name':'preprocessing','param_name':'nStimuli','tab_label':'Preprocessing','row_label':'Number of stimuli per trial','kind':'infer'},
-                                {'dict_name':'preprocessing','param_name':'stimuli','tab_label':'Preprocessing','row_label':'start/stop frame of stimuli','kind':'infer'},
-                                {'dict_name':'preprocessing','param_name':'dFF_frames','tab_label':'Preprocessing','row_label':'frames for background calculation','kind':'infer'},
-                                {'dict_name':'preprocessing','param_name':'filter_size','tab_label':'Preprocessing','row_label':'xy t filter size','kind':'infer'},
-                                
-                                {'dict_name':'preprocessing','param_name':'filter_target','tab_label':'General','row_label':'apply filter to','kind':'choices','choices':['raw','dFF']},
-                                {'dict_name':'view','param_name':'composition_mode','tab_label':'View','row_label':'image composition mode','kind':'choices','choices':self.QtCompositionModes},
-                                
-                                {'dict_name':'view','param_name':'trial_labels_on_traces_vis','tab_label':'View','row_label':'show trial labels on stim sorted traces','kind':'choices','choices':['True','False']},
-                                
-                                {'dict_name':'ROI','param_name':'diameter','tab_label':'View','row_label':'ROI diameter','kind':'infer'},
-                                {'dict_name':'ROI','param_name':'type','tab_label':'View','row_label':'ROI type','kind':'choices','choices':['circle','polygon']},
-                                {'dict_name':'ROI','param_name':'place_in_layer','tab_label':'View','row_label':'place ROI in layer','kind':'infer'},
-                                {'dict_name':'ROI','param_name':'default_layer','tab_label':'View','row_label':'ROI default layer','kind':'infer'},
-                                
-                                {'dict_name':'export','param_name':'data','tab_label':'Export','row_label':'Export traces from','kind':'choices','choices':['raw','dFF']},
-                                {'dict_name':'export','param_name':'format','tab_label':'Export','row_label':'Export format','kind':'choices','choices':['.csv','.gloDatamix']}
-                                ]
-
-                                        
-        # multi stim support
-        
+#    def make_settable_options(self):
+#        """ 
+#        this one needs a good doc
+#        kind can be: infer,choices,path
+#        """
+#        self.settable_options = [
+#                                {'dict_name':'general','param_name':'verbose','tab_label':'General','row_label':'verbose mode','kind':'choices','choices':['True','False']},
+#                                {'dict_name':'general','param_name':'options_filepath','tab_label':'General','row_label':'options filepath','kind':'path'},
+#                                {'dict_name':'general','param_name':'cwd','tab_label':'General','row_label':'current working directory','kind':'path'},
 #        
-#        for i in range(self.preprocessing['nStimuli']):
-#            stim_list = [['preprocessing','stimulus'+str(i+1)],'Preprocessing','stimulus '+str(i)+' onset/offset frame',['int']*2,None]
-#            self.settable_options.append(stim_list)            
-
-        pass
+#                                {'dict_name':'preprocessing','param_name':'nStimuli','tab_label':'Preprocessing','row_label':'Number of stimuli per trial','kind':'infer'},
+#                                {'dict_name':'preprocessing','param_name':'stimuli','tab_label':'Preprocessing','row_label':'start/stop frame of stimuli','kind':'infer'},
+#                                {'dict_name':'preprocessing','param_name':'dFF_frames','tab_label':'Preprocessing','row_label':'frames for background calculation','kind':'infer'},
+#                                {'dict_name':'preprocessing','param_name':'filter_size','tab_label':'Preprocessing','row_label':'xy t filter size','kind':'infer'},
+#                                
+#                                {'dict_name':'preprocessing','param_name':'filter_target','tab_label':'General','row_label':'apply filter to','kind':'choices','choices':['raw','dFF']},
+#                                {'dict_name':'view','param_name':'composition_mode','tab_label':'View','row_label':'image composition mode','kind':'choices','choices':self.QtCompositionModes},
+#                                
+#                                {'dict_name':'view','param_name':'trial_labels_on_traces_vis','tab_label':'View','row_label':'show trial labels on stim sorted traces','kind':'choices','choices':['True','False']},
+#                                
+#                                {'dict_name':'ROI','param_name':'diameter','tab_label':'View','row_label':'ROI diameter','kind':'infer'},
+#                                {'dict_name':'ROI','param_name':'type','tab_label':'View','row_label':'ROI type','kind':'choices','choices':['circle','polygon']},
+#                                {'dict_name':'ROI','param_name':'place_in_layer','tab_label':'View','row_label':'place ROI in layer','kind':'infer'},
+#                                {'dict_name':'ROI','param_name':'default_layer','tab_label':'View','row_label':'ROI default layer','kind':'infer'},
+#                                
+#                                {'dict_name':'export','param_name':'data','tab_label':'Export','row_label':'Export traces from','kind':'choices','choices':['raw','dFF']},
+#                                {'dict_name':'export','param_name':'format','tab_label':'Export','row_label':'Export format','kind':'choices','choices':['.csv','.gloDatamix']}
+#                                ]
+#
+#                                        
+#        # multi stim support
+#        
+##        
+##        for i in range(self.preprocessing['nStimuli']):
+##            stim_list = [['preprocessing','stimulus'+str(i+1)],'Preprocessing','stimulus '+str(i)+' onset/offset frame',['int']*2,None]
+##            self.settable_options.append(stim_list)            
+#
+#        pass
     
     
-    def get_options_from_UI_and_set(self):
-        """ reads from the Options_Control widget the currently present user
-        defined values for the variables """
-        
-        """ iterate over rows in Options_Control """        
-        
-
-        widgets = [row[2] for row in self.Main.Options_Control.rows]
-        
-        for i,widget in enumerate(widgets):
-            dict_name = self.Main.Options_Control.rows[i][0]
-            param_name = self.Main.Options_Control.rows[i][1]
-            
-            # QComboBox            
-            if type(widget) == QtGui.QComboBox:
-                if self.settable_options[i]['choices'] == ['True','False']:
-                    choices = [True,False]
-                else:
-                    choices = self.settable_options[i]['choices']
-                getattr(self,dict_name)[param_name] = choices[widget.currentIndex()]
-
-            # QTableWidget            
-            if type(widget) == QtGui.QTableWidget:
-                var = sp.array(getattr(self,dict_name)[param_name])
-                dtype = var.dtype.kind # needs np dtype!
-                dim = var.shape
-                nDim = len(dim)
-                                
-                if nDim == 0:
-                    getattr(self,dict_name)[param_name] = sp.array(str(widget.item(0,0).text())).astype(dtype)
-                    pass
-                
-                if nDim == 1:
-                    for c in range(widget.columnCount()):
-                        getattr(self,dict_name)[param_name][c] = sp.array(str(widget.item(0,c).text())).astype(dtype)
-                if nDim == 2:
-                    for r in range(widget.rowCount()):
-                        for c in range(widget.columnCount()):
-#                            import pdb
-#                            pdb.set_trace()
-                            getattr(self,dict_name)[param_name][r,c] = sp.array(str(widget.item(r,c).text())).astype(dtype)
+#    def get_options_from_UI_and_set(self):
+#        """ reads from the Options_Control widget the currently present user
+#        defined values for the variables """
+#        
+#        """ iterate over rows in Options_Control """        
+#        
+#
+#        widgets = [row[2] for row in self.Main.Options_Control.rows]
+#        
+#        for i,widget in enumerate(widgets):
+#            dict_name = self.Main.Options_Control.rows[i][0]
+#            param_name = self.Main.Options_Control.rows[i][1]
+#            
+#            # QComboBox            
+#            if type(widget) == QtGui.QComboBox:
+#                if self.settable_options[i]['choices'] == ['True','False']:
+#                    choices = [True,False]
+#                else:
+#                    choices = self.settable_options[i]['choices']
+#                getattr(self,dict_name)[param_name] = choices[widget.currentIndex()]
+#
+#            # QTableWidget            
+#            if type(widget) == QtGui.QTableWidget:
+#                var = sp.array(getattr(self,dict_name)[param_name])
+#                dtype = var.dtype.kind # needs np dtype!
+#                dim = var.shape
+#                nDim = len(dim)
+#                                
+#                if nDim == 0:
+#                    getattr(self,dict_name)[param_name] = sp.array(str(widget.item(0,0).text())).astype(dtype)
+#                    pass
+#                
+#                if nDim == 1:
+#                    for c in range(widget.columnCount()):
+#                        getattr(self,dict_name)[param_name][c] = sp.array(str(widget.item(0,c).text())).astype(dtype)
+#                if nDim == 2:
+#                    for r in range(widget.rowCount()):
+#                        for c in range(widget.columnCount()):
+##                            import pdb
+##                            pdb.set_trace()
+#                            getattr(self,dict_name)[param_name][r,c] = sp.array(str(widget.item(r,c).text())).astype(dtype)
 
 
 

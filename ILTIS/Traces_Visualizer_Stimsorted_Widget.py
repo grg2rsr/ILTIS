@@ -23,7 +23,7 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         self.plotItems = []
 #        self.plotWidgets = []
         self.traces = []
-        self.stim_regions = [] # is 2d in this case, first dim labels second dim stimulus
+        self.stim_regions = None # is a list of stimclass holding a list of stim_regions
         self.vlines = []
         
         self.init_UI()
@@ -99,15 +99,16 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
     def update_stim_regions(self):
         """ delete all possibly present stimulus regions and draw new ones """
         # delete preset
-        for plotItem in self.plotItems:
-            for item in plotItem.items:
-                if type(item) == pg.graphicsItems.LinearRegionItem.LinearRegionItem:
-                    plotItem.items.remove(item)
+        if self.stim_regions != None:
+            for i in range(self.nStimClasses):
+                for stim_region in self.stim_regions[i]:
+                    self.plotItems[i].removeItem(stim_region)
+        self.stim_regions = []
         
         # draw new ones
         for i,StimClass in enumerate(range(self.nStimClasses)):
             self.stim_regions.append([])
-            for stim_id in range(self.Main.Options.preprocessing['nStimuli']):
+            for stim_id in range(self.Main.Options.preprocessing['stimuli'].shape[0]):
                 stim_frames = self.Main.Options.preprocessing['stimuli'][stim_id]
                 stim_region = pg.LinearRegionItem(values=stim_frames,movable=False,brush=pg.mkBrush([50,50,50,100]))
                 for line in stim_region.lines:
@@ -135,19 +136,16 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             else:
                 self.plotItems[i].setTitle(None)
         
-            # update stim marker
-            for stim_id in range(self.Main.Options.preprocessing['nStimuli']):
-                stim_frames = self.Main.Options.preprocessing['stimuli'][stim_id]
-                self.stim_regions[i][stim_id].setRegion(stim_frames)
-
             # plot labels
             if self.Main.Options.view['show_dFF'] == True:
                 self.plotItems[i].setLabel('left','dF/F')
                 
             if self.Main.Options.view['show_dFF'] == False:
-                self.plotItems[i].setLabel('left','F [au]')    
+                self.plotItems[i].setLabel('left','F [au]')
             
-
+        # update stim regions
+        self.update_stim_regions()
+    
     def get_traces(self):
         """ helper for calculating the traces matrix """
         active_inds = sp.where(self.Main.Options.view['show_flags'])[0]

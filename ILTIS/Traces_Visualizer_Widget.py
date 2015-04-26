@@ -46,9 +46,20 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
             
         self.plotItem.setRange(xRange=[0, self.Main.Data.nFrames], disableAutoRange=False)
         
+        self.update_stim_regions()
+        
+
+    def update_stim_regions(self):
+        """ delete all possibly present stimulus regions and draw new ones """
+        # delete preset if any
+        for stim_region in self.stim_regions:
+            self.plotItem.removeItem(stim_region)
+            
+        self.stim_regions = []
+
         # color stimulus regions
-        for stim_id in range(self.Main.Options.preprocessing['nStimuli']):
-            stim_frames = self.Main.Options.preprocessing['stimuli'][stim_id]
+        for stim_id in range(self.Main.Options.preprocessing['stimuli'].shape[0]):
+            stim_frames = self.Main.Options.preprocessing['stimuli'][stim_id,:]
             stim_region = pg.LinearRegionItem(values=stim_frames,movable=False,brush=pg.mkBrush([50,50,50,100]))
             for line in stim_region.lines:
                 line.hide()
@@ -56,7 +67,14 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
             self.plotItem.addItem(stim_region)
             self.stim_regions.append(stim_region)
             pass
-    
+
+#                            
+#        # update stim marker
+#        for i,stim_region in enumerate(self.stim_regions):
+#            stim_frames = self.Main.Options.preprocessing['stimuli'][i]
+#            stim_region.setRegion(stim_frames)
+            
+                    
     def update_display_settings(self):
         """ this is handled via signal/slot mechanism"""
         for n,val in enumerate(self.Main.Options.view['show_flags']):
@@ -64,18 +82,16 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
                 self.traces[n].show()
             else:
                 self.traces[n].hide()
-                    
-        # update stim marker
-        for i,stim_region in enumerate(self.stim_regions):
-            stim_frames = self.Main.Options.preprocessing['stimuli'][i]
-            stim_region.setRegion(stim_frames)
-    
+
         # plot labels
         if self.Main.Options.view['show_dFF'] == True:
             self.plotItem.setLabel('left','dF/F')
             
         if self.Main.Options.view['show_dFF'] == False:
             self.plotItem.setLabel('left','F [au]')
+            
+        # update stim_regions
+        self.update_stim_regions()
         
         pass
     
@@ -83,10 +99,8 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         """ update traces - for speed reasons via direct call"""
         
         # do not run if no ROIs
-
         if (self.Main.ROIs.nROIs > 0 and self.Main.Options.ROI['active_ROI_id'] != None):
             active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
-            # sp.where(self.Main.Options.view['show_flags'] # this should work for the slicing and actually contains inds
                 
             # implementation using the pyqtgraph internal slicing
             """ fix idea: after this is a local copy, then the get_ROI_mask func can be put into the ROI class"""

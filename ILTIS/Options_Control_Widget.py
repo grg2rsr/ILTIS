@@ -56,36 +56,36 @@ class Options_Control_Widget(QtGui.QTabWidget):
         ### preprocessing
         FormLayout = self.make_tab('Preprocessing')
 #        nStimuli
-#        stimuli
-#        dff Frames
-#        filter_size
+#        FormLayout.addRow('number of stimuli',SingleValueWidget(self,'preprocessing','nStimuli','i'))
+        FormLayout.addRow('start/stop frames of stimuli',StimRegionWidget(self,'preprocessing','stimuli',self.Main.Options.preprocessing['nStimuli'],2,'i'))
+#        FormLayout.addRow('start/stop frames of stimuli',ArrayWidget(self,'preprocessing','stimuli',self.Main.Options.preprocessing['nStimuli'],2,'i'))
         FormLayout.addRow('start/stop frames for background calculation',VectorWidget(self,'preprocessing','dFF_frames',2,'i'))
         FormLayout.addRow('[xy,t] filter size',VectorWidget(self,'preprocessing','filter_size',2,'f'))
-#{'dict_name':'preprocessing','param_name':'dFF_frames','tab_label':'Preprocessing','row_label':'frames for background calculation','kind':'infer'},
-#{'dict_name':'preprocessing','param_name':'filter_size','tab_label':'Preprocessing','row_label':'xy t filter size','kind':'infer'},        
+
         ### view
         FormLayout = self.make_tab('View')
         FormLayout.addRow('image composition mode',StringChoiceWidget(self,'view','composition_mode',choices=self.Main.Options.QtCompositionModes))
         FormLayout.addRow('show trial labels on stim-sorted traces',BooleanChoiceWidget(self,'view','trial_labels_on_traces_vis'))
+      
         ### ROI
         FormLayout = self.make_tab('ROI')
         FormLayout.addRow('ROI default diameter',SingleValueWidget(self,'ROI','diameter','i'))
         FormLayout.addRow('ROI type',StringChoiceWidget(self,'ROI','type',choices=['circle','polygon']))
-#        place in layer
-#        default_layer
+
         ### export
         FormLayout = self.make_tab('Export')
         FormLayout.addRow('Export traces from',StringChoiceWidget(self,'export','data',choices=['raw','dFF']))
         FormLayout.addRow('Export format',StringChoiceWidget(self,'export','format',choices=['.csv','.gloDatamix']))
 
         self.get_options()
+        self.nStimuli_old = self.Main.Options.preprocessing['nStimuli']
         for row in self.get_rows():
             row[1].connect()
         
     def reset_UI(self):
         """ if number of stim changes, redo the whole UI with the new settable 
         ones """
-        
+        print "resetting UI"
         for tab_ind in range(self.count()):
             self.removeTab(0) # removes all ... 
         self.rows = []
@@ -104,7 +104,7 @@ class Options_Control_Widget(QtGui.QTabWidget):
             tab = self.widget(tab_ind)
             FormLayout = tab.layout()
             for row_ind in range(FormLayout.rowCount()):
-                label = FormLayout.itemAt(row_ind,0)
+                label = FormLayout.itemAt(row_ind,0).widget()
                 widget = FormLayout.itemAt(row_ind,1).widget()
                 rows.append([label,widget])
         return rows
@@ -121,7 +121,33 @@ class Options_Control_Widget(QtGui.QTabWidget):
         return FormLayout
 
     def UI_changed(self):
+        # set changes to the Options_object
         self.set_options()
+
+        # check if number of stim has changed
+#        nStimuli = self.Main.Options.preprocessing['nStimuli']
+#        if nStimuli != self.nStimuli_old:
+#            row_ind = [row[1].param_name for row in self.get_rows()].index('stimuli')
+##            self.widget(1).layout().setRowCount(5)
+#            table = self.get_rows()[row_ind][1]
+#            table.insertRow(table.rowCount())
+#            self.widget(1).layout().insertRow(row_ind,'replace',ArrayWidget(self,'preprocessing','stimuli',self.Main.Options.preprocessing['nStimuli'],2,'i'))
+            
+            
+#            if nStimuli == 1:
+#                self.Main.Options.preprocessing['stimuli'] = sp.array([self.Main.Options.preprocessing['stimuli'][0,:]])
+#            if nStimuli > 1:
+#                for i in range(1,nStimuli):
+#                    new_stim = sp.zeros((nStimuli,2),dtype='int32')
+#                    new_stim[i,0] = self.Main.Options.preprocessing['stimuli'][0,0] * i
+#                    new_stim[i,1] = self.Main.Options.preprocessing['stimuli'][0,1] * i
+#                self.Main.Options.preprocessing['stimuli'] = new_stim
+            
+#            self.reset_UI()
+#            self.setCurrentIndex(1)
+#            self.nStimuli_old = nStimuli # set n stim
+            
+            
         self.Main.Signals.updateDisplaySettingsSignal.emit()
         pass
     
@@ -205,7 +231,7 @@ class SingleValueWidget(QtGui.QLineEdit):
     
     def set_value(self,value):
         value = sp.array(value)
-        if value.dtype == self.dtype:
+        if value.dtype.kind != self.dtype:
             raise ValueError('trying to set a Options_Control UI field with the wrong datatype!')
         self.setText(str(value)) # rounding?
         
@@ -240,7 +266,7 @@ class VectorWidget(QtGui.QTableWidget):
     
     def set_value(self,value):
         value = sp.array(value)
-        if value.dtype == self.dtype:
+        if value.dtype.kind != self.dtype:
             raise ValueError('trying to set a Options_Control UI field with the wrong datatype!')
         for col_ind in range(self.columnCount()):
             self.item(0,col_ind).setText(str(value[col_ind]))
@@ -248,11 +274,11 @@ class VectorWidget(QtGui.QTableWidget):
     
 class ArrayWidget(QtGui.QTableWidget):
     def __init__(self,parent,dict_name,param_name,rows,columns,dtype):
-        super(ArrayWidget,self).__init__(1,rows,columns,parent=parent)
+        super(ArrayWidget,self).__init__(rows,columns,parent=parent)
         self.dict_name = dict_name
         self.param_name = param_name
         self.dtype = dtype
-        self.cellChanged.connect(self.parent.UI_changed)
+        self.parent = parent
 
         self.verticalHeader().hide()
         self.horizontalHeader().hide()
@@ -260,7 +286,7 @@ class ArrayWidget(QtGui.QTableWidget):
         self.setFixedHeight(self.rowHeight(0) * self.rowCount())
         self.horizontalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
 
-        for row_ind in range(self.rowCoutn()):
+        for row_ind in range(self.rowCount()):
             for col_ind in range(self.columnCount()):
                 self.setItem(row_ind,col_ind,QtGui.QTableWidgetItem(''))
 
@@ -269,16 +295,16 @@ class ArrayWidget(QtGui.QTableWidget):
         
     def get_value(self):
         value = sp.zeros((self.rowCount(),self.columnCount()),dtype=self.dtype)
-        for row_ind in range(self.rowCoutn()):
+        for row_ind in range(self.rowCount()):
             for col_ind in range(self.columnCount()):
                 value[row_ind,col_ind] = sp.array(str(self.item(row_ind,col_ind).text())).astype(self.dtype)
         return value
     
     def set_value(self,value):
         value = sp.array(value)
-        if value.dype == self.dtype:
+        if value.dtype.kind != self.dtype:
             raise ValueError('trying to set a Options_Control UI field with the wrong datatype!')
-        for row_ind in range(self.rowCoutn()):
+        for row_ind in range(self.rowCount()):
             for col_ind in range(self.columnCount()):
                 self.item(row_ind,col_ind).setText(str(value[row_ind,col_ind]))
                 
@@ -297,9 +323,7 @@ class PathSelectWidget(QtGui.QWidget):
         layout = QtGui.QHBoxLayout(self)
         layout.addWidget(self.Button)
         layout.addWidget(self.PathDisplay)
-        
-        
-        
+
         self.path = None
 
     def connect(self):
@@ -317,7 +341,63 @@ class PathSelectWidget(QtGui.QWidget):
     def set_value(self,value):
         self.PathDisplay.setText(value)
 
+class StimRegionWidget(QtGui.QWidget):
+    """ just an ArrayWidget with a plus and a minus button above to add / remove
+    stimuli """
+    def __init__(self,parent,dict_name,param_name,rows,columns,dtype):
+        super(StimRegionWidget,self).__init__(parent=parent)
+        
+        self.parent = parent
+        self.dict_name = dict_name
+        self.param_name = param_name
+        
+        self.StimTable = ArrayWidget(parent,dict_name,param_name,rows,columns,dtype)
+        self.PlusButton = QtGui.QPushButton('+')
+        self.MinusButton = QtGui.QPushButton('-')
+        
+        BtnLayout = QtGui.QHBoxLayout()
+        BtnLayout.addWidget(self.PlusButton)
+        BtnLayout.addWidget(self.MinusButton)
+#        
+        AllLayout = QtGui.QVBoxLayout()
+        AllLayout.addLayout(BtnLayout)
+        AllLayout.addWidget(self.StimTable)
+        
+        self.setLayout(AllLayout)
 
+    def connect(self):
+        self.StimTable.connect()
+        self.PlusButton.clicked.connect(self.addRow)
+        self.MinusButton.clicked.connect(self.removeRow)
+    
+    def addRow(self):
+        stimuli = self.get_value()
+        self.StimTable.blockSignals(True)
+        self.StimTable.insertRow(self.StimTable.rowCount())
+        a = stimuli[-1,0]
+        b = stimuli[-1,1]
+        self.StimTable.setItem(self.StimTable.rowCount()-1,0,QtGui.QTableWidgetItem(str(b + (b-a))))
+        self.StimTable.setItem(self.StimTable.rowCount()-1,1,QtGui.QTableWidgetItem(str(b + 2*(b-a))))
+        self.StimTable.blockSignals(False)
+        
+        self.parent.UI_changed()
+        pass
+    
+    def removeRow(self):
+        stimuli = self.get_value()
+        self.StimTable.removeRow(self.StimTable.rowCount()-1)
+        self.set_value(stimuli[:-1,:])
+        self.parent.UI_changed()
+        pass
+    
+    def get_value(self):
+        return self.StimTable.get_value()
+    
+    def set_value(self,value):
+        self.StimTable.set_value(value)
+        pass
+    
+        
 if __name__ == '__main__':
     import Main
     Main.main()
