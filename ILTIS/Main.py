@@ -56,6 +56,9 @@ class Main(QtCore.QObject):
         
         ## Signals # centrally managed connections work, and all slots are ready at this timepoint in the code
         self.Signals = Signals(self)
+        
+        ### HACKED IN FOR TESTINGS START
+        self.IO.init_data()
     
     ### initializers
     def initialize_paths(self):

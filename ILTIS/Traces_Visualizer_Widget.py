@@ -23,6 +23,7 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
 
 
     def init_UI(self):
+        """ inits empty plot """
         self.plotWidget = pg.GraphicsLayoutWidget()
         self.plotItem = self.addPlot()
         self.plotItem.setLabel('left','F')
@@ -35,20 +36,32 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         pass
     
     def init_data(self):
-        
-        ### plot
+        """ sets all info that is gained after loading a dataset """
         self.vline.setBounds((0, self.Main.Data.nFrames -1))
-
-        for n in range(self.Main.Data.nTrials):
-            pen = pg.mkPen(self.Main.Options.view['colors'][n], width=2)
-            trace = self.plotItem.plot(pen=pen)
-            self.traces.append(trace)
-            
         self.plotItem.setRange(xRange=[0, self.Main.Data.nFrames], disableAutoRange=False)
-        
         self.update_stim_regions()
         
-
+    def init_traces(self):
+        """ creates the traces, depending on the number of ROIs selected. """
+        nActiveROIs = len(self.Main.Options.ROI['active_ROIs'])
+        
+        # one ROI active, normal mode: traces overlaid, colored to stim class
+        if nActiveROIs == 1:
+            for n in range(self.Main.Data.nTrials):
+                pen = pg.mkPen(self.Main.Options.view['colors'][n], width=2)
+                trace = self.plotItem.plot(pen=pen)
+                self.traces.append(trace)
+                
+        # multiple ROI active, traces colored to ROI
+        if nActiveROIs > 1:
+            colors = self.Main.Processing.calc_colormaps(nActiveROIs)
+            for i,ROI_id in enumerate(self.Main.Options.ROI['active_ROIs']):
+                for n in range(self.Main.Data.nTrials):
+                    pen = pg.mkPen(colors[i], width=2)
+                    trace = self.plotItem.plot(pen=pen)
+                    self.traces.append(trace)
+        pass
+    
     def update_stim_regions(self):
         """ delete all possibly present stimulus regions and draw new ones """
         # delete preset if any
@@ -97,29 +110,48 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
     
     def update_traces(self):
         """ update traces - for speed reasons via direct call"""
+        active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
+        nActiveROIs = len(self.Main.Options.ROI['active_ROIs'])
         
         # do not run if no ROIs
-        if (self.Main.ROIs.nROIs > 0 and self.Main.Options.ROI['active_ROI_id'] != None):
-            active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
-                
-            # implementation using the pyqtgraph internal slicing
-            """ fix idea: after this is a local copy, then the get_ROI_mask func can be put into the ROI class"""
-            ROI = self.Main.ROIs.ROI_list[self.Main.Options.ROI['active_ROI_id']]
+        if len(self.Main.ROIs.ROI_list) > 0:
             
-            # func bool mask slicing
-            mask, inds = self.Main.ROIs.get_ROI_mask(ROI)  ### FIXME signal needed?
-            
-            if self.Main.Options.view['show_dFF']:
-                sliced = self.Main.Data.dFF[mask,:,:][:,:,active_inds]
-            else:
-                sliced = self.Main.Data.raw[mask,:,:][:,:,active_inds]
+            # if only one is selected: normal mode
+            if nActiveROIs == 1:
+                ROI = self.Main.ROIs.ROI_list[self.Main.Options.ROI['active_ROIs'][0]]
+                Traces = self.get_traces(ROI)
     
-            Traces = sp.average(sliced,axis=0)
+                for n,ind in enumerate(active_inds):
+                    self.traces[ind].setData(Traces[:,n])
+                    
+            # if more than one: multi_ROI_mode
+            if nActiveROIs > 1:
+                for i,ROI_id in enumerate(self.Main.Options.ROI['active_ROIs']):
+                    ROI = self.Main.ROIs.ROI_list[ROI_id]
+                    Traces = self.get_traces(ROI)
+                    
+                    for n,ind in enumerate(active_inds):
+                        mapped_ind = ind + i * len(active_inds)
+                        self.traces[mapped_ind].setData(Traces[:,n])
+                
+        
+        # if no ROIs, hide all
+        else:
+            [trace.hide() for trace in self.traces]
+            
+    def get_traces(self,ROI):
+        """ helper for calculating the traces matrix """
+        active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
+        # func bool mask slicing
+        mask, inds = self.Main.ROIs.get_ROI_mask(ROI)  ### FIXME signal needed?
+        
+        if self.Main.Options.view['show_dFF']:
+            sliced = self.Main.Data.dFF[mask,:,:][:,:,active_inds]
+        else:
+            sliced = self.Main.Data.raw[mask,:,:][:,:,active_inds]
+        Traces = sp.average(sliced,axis=0)
+        return Traces
 
-            
-            for n,ind in enumerate(active_inds):
-                self.traces[ind].setData(Traces[:,n])
-            
             
     def reset(self):
         for trace in self.traces:
@@ -142,8 +174,6 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
 #        for vline in self.Main.Data_Display.Traces_Visualizer_Stimsorted.vlines:
 #            vline.setValue(pos)
         
-        
-
     pass
 
 if __name__ == '__main__':

@@ -93,86 +93,40 @@ class Processing_Object(object):
         self.Main.Options.general['dFF_was_calc'] = True
 
 
-    def calc_colormaps(self,nColors,hot=False):
-        """ generate evenly spaced colors on the HSV wheel """
-        h = sp.linspace(0,360,nColors,endpoint=False).astype('int').tolist()
+    def calc_colormaps(self,nColors,HSVsubset=(0,360),HSVoffset=0):
+        colors = self.calc_colors(nColors,HSVsubset,HSVoffset)
+        color_maps = [self.calc_colormap(color) for color in colors]
+        return colors, color_maps
+        
+    def calc_colors(self,nColors,HSVsubset=(0,360),HSVoffset=0):
+        h = sp.linspace(0,360,nColors,endpoint=False).astype('int')
+        h = self.add_circular_offset(h,HSVoffset,HSVsubset[1]).tolist()
         s = [255] * nColors
         v = [255] * nColors
-        color_maps = []
         colors = []
         for n in range(nColors):
             Color = QColor()
             Color.setHsv(h[n],s[n],v[n])
-            rgb = Color.getRgb()
-            if hot == False:
-                pos = sp.array([1,0])
-                cols = sp.array([rgb,[0,0,0,0]],dtype=sp.ubyte)
-                cmap = PGColorMap(pos,cols)
-                colors.append(rgb)
-                color_maps.append(cmap)
-                pass
-            if hot == True:
-                pos = sp.array([1,0.8,0])
-                cols = sp.array([[255,255,255,255],rgb,[0,0,0,255]],dtype=sp.ubyte)
-                cmap = PGColorMap(pos,cols)
-                colors.append(rgb)
-                color_maps.append(cmap)
-                pass
-            pass
-        return colors, color_maps
+            colors.append(Color.getRgb())
+        return colors
     
+    def calc_colormap(self,rgba):
+        """ input is a rgb(a) tuple returns PGColorMap """
+        pos = sp.array([1,0])
+        cols = sp.array([rgba,[0,0,0,0]],dtype=sp.ubyte)
+        cmap = PGColorMap(pos,cols)
+        return cmap
+        
+        pass
+    
+    def add_circular_offset(self,array,offset,bound):
+        """ helper function to rotate the color wheel"""
+        rotated = sp.array([val % bound if val > bound else val for val in (array + offset)])
+        return rotated
     pass
         
-#    ### readers / loaders
-#    def load(self):
-#        """ load all """ 
-#        pass
-#    
-#    def load_multi_stack_data(self):
-#        """ load the data from disk """
-#        pass
-#    
-#    def load_traces_data(self):
-#        """ load the data from disk """
-#        pass
-#
-#    def read_tifs(self,paths):
-#        """ read tifs found at paths (list with paths) """
-#        # reading
-#        x,y,t = io.read_tiffstack(paths[0]).shape
-#        n = len(paths)
-#        self.raw = sp.zeros((x,y,t,n),dtype='uint16')
-#        self.dFF = sp.zeros((x,y,t,n),dtype='float32')
-#
-#        for n,path in enumerate(paths):
-#            print "loading dataset from " + path
-#            print "Dataset size: " + str(os.stat(path).st_size / 1000000.0) + ' MB'
-##            self.Main.MainWindow.statusBar().showMessage("loading dataset: " + path)  ### FIXME signal needed
-#            t_stack = io.read_tiffstack(path)
-#            self.raw[:,:,:,n] = t_stack
-#            
-##            self.dFF[:,:,:,n] = self.calc_dFF(t_stack,self.Main.Options.preprocessing['dFF_frames'])
-#        
-#        self.nTrials = len(paths)
-#        self.nFrames = self.raw.shape[2]
-##        self.Main.MainWindow.statusBar().clearMessage()  ### FIXME signal needed
-#        
-#        # hacking in metadata. FIXME
-#        self.Metadata = Metadata_Object(self.Main,self)
-#        self.Metadata.paths = paths
-#        self.Metadata.trial_labels = paths
-#        
-#        self.Main.Options.view['show_flags'] = sp.ones(self.Main.Data.nTrials,dtype='bool')
-#        pass
-    
-#    def associate_metadata(self,meta_data,recalc=True):
-#        """ link meta_data to this dataset, per default do recalculations of
-#        dFF, traces, filters etc """
-#        pass
-#    
-#    ### writers / savers
-#    def write_data_object(self,path):
-#        pass
-#    
-#    def save(self):
-#        pass
+
+if __name__ == '__main__':
+    import Main
+    Main.main()
+    pass

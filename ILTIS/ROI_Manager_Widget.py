@@ -6,8 +6,6 @@ Created on Wed Apr 15 14:58:09 2015
 """
 from PyQt4 import Qt, QtGui, QtCore
 import pyqtgraph as pg
-from Signals import Signals
-from ROIs_Object import myCircleROI,myPolyLineROI
 
 
 class ROI_Manager_Widget(QtGui.QTableWidget):
@@ -23,44 +21,43 @@ class ROI_Manager_Widget(QtGui.QTableWidget):
         
         self.setColumnCount(1)
         self.setHorizontalHeaderLabels(['ROI label'])
-        self.itemChanged.connect(self.Main.ROIs.ROI_label_change)
-        self.cellClicked.connect(self.clicked)
+        self.itemChanged.connect(self.Main.ROIs.ROI_label_change) # move function to this class?
         self.horizontalHeader().setStretchLastSection(True)
+        
+        # connect
+        self.itemSelectionChanged.connect(self.selection_changed)
+        
+#        self.setSelectionMode(Qt.QAbstractItemView.ExtendedSelection) 
         pass
 
     def init_data(self):
+
         pass    
                
     def update(self):
+        """  """
         self.setRowCount(len(self.Main.ROIs.ROI_list))
         for i,ROI in enumerate(self.Main.ROIs.ROI_list):
             self.setItem(i,0,QtGui.QTableWidgetItem(ROI.label))
 
-            if i == self.Main.Options.ROI['active_ROI_id']:
-                if type(ROI) == myCircleROI:
-                    ROI.setPen(pg.mkPen(pg.mkColor('y'),width=1.8)) ### FIXME layer pen and highlight pen
-                if type(ROI) == myPolyLineROI:
-                    for segment in ROI.segments:
-                        segment.setPen(pg.mkPen(pg.mkColor('y'),width=1.8)) ### FIXME layer pen and highlight pen
-            else:
-                if type(ROI) == myCircleROI:
-                    ROI.setPen(pg.mkPen(self.Main.Options.view['colors'][ROI.layer],width=1.8))
-                if type(ROI) == myPolyLineROI:
-                    for segment in ROI.segments:
-                        segment.setPen(pg.mkPen(self.Main.Options.view['colors'][ROI.layer],width=1.8))
-        
-        if self.Main.Options.ROI['active_ROI_id'] != None:
-            self.selectRow(self.Main.Options.ROI['active_ROI_id'])
+        [self.selectRow(i) for i in self.Main.Options.ROI['active_ROIs']]
         
     def reset(self):
+        """ remove all rows ... """
         pass
-
-    def clicked(self,row,col):
-        self.Main.Options.ROI['active_ROI_id'] = row
-        self.update()
-        self.Main.Data_Display.Traces_Visualizer.update()  ### FIXME signal needed
+        
+    def selection_changed(self):     
+        """ upon click in the table """
+        selection = [item.row() for item in self.selectedItems()]
+        if len(selection) == 1:
+            [ROI.deactivate() for ROI in self.Main.ROIs.ROI_list]
+        [ROI.activate() for ROI in [self.Main.ROIs.ROI_list[ind] for ind in selection]]
+        self.Main.ROIs.set_active_ROIs()
+        pass
          
     
 
 if __name__ == '__main__':
+    import Main
+    Main.main()
     pass

@@ -119,12 +119,11 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         
     def update_display_settings(self):
         """ this is handled via signal/slot mechanism"""
-        if (self.Main.ROIs.nROIs > 0 and self.Main.Options.ROI['active_ROI_id'] != None):
+        if len(self.Main.ROIs.ROI_list) > 0:
             active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
             Traces = self.get_traces()
             
-            for trace in self.traces:
-                trace.hide()
+            [trace.hide() for trace in self.traces]
                 
             for n,ind in enumerate(active_inds):
                     self.traces[ind].setData(Traces[:,n])
@@ -149,30 +148,38 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
     def get_traces(self):
         """ helper for calculating the traces matrix """
         active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
-                
-        # implementation using the pyqtgraph internal slicing
-        ROI = self.Main.ROIs.ROI_list[self.Main.Options.ROI['active_ROI_id']]
-        
-        # func bool mask slicing
-        mask, inds = self.Main.ROIs.get_ROI_mask(ROI)  ### FIXME signal needed?
-        
-        if self.Main.Options.view['show_dFF']:
-            sliced = self.Main.Data.dFF[mask,:,:][:,:,active_inds]
-        else:
-            sliced = self.Main.Data.raw[mask,:,:][:,:,active_inds]
 
-        Traces = sp.average(sliced,axis=0)
+        # if only one is selected: normal mode
+        if len(self.Main.Options.ROI['active_ROIs']) == 1:
+                    
+            # implementation using the pyqtgraph internal slicing
+            ROI_ind = self.Main.Options.ROI['active_ROIs'][0]
+            ROI = self.Main.ROIs.ROI_list[ROI_ind]
+            
+            # func bool mask slicing
+            mask, inds = self.Main.ROIs.get_ROI_mask(ROI)  ### FIXME signal needed?
+            
+            if self.Main.Options.view['show_dFF']:
+                sliced = self.Main.Data.dFF[mask,:,:][:,:,active_inds]
+            else:
+                sliced = self.Main.Data.raw[mask,:,:][:,:,active_inds]
+    
+            Traces = sp.average(sliced,axis=0)
         
-        return Traces
+            return Traces
+        if len(self.Main.Options.ROI['active_ROIs']) == 1:
+            print "multiROImode not supported"
         
     def update_traces(self):
         """ is called upon all ROI and Dataset changes """
-        if (self.Main.ROIs.nROIs > 0 and self.Main.Options.ROI['active_ROI_id'] != None):
+        if len(self.Main.ROIs.ROI_list) > 0:
             active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
             Traces = self.get_traces()
 
             for n,ind in enumerate(active_inds):
                 self.traces[ind].setData(Traces[:,n])
+        else:
+            [trace.hide() for trace in self.traces]
 
     def reset(self):
         for trace in self.traces:

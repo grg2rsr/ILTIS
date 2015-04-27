@@ -75,8 +75,11 @@ class IO_Object(object):
     
     def read_Data(self):
         """ data loader: opens a file dialog asking for  """
-        paths = self.OpenFileDialog(title='Open data set', default_dir=self.Main.Options.general['cwd'], extension='(*.tif *.ids *.lsm)')
+        # paths = self.OpenFileDialog(title='Open data set', default_dir=self.Main.Options.general['cwd'], extension='(*.tif *.ids *.lsm)')
         
+        ### FIXME hacked in for fast testing start!
+        paths = ['/home/georg/Dropbox/python/ILTIS/testdata/EXP6DO_R01_GR1_B1.tif','/home/georg/Dropbox/python/ILTIS/testdata/EXP6DO_R03_GR1_B1.tif','/home/georg/Dropbox/python/ILTIS/testdata/EXP6DO_R04_GR1_B1.tif']
+
         if len(paths) == 0:
             return None
         if len(paths) == 1:
