@@ -19,28 +19,12 @@ class Processing_Object(object):
         self.Main = Main
         self.Data = None
         
-        
-
-        
-        # calculate colormaps here, but store in Options.view['colormaps']        
-        pos = sp.array([1,0.66,0.33,0])
-        cols = sp.array([[255,255,255,255],[255,220,0,255],[185,0,0,255],[0,0,0,0]],dtype=sp.ubyte)
-        self.Main.Options.view['heatmap'] = PGColorMap(pos,cols)
-        
-        pos = sp.array([1,0])
-        cols = sp.array([[255,255,255,255],[0,0,0,255]],dtype=sp.ubyte)
-        self.Main.Options.view['graymap'] = PGColorMap(pos,cols)
+        heatmap, graymap = self.calc_preset_colormaps()
+        self.Main.Options.view['heatmap'] = heatmap
+        self.Main.Options.view['graymap'] = graymap
         pass
 
 
-    ### calculations
-    def calc_extraction_mask(self):
-        """ calculate the extraction mask based on ROIs """
-        pass
-    
-    def calc_traces(self):
-        """ """
-        pass
     
     def calc_gaussian_smooth(self):
         """ apply gaussian """
@@ -92,7 +76,20 @@ class Processing_Object(object):
         self.Main.Data.dFF = (data_tmp - bck) / bck
         self.Main.Options.general['dFF_was_calc'] = True
 
+#==============================================================================
+    ### dataset extraction related 
+#==============================================================================
+    def calc_extraction_mask(self):
+        """ calculate the extraction mask based on ROIs """
+        pass
+    
+    def calc_traces(self):
+        """ """
+        pass
 
+#==============================================================================
+    ### color calculations
+#==============================================================================
     def calc_colormaps(self,nColors,HSVsubset=(0,360),HSVoffset=0):
         colors = self.calc_colors(nColors,HSVsubset,HSVoffset)
         color_maps = [self.calc_colormap(color) for color in colors]
@@ -117,7 +114,17 @@ class Processing_Object(object):
         cmap = PGColorMap(pos,cols)
         return cmap
         
-        pass
+    def calc_preset_colormaps(self):
+        pos = sp.array([1,0.66,0.33,0])
+        cols = sp.array([[255,255,255,255],[255,220,0,255],[185,0,0,255],[0,0,0,0]],dtype=sp.ubyte)
+        heatmap = PGColorMap(pos,cols)
+
+        pos = sp.array([1,0])
+        cols = sp.array([[255,255,255,255],[0,0,0,255]],dtype=sp.ubyte)
+        graymap = PGColorMap(pos,cols)
+        
+        return heatmap, graymap
+        
     
     def add_circular_offset(self,array,offset,bound):
         """ helper function to rotate the color wheel"""

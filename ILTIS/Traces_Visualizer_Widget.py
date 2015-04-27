@@ -13,7 +13,6 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         super(Traces_Visualizer_Widget,self).__init__()
         
         self.Main = Main
-#        self.Main.Traces_Visualizer = self        
         self.Data_Display = parent
         
         self.plotWidget = []        
@@ -45,6 +44,10 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         """ creates the traces, depending on the number of ROIs selected. """
         nActiveROIs = len(self.Main.Options.ROI['active_ROIs'])
         
+        # delete all present
+        [trace.clear() for trace in self.traces]
+        self.traces = []
+        
         # one ROI active, normal mode: traces overlaid, colored to stim class
         if nActiveROIs == 1:
             for n in range(self.Main.Data.nTrials):
@@ -54,13 +57,14 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
                 
         # multiple ROI active, traces colored to ROI
         if nActiveROIs > 1:
-            colors = self.Main.Processing.calc_colormaps(nActiveROIs)
+            colors = self.Main.Processing.calc_colors(nActiveROIs)
             for i,ROI_id in enumerate(self.Main.Options.ROI['active_ROIs']):
                 for n in range(self.Main.Data.nTrials):
                     pen = pg.mkPen(colors[i], width=2)
                     trace = self.plotItem.plot(pen=pen)
                     self.traces.append(trace)
-        pass
+        
+        self.update_traces()
     
     def update_stim_regions(self):
         """ delete all possibly present stimulus regions and draw new ones """
@@ -70,7 +74,7 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
             
         self.stim_regions = []
 
-        # color stimulus regions
+        # gray stimulus regions
         for stim_id in range(self.Main.Options.preprocessing['stimuli'].shape[0]):
             stim_frames = self.Main.Options.preprocessing['stimuli'][stim_id,:]
             stim_region = pg.LinearRegionItem(values=stim_frames,movable=False,brush=pg.mkBrush([50,50,50,100]))
@@ -80,21 +84,15 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
             self.plotItem.addItem(stim_region)
             self.stim_regions.append(stim_region)
             pass
-
-#                            
-#        # update stim marker
-#        for i,stim_region in enumerate(self.stim_regions):
-#            stim_frames = self.Main.Options.preprocessing['stimuli'][i]
-#            stim_region.setRegion(stim_frames)
-            
                     
     def update_display_settings(self):
         """ this is handled via signal/slot mechanism"""
-        for n,val in enumerate(self.Main.Options.view['show_flags']):
-            if val == True:
-                self.traces[n].show()
-            else:
-                self.traces[n].hide()
+        if len(self.Main.Options.ROI['active_ROIs']) > 0:
+            for n,val in enumerate(self.Main.Options.view['show_flags']):
+                if val == True:
+                    self.traces[n].show()
+                else:
+                    self.traces[n].hide()
 
         # plot labels
         if self.Main.Options.view['show_dFF'] == True:

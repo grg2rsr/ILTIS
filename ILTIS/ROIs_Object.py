@@ -85,14 +85,14 @@ class ROIs_Object(QtCore.QObject):
         
         #
         self.ROI_list.append(ROI)
+        self.Main.Data_Display.Frame_Visualizer.ViewBox.addItem(ROI)
         
-        self.Main.Options.ROI['active_ROIs'] = self.get_active_ROIs()[1]
-        
-        self.Main.Data_Display.Frame_Visualizer.ViewBox.addItem(ROI)  ### FIXME signal needed
-        
+        self.set_active_ROIs()
         self.Main.MainWindow.Front_Control_Panel.ROI_Manager.update()
-        self.Main.MainWindow.Data_Display.Traces_Visualizer.update_traces()
-        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
+        
+#        self.Main.Options.ROI['active_ROIs'] = self.get_active_ROIs()[1]
+#        self.Main.MainWindow.Data_Display.Traces_Visualizer.update_traces()
+#        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
 
         
     def remove_ROI(self,evt):
@@ -105,9 +105,7 @@ class ROIs_Object(QtCore.QObject):
         
         self.Main.MainWindow.Front_Control_Panel.ROI_Manager.update()
         self.Main.MainWindow.Data_Display.Traces_Visualizer.update_traces()
-        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
-        
-        
+#        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
                
     def get_active_ROIs(self):
         """ returns both boolean vector and indices """
@@ -123,8 +121,10 @@ class ROIs_Object(QtCore.QObject):
         
         
     def ROI_label_change(self,evt): # find out where this stub is from and why it is needed
+        """ connected to ROI manager textChange """
         self.ROI_list[evt.row()].label = evt.text()
         
+
                     
     def get_ROI_mask(self,ROI):
         """ helper for slicing the pixels out of the image below a ROI 
@@ -147,10 +147,15 @@ class ROIs_Object(QtCore.QObject):
             return None
 
         ROI = evt[0]
+        if not(ROI.active):
+            [roi.deactivate() for roi in self.ROI_list]
+            ROI.activate()
+            self.set_active_ROIs()
+            
         self.Main.Options.ROI['active_ROI_id'] = self.ROI_list.index(ROI)
         
         self.Main.MainWindow.Data_Display.Traces_Visualizer.update_traces()
-        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
+#        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
         
 #    def ROI_hover(self,evt): # this one can be reimplemented
 #        """ on ROI hover: update traces with the ROI hovered """
@@ -168,25 +173,26 @@ class ROIs_Object(QtCore.QObject):
         ROI = evt.sender()
         modifiers = QtGui.QApplication.keyboardModifiers()
         if modifiers == QtCore.Qt.ShiftModifier:
+            ROI.toggle_state()
+            "shift clicked"
             pass
         else:
             [roi.deactivate() for roi in self.ROI_list]
-        ROI.activate()
+            "normal clicked"
+            ROI.toggle_state()
         self.set_active_ROIs()
         self.Main.MainWindow.Front_Control_Panel.ROI_Manager.update()
+#        self.Main.MainWindow.Front_Control_Panel.ROI_Manager.selection_changed()
         self.Main.MainWindow.Data_Display.Traces_Visualizer.update_traces()
-        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
+#        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
         
 
-
-
-class myCircleROI(pg.CircleROI):
-    def __init__(self,Main,pos,size,label,**kwargs):
-        super(myCircleROI,self).__init__(pos,size,**kwargs)
+class myROI(object):
+    def __init__(self,Main,label):
         self.Main = Main
-        self.id = None
         self.label = label
         self.active = False
+        self.textItem = pg.TextItem(text=label)
         
     def activate(self):
         self.active = True
@@ -195,29 +201,104 @@ class myCircleROI(pg.CircleROI):
     def deactivate(self):
         self.active = False
         self.setPen(pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8))
+    
+    def toggle_state(self):
+        if self.active == True:
+            self.deactivate()
+        if self.active == False:
+            self.activate()
+        pass
         
+        
+class myCircleROI(pg.CircleROI,myROI):
+    def __init__(self,Main,pos,size,label,**kwargs):
+        pg.CircleROI.__init__(self,pos,size,**kwargs)
+        myROI.__init__(self, Main, label)
+        
+#        super(myCircleROI,self).__init__(pos,size,**kwargs)
         pass
     pass
-
-class myPolyLineROI(pg.PolyLineROI):
+        
+class myPolyLineROI(pg.PolyLineROI,myROI):
     def __init__(self,Main,positions,label,**kwargs):
-        super(myPolyLineROI,self).__init__(positions,**kwargs)
-        self.Main = Main
-        self.id = None
-        self.label = label
-        self.active = False
+        pg.PolyLineROI.__init__(self, positions,**kwargs)
+        myROI.__init__(self, Main, label)
+#        super(myPolyLineROI,self).__init__(positions,**kwargs)
 
     def activate(self):
+        print "now I am called"
         self.active = True
         for segment in self.segments:
-            self.setPen(pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8))
+            segment.setPen(pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8))
     
     def deactivate(self):
+        print "now I am called deactivaged"
         self.active = False
         for segment in self.segments:
-            self.setPen(pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8))
+            segment.setPen(pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8))
         pass
     pass
+
+
+#class myCircleROI(pg.CircleROI):
+#    def __init__(self,Main,pos,size,label,**kwargs):
+#        super(myCircleROI,self).__init__(pos,size,**kwargs)
+#        self.Main = Main
+#        self.id = None
+#        self.label = label
+#        self.active = False
+#        
+#        self.textItem = pg.TextItem(text=label)
+#        
+#    def activate(self):
+#        self.active = True
+#        self.setPen(pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8))
+#    
+#    def deactivate(self):
+#        self.active = False
+#        self.setPen(pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8))
+#    
+#    def toggle_state(self):
+#        if self.active == True:
+#            self.deactivate()
+#        if self.active == False:
+#            self.activate()
+#        pass
+#    
+##    def get_ROI_center(self,ROI): # obsolete?
+##        """ returns ROI center, used for label show """
+##        pos = ROI.getState()['pos']
+##        pos = sp.array([pos.x(),pos.y()])
+##        pos = pos + self.Main.Options.ROI['diameter'] / 2.0 # here is is a plus. probably a ROI has it's coordinate 0,0 at the upper left corner, whereas the image 0,0 is bottom left
+##        return pos
+#    pass
+#
+#class myPolyLineROI(pg.PolyLineROI):
+#    def __init__(self,Main,positions,label,**kwargs):
+#        super(myPolyLineROI,self).__init__(positions,**kwargs)
+#        self.Main = Main
+#        self.id = None
+#        self.label = label
+#        self.active = False
+#
+#    def activate(self):
+#        self.active = True
+#        for segment in self.segments:
+#            self.setPen(pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8))
+#    
+#    def deactivate(self):
+#        self.active = False
+#        for segment in self.segments:
+#            self.setPen(pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8))
+#        pass
+#    
+#    def toggle_state(self):
+#        if self.active == True:
+#            self.deactivate()
+#        if self.active == False:
+#            self.activate()
+#        pass
+#    pass
 
 
 

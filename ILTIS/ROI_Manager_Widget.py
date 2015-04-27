@@ -18,16 +18,18 @@ class ROI_Manager_Widget(QtGui.QTableWidget):
         self.init_UI()
         
     def init_UI(self):
-        
+        # UI
         self.setColumnCount(1)
         self.setHorizontalHeaderLabels(['ROI label'])
-        self.itemChanged.connect(self.Main.ROIs.ROI_label_change) # move function to this class?
         self.horizontalHeader().setStretchLastSection(True)
         
         # connect
         self.itemSelectionChanged.connect(self.selection_changed)
+        self.itemChanged.connect(self.Main.ROIs.ROI_label_change) # move function to this class?
         
-#        self.setSelectionMode(Qt.QAbstractItemView.ExtendedSelection) 
+        pass
+    
+    def connect(self):
         pass
 
     def init_data(self):
@@ -35,12 +37,15 @@ class ROI_Manager_Widget(QtGui.QTableWidget):
         pass    
                
     def update(self):
-        """  """
+        """ purely visual """
+        print "update called"
         self.setRowCount(len(self.Main.ROIs.ROI_list))
         for i,ROI in enumerate(self.Main.ROIs.ROI_list):
             self.setItem(i,0,QtGui.QTableWidgetItem(ROI.label))
-
+        
+        self.blockSignals(True)
         [self.selectRow(i) for i in self.Main.Options.ROI['active_ROIs']]
+        self.blockSignals(False)
         
     def reset(self):
         """ remove all rows ... """
@@ -48,6 +53,7 @@ class ROI_Manager_Widget(QtGui.QTableWidget):
         
     def selection_changed(self):     
         """ upon click in the table """
+        print "selection changed"
         selection = [item.row() for item in self.selectedItems()]
         if len(selection) == 1:
             [ROI.deactivate() for ROI in self.Main.ROIs.ROI_list]

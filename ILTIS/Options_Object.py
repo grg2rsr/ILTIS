@@ -95,7 +95,8 @@ class Options_Object(QtCore.QObject):
                      'color_maps':None,
                      'colors':None,
                      'heatmap':None,
-                     'graymap':None
+                     'graymap':None,
+                     'jetmap':None,
                      }
                      
         self.ROI = {'type':'circle',
