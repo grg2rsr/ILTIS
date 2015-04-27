@@ -103,7 +103,8 @@ class Options_Object(QtCore.QObject):
                     'diameter':8,
                     'active_ROIs':[],
                     'active_color':[255,255,255,255],
-                    'inactive_color':[255,255,255,100]}
+                    'inactive_color':[255,255,255,100],
+                    'show_labels':True}
                     
         self.export = {'format':'.csv',
                        'data':'dFF',

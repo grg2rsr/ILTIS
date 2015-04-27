@@ -21,31 +21,6 @@ class Options_Control_Widget(QtGui.QTabWidget):
         """ deactivate all Qt Signals from this object during init_UI 
         definition of options_string: row_label"""
         self.setWindowTitle('Options')    
-#        self.make_rows()
-
-
-#        self.settable_options = [
-#                                {'dict_name':'general','param_name':'verbose','tab_label':'General','row_label':'verbose mode','kind':'choices','choices':['True','False']},
-#                                {'dict_name':'general','param_name':'options_filepath','tab_label':'General','row_label':'options filepath','kind':'path'},
-#                                {'dict_name':'general','param_name':'cwd','tab_label':'General','row_label':'current working directory','kind':'path'},
-#        
-#                                {'dict_name':'preprocessing','param_name':'nStimuli','tab_label':'Preprocessing','row_label':'Number of stimuli per trial','kind':'infer'},
-#                                {'dict_name':'preprocessing','param_name':'stimuli','tab_label':'Preprocessing','row_label':'start/stop frame of stimuli','kind':'infer'},
-#                                {'dict_name':'preprocessing','param_name':'dFF_frames','tab_label':'Preprocessing','row_label':'frames for background calculation','kind':'infer'},
-#                                {'dict_name':'preprocessing','param_name':'filter_size','tab_label':'Preprocessing','row_label':'xy t filter size','kind':'infer'},
-#                                
-#                                {'dict_name':'preprocessing','param_name':'filter_target','tab_label':'General','row_label':'apply filter to','kind':'choices','choices':['raw','dFF']},
-#                                {'dict_name':'view','param_name':'composition_mode','tab_label':'View','row_label':'image composition mode','kind':'choices','choices':self.QtCompositionModes},
-#                                
-#                                {'dict_name':'view','param_name':'trial_labels_on_traces_vis','tab_label':'View','row_label':'show trial labels on stim sorted traces','kind':'choices','choices':['True','False']},
-#                                
-#                                {'dict_name':'ROI','param_name':'diameter','tab_label':'View','row_label':'ROI diameter','kind':'infer'},
-#                                {'dict_name':'ROI','param_name':'type','tab_label':'View','row_label':'ROI type','kind':'choices','choices':['circle','polygon']},
-#                                {'dict_name':'ROI','param_name':'place_in_layer','tab_label':'View','row_label':'place ROI in layer','kind':'infer'},
-#                                {'dict_name':'ROI','param_name':'default_layer','tab_label':'View','row_label':'ROI default layer','kind':'infer'},
-#                                
-
-#                                ]
 
         ### general
         FormLayout = self.make_tab('General')
@@ -71,6 +46,7 @@ class Options_Control_Widget(QtGui.QTabWidget):
         FormLayout = self.make_tab('ROI')
         FormLayout.addRow('ROI default diameter',SingleValueWidget(self,'ROI','diameter','i'))
         FormLayout.addRow('ROI type',StringChoiceWidget(self,'ROI','type',choices=['circle','polygon']))
+        FormLayout.addRow('show ROI labels',BooleanChoiceWidget(self,'ROI','show_labels'))
 
         ### export
         FormLayout = self.make_tab('Export')

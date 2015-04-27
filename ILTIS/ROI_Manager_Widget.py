@@ -38,7 +38,6 @@ class ROI_Manager_Widget(QtGui.QTableWidget):
                
     def update(self):
         """ purely visual """
-        print "update called"
         self.setRowCount(len(self.Main.ROIs.ROI_list))
         for i,ROI in enumerate(self.Main.ROIs.ROI_list):
             self.setItem(i,0,QtGui.QTableWidgetItem(ROI.label))
@@ -53,7 +52,6 @@ class ROI_Manager_Widget(QtGui.QTableWidget):
         
     def selection_changed(self):     
         """ upon click in the table """
-        print "selection changed"
         selection = [item.row() for item in self.selectedItems()]
         if len(selection) == 1:
             [ROI.deactivate() for ROI in self.Main.ROIs.ROI_list]

@@ -78,6 +78,7 @@ class Signals(QtCore.QObject):
                  self.Main.MainWindow.Data_Display.Traces_Visualizer.update_display_settings,
                  self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_display_settings,
                  self.Main.MainWindow.Data_Display.LUT_Controlers.update_display_settings,
+                 self.Main.ROIs.update_display_settings,
                  self.Main.Processing.first_time_dFF]
                  
         for slot in slots:
