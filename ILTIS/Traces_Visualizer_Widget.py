@@ -30,18 +30,18 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         self.plotItem.showGrid(x=True,y=True,alpha=0.5)
                 
         self.vline = self.plotItem.addLine(x=self.Data_Display.Frame_Visualizer.frame,movable=True)
-        self.vline.sigPositionChanged.connect(self.update_vline) # add interactivity
-    
+        self.vline.sigPositionChanged.connect(self.vline_pos_changed) # add interactivity
+        
+    def reset(self):
+        for trace in self.traces:
+            trace.clear()
+        self.traces = []        
+        
     def init_data(self):
         """ sets all info that is gained after loading a dataset """
         self.vline.setBounds((0, self.Main.Data.nFrames -1))
         self.plotItem.setRange(xRange=[0, self.Main.Data.nFrames], disableAutoRange=False)
         self.update_stim_regions()
-
-    def reset(self):
-        for trace in self.traces:
-            trace.clear()
-        self.traces = []
         
     def init_traces(self):
         """ creates the traces, depending on the selected number of ROIs and 
@@ -168,25 +168,28 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         pass
     
 
-
-            
-
-
-    def update_vline(self,evt):
+    def vline_pos_changed(self,evt):
         """ updater for the zlayer change caused by the vline """
         vline = evt
         pos = int(vline.pos().x())
         self.Main.Data_Display.Frame_Visualizer.frame = pos
-        self.Main.Data_Display.Frame_Visualizer.update_frame()    
-#        self.vline.setValue(evt.pos().x()) # this is for the keypress event
+        self.Main.Data_Display.Frame_Visualizer.update_frame()
+        self.update_vline(pos)
+
+    def update_vline(self,pos):
+        self.vline.setValue(pos) # this is for the keypress event
         
         # update all lines of Traces_Visualizer_Stimsorted
         for vline in self.Main.Data_Display.Traces_Visualizer_Stimsorted.vlines:
             vline.blockSignals(True)
             vline.setValue(pos)
             vline.blockSignals(False)
-#        for vline in self.Main.Data_Display.Traces_Visualizer_Stimsorted.vlines:
-#            vline.setValue(pos)
+            
+    def wheelEvent(self,evt): # reimplementation
+        d = sp.around(evt.delta() / 120.0) # check this on different machines how much it is
+        self.Main.Data_Display.Frame_Visualizer.frame -= d
+        self.update_vline(self.Main.Data_Display.Frame_Visualizer.frame)
+        self.Main.Data_Display.Frame_Visualizer.update_frame()
         
     pass
 

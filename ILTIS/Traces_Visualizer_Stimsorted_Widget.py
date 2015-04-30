@@ -29,6 +29,7 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
 
     def init_UI(self):
         self.plotWidget = pg.GraphicsLayoutWidget(self)
+        self.plotWidget.wheelEvent = self.wheelEvent # quite hacky ... 
         self.Layout = QtGui.QHBoxLayout(self)
         self.Layout.setMargin(0)
         self.Layout.setSpacing(0)
@@ -36,6 +37,8 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         pass
     
     def init_data(self):
+#        self.reset()
+        
         # some preparations
         self.trial_labels = self.Main.Data.Metadata.trial_labels
         self.trial_indices = range(self.Main.Data.nTrials)
@@ -62,13 +65,13 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             
             # vlines
             vline = plot.addLine(x=self.Data_Display.Frame_Visualizer.frame,movable=True)
-            vline.sigPositionChanged.connect(self.update_vlines) # add interactivity
+            vline.sigPositionChanged.connect(self.vline_pos_changed) # add interactivity
             self.vlines.append(vline)
             
+            # 
+
             # add the plot to the list of plots
             self.plotItems.append(plot)
-
-
                                         
         # set the layout
         self.update_stim_regions()
@@ -167,18 +170,24 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
 
 
     def reset(self):
+        for item in self.plotItems:
+            self.plotWidget.removeItem(item)
+            
         for trace in self.traces:
             trace.clear()
         self.traces = []
         pass
 
-    def update_vlines(self,evt):
-        """ handles sigPositionChanged """
+    def vline_pos_changed(self,evt):
+        """ updater for the zlayer change caused by the vline """
         vline = evt
         pos = int(vline.pos().x())
         self.Main.Data_Display.Frame_Visualizer.frame = pos
         self.Main.Data_Display.Frame_Visualizer.update_frame()    
+        self.update_vlines(pos)
 
+    def update_vlines(self,pos):
+        """ handles sigPositionChanged """
         # update all other lines in this widget as well
         for vline in self.vlines:
             vline.blockSignals(True)
@@ -187,6 +196,15 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             
         # update the line of the other traces widget
         self.Main.Data_Display.Traces_Visualizer.vline.setValue(pos)
+        
+    def wheelEvent(self,evt): # reimplementation
+        d = sp.around(evt.delta() / 120.0) # check this on different machines how much it is
+        self.Main.Data_Display.Frame_Visualizer.frame -= d
+        self.update_vlines(self.Main.Data_Display.Frame_Visualizer.frame)
+        self.Main.Data_Display.Frame_Visualizer.update_frame()
+        
+        
+        
         
 if __name__ == '__main__':
     import Main

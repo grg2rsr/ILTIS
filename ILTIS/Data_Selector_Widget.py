@@ -20,7 +20,7 @@ class Data_Selector_Widget(QtGui.QTableWidget):
         self.setColumnCount(1)
         self.setHorizontalHeaderLabels(['select data'])
         self.horizontalHeader().setStretchLastSection(True)
-        pass
+
     
     def init_data(self):
                 
@@ -29,7 +29,7 @@ class Data_Selector_Widget(QtGui.QTableWidget):
         
         # table entries
         for n,path in enumerate(self.paths):
-            self.setItem(n,0,QtGui.QTableWidgetItem(path))
+            self.setItem(n,0,QtGui.QTableWidgetItem(self.Main.Data.Metadata.trial_labels[n]))
             
             color = self.Main.Options.view['colors'][n]
             QColor = QtGui.QColor(*color)
@@ -47,6 +47,7 @@ class Data_Selector_Widget(QtGui.QTableWidget):
 
         # connect
         self.itemSelectionChanged.connect(self.selection_changed)
+        self.itemChanged.connect(self.labels_changed)
         
         # select all on startup
         selection = QtGui.QTableWidgetSelectionRange(0,0,len(self.paths)-1,0)
@@ -88,12 +89,31 @@ class Data_Selector_Widget(QtGui.QTableWidget):
             self.Main.MainWindow.Data_Display.Traces_Visualizer.init_traces()
             self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.init_traces()
             self.Main.Signals.updateDisplaySettingsSignal.emit()
-            
         pass
 
-    
-    pass
 
+    def labels_changed(self):
+        """ entry point for manual label change """
+        current_labels = self.get_current_labels()
+        print current_labels
+        self.update_labels(current_labels)
+        
+    def get_current_labels(self):
+        """ reads the labels that are currently displayed """
+        labels = [str(self.item(row,0).text()) for row in range(self.rowCount())]
+        return labels
+    
+    def set_current_labels(self):
+        """ writes the labels currently displayed """
+        pass
+    
+    def update_labels(self,labels):
+        """ update the trial_labels of the Metadata object, reinitialize
+        Stimsorted """
+        self.Main.Data.Metadata.trial_labels = labels
+        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.init_data()
+        pass
+        
 
 if __name__ == '__main__':
     import Main

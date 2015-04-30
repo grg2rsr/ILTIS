@@ -115,7 +115,6 @@ class ROIs_Object(QtCore.QObject):
         
     def update_active_ROIs(self):
         """ sets the ROI['active_ROIs'] """
-        print "currently active: ", self.get_active_ROIs()[1]
         self.Main.Options.ROI['active_ROIs'] = self.get_active_ROIs()[1]
         self.Main.MainWindow.Front_Control_Panel.ROI_Manager.set_current_selection()
         
@@ -154,7 +153,7 @@ class ROIs_Object(QtCore.QObject):
         if not(ROI.active):
             [roi.deactivate() for roi in self.ROI_list]
             ROI.activate()
-            self.set_active_ROIs()
+            self.update_active_ROIs()
         
         ROI.update_center()
         self.Main.Options.ROI['last_active'] = self.ROI_list.index(ROI)
