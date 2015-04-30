@@ -84,9 +84,18 @@ class Data_Selector_Widget(QtGui.QTableWidget):
             show_flags_updated[selection] = 1
             self.Main.Options.view['show_flags'] = show_flags_updated
             self.Main.Options.view['last_selected'] = last_selected
+            
+            self.Main.MainWindow.Data_Display.Traces_Visualizer.init_traces()
+            self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.init_traces()
             self.Main.Signals.updateDisplaySettingsSignal.emit()
             
         pass
 
     
+    pass
+
+
+if __name__ == '__main__':
+    import Main
+    Main.main()
     pass

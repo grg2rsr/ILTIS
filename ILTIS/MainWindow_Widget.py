@@ -40,12 +40,13 @@ class MainWindow_Widget(QtGui.QMainWindow):
     def init_UI(self):
         """ """
         # own layout
-        DesktopWidget = QtGui.QDesktopWidget()
-        qrect = DesktopWidget.screenGeometry()
-        height, width = qrect.height(), qrect.width()
+#        DesktopWidget = QtGui.QDesktopWidget()
+#        qrect = DesktopWidget.screenGeometry()
+#        height, width = qrect.height(), qrect.width()
 
-        self.resize(width*0.7,height*0.7)
-        self.move(width/15,height/15)
+#        self.resize(width*0.7,height*0.7)
+#        self.move(width/15,height/15)
+        self.showMaximized()
         
         # ini
         self.Data_Display = Data_Display_Widget(self.Main,self)
@@ -104,12 +105,21 @@ class MainWindow_Widget(QtGui.QMainWindow):
         pass
     
     def setup_ToolBar(self):
+        left_spacer = QtGui.QWidget()
+        left_spacer.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        # spacer widget for right
+        # you can't add the same widget to both left and right. you need two different widgets.
+        right_spacer = QtGui.QWidget()
+        right_spacer.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        
         self.ToolBar = self.addToolBar('Hide')
+        self.ToolBar.addWidget(left_spacer)
         self.ToolBar.addAction(self.toggledFFAction)
         self.ToolBar.addAction(self.toggleMonochromeAction)
         self.ToolBar.addAction(self.toggleAvgAction)
         self.ToolBar.addAction(self.toggleGlobalLevels)
         self.ToolBar.addAction(self.OpenOptionsAction)
+        self.ToolBar.addWidget(right_spacer)
         pass
     
     def setup_StatusBar(self):
@@ -197,7 +207,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                                     
                         'toggleAvgAction':{'label':'Display time average',
                                            'status_tip':'toggles display time average use',
-                                           'icon':None,
+                                           'icon':'/home/georg/python/ILTIS/ILTIS/icons/Average_Image.svg',
                                            'func':self.toggle_avg_img,
                                            'checkable':True,
                                            'no_data_disabled':True},

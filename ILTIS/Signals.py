@@ -14,7 +14,8 @@ class Signals(QtCore.QObject):
     updateTracesSignal = QtCore.pyqtSignal() # this not used because of speed reasons
     updateFrameSignal = QtCore.pyqtSignal() # this is not used because of speed reasons
     LUTchangedSignal = QtCore.pyqtSignal() # this is not used because of speed reasons
-
+    activeROIsChangedSignal = QtCore.pyqtSignal()
+    
     updateDisplaySettingsSignal = QtCore.pyqtSignal()
 
     optionsUpdateSignal = QtCore.pyqtSignal()    
@@ -83,6 +84,13 @@ class Signals(QtCore.QObject):
                  
         for slot in slots:
             self.updateDisplaySettingsSignal.connect(slot)
+            
+        # active ROIs changed
+        slots = [self.Main.MainWindow.Data_Display.Traces_Visualizer.init_traces,
+                 self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.init_traces]
+                 
+        for slot in slots:
+            self.activeROIsChangedSignal.connect(slot)
                  
 
     pass

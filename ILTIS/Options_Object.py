@@ -75,8 +75,8 @@ class Options_Object(QtCore.QObject):
                         'dFF_was_calc':False
                         }
                         
-        self.preprocessing = {'stimuli':sp.array([[20,22],[25,27]]),
-                              'nStimuli':2,
+        self.preprocessing = {'stimuli':sp.array([[25,50]]),
+                              'nStimuli':1,
                               'dFF_frames':[0,20],
                               'filter_xy':0.8,
                               'filter_t':1,
@@ -102,6 +102,7 @@ class Options_Object(QtCore.QObject):
         self.ROI = {'type':'circle',
                     'diameter':8,
                     'active_ROIs':[],
+                    'last_active': None,                                                  
                     'active_color':[255,255,255,255],
                     'inactive_color':[255,255,255,100],
                     'show_labels':True}

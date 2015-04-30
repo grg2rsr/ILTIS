@@ -83,18 +83,16 @@ class ROIs_Object(QtCore.QObject):
         [roi.deactivate() for roi in self.ROI_list]
         ROI.activate()
         
-        #
+        # add ROI
         self.ROI_list.append(ROI)
+        self.Main.Options.ROI['last_active'] = self.ROI_list.index(ROI)
         self.Main.Data_Display.Frame_Visualizer.ViewBox.addItem(ROI)
         
-        self.set_active_ROIs()
+        # update
         self.Main.MainWindow.Front_Control_Panel.ROI_Manager.update()
-        self.update_display_settings()
+        self.update_active_ROIs()
         
-#        self.Main.Options.ROI['active_ROIs'] = self.get_active_ROIs()[1]
-#        self.Main.MainWindow.Data_Display.Traces_Visualizer.update_traces()
-#        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
-
+        
         
     def remove_ROI(self,evt):
         """ remove a ROI, right click from popup menu"""
@@ -104,11 +102,10 @@ class ROIs_Object(QtCore.QObject):
         
         ROI.removeTimer.stop() # fix from luke campagnola (pyqtgraph mailinglist) # seems to be unnecessary now?
         self.ROI_list.remove(ROI)
-        self.Main.Options.ROI['active_ROIs'] = self.get_active_ROIs()[1]
-        
+
         self.Main.MainWindow.Front_Control_Panel.ROI_Manager.update()
-        self.Main.MainWindow.Data_Display.Traces_Visualizer.update_traces()
-#        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
+        self.update_active_ROIs()
+        
                
     def get_active_ROIs(self):
         """ returns both boolean vector and indices """
@@ -116,11 +113,15 @@ class ROIs_Object(QtCore.QObject):
         inds = sp.where(boolvec)[0]
         return boolvec,inds
         
-    def set_active_ROIs(self):
+    def update_active_ROIs(self):
         """ sets the ROI['active_ROIs'] """
+        print "currently active: ", self.get_active_ROIs()[1]
         self.Main.Options.ROI['active_ROIs'] = self.get_active_ROIs()[1]
+        self.Main.MainWindow.Front_Control_Panel.ROI_Manager.set_current_selection()
+        
+        self.update_display_settings()
         self.Main.MainWindow.Data_Display.Traces_Visualizer.init_traces()
-#        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.init_traces()
+        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.init_traces()
         
         
     def ROI_label_change(self,evt): # find out where this stub is from and why it is needed
@@ -156,10 +157,10 @@ class ROIs_Object(QtCore.QObject):
             self.set_active_ROIs()
         
         ROI.update_center()
-        self.Main.Options.ROI['active_ROI_id'] = self.ROI_list.index(ROI)
+        self.Main.Options.ROI['last_active'] = self.ROI_list.index(ROI)
         
         self.Main.MainWindow.Data_Display.Traces_Visualizer.update_traces()
-#        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
+        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
         
 #    def ROI_hover(self,evt): # this one can be reimplemented
 #        """ on ROI hover: update traces with the ROI hovered """
@@ -176,25 +177,41 @@ class ROIs_Object(QtCore.QObject):
         selected """
         ROI = evt.sender()
         modifiers = QtGui.QApplication.keyboardModifiers()
+
         if modifiers == QtCore.Qt.ShiftModifier:
             ROI.toggle_state()
-            "shift clicked"
-            pass
         else:
             [roi.deactivate() for roi in self.ROI_list]
-            "normal clicked"
             ROI.toggle_state()
-        self.set_active_ROIs()
-        self.Main.MainWindow.Front_Control_Panel.ROI_Manager.update()
-#        self.Main.MainWindow.Front_Control_Panel.ROI_Manager.selection_changed()
-        self.Main.MainWindow.Data_Display.Traces_Visualizer.update_traces()
-#        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
+            
+        self.update_active_ROIs()
+        self.Main.Options.ROI['last_active'] = self.ROI_list.index(ROI)
+        self.update_display_settings()
         
     def update_display_settings(self):
+        # handle the labels
         if self.Main.Options.ROI['show_labels'] == True:
             [ROI.labelItem.show() for ROI in self.ROI_list]
         if self.Main.Options.ROI['show_labels'] == False:
             [ROI.labelItem.hide() for ROI in self.ROI_list]
+            
+        # handle the ROI colors
+        nActiveROIs = len(self.Main.Options.ROI['active_ROIs'])
+        
+        # one ROI active, active/inactive color scheme
+        if nActiveROIs == 1:
+            for ROI in self.ROI_list:
+                if ROI.active == True:
+                    ROI.setPen(pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8))
+                if ROI.active == False:
+                    ROI.setPen(pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8))
+                
+        # multiple ROI active, traces colored to ROI
+        if nActiveROIs > 1:
+            colors = self.Main.Processing.calc_colors(nActiveROIs)
+            for i,ROI_id in enumerate(self.Main.Options.ROI['active_ROIs']):
+                self.ROI_list[ROI_id].setPen(pg.mkPen(colors[i],width=1.8))
+                
         pass
     
 class myROI(object):
@@ -218,7 +235,7 @@ class myROI(object):
     def toggle_state(self):
         if self.active == True:
             self.deactivate()
-        if self.active == False:
+        elif self.active == False:
             self.activate()
     
     def update_center(self):
@@ -231,6 +248,7 @@ class myROI(object):
         self.label = text
         self.labelItem.setText(self.label)
         
+       
         
 class myCircleROI(pg.CircleROI,myROI):
     def __init__(self,Main,pos,size,label,**kwargs):

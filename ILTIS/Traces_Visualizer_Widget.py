@@ -31,40 +31,101 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
                 
         self.vline = self.plotItem.addLine(x=self.Data_Display.Frame_Visualizer.frame,movable=True)
         self.vline.sigPositionChanged.connect(self.update_vline) # add interactivity
-
-        pass
     
     def init_data(self):
         """ sets all info that is gained after loading a dataset """
         self.vline.setBounds((0, self.Main.Data.nFrames -1))
         self.plotItem.setRange(xRange=[0, self.Main.Data.nFrames], disableAutoRange=False)
         self.update_stim_regions()
-        
-    def init_traces(self):
-        """ creates the traces, depending on the number of ROIs selected. """
-        nActiveROIs = len(self.Main.Options.ROI['active_ROIs'])
-        
-        # delete all present
-        [trace.clear() for trace in self.traces]
+
+    def reset(self):
+        for trace in self.traces:
+            trace.clear()
         self.traces = []
         
+    def init_traces(self):
+        """ creates the traces, depending on the selected number of ROIs and 
+        datasets. """
+        nActiveROIs = len(self.Main.Options.ROI['active_ROIs'])
+        nActiveTrials = sp.sum(self.Main.Options.view['show_flags'])
+        trial_inds = sp.where(self.Main.Options.view['show_flags'])[0]
+        
+        # delete all present if any
+        if len(self.traces) > 0:
+            self.reset()
+        
         # one ROI active, normal mode: traces overlaid, colored to stim class
+        # this causes traces to be trial1, trial2, trial4 for active: (1,2,4)
         if nActiveROIs == 1:
-            for n in range(self.Main.Data.nTrials):
-                pen = pg.mkPen(self.Main.Options.view['colors'][n], width=2)
+            colors = self.Main.Options.view['colors']
+            for n in range(nActiveTrials):
+                pen = pg.mkPen(colors[trial_inds[n]], width=2)
                 trace = self.plotItem.plot(pen=pen)
                 self.traces.append(trace)
                 
         # multiple ROI active, traces colored to ROI
+        # this results traces to contain roi1 trial1, roi1 trail2, roi1 trial4, roi2 trial1 roi2 trial2, roi2 trial4 for ROI (1,2) trials (1,2,4)
         if nActiveROIs > 1:
             colors = self.Main.Processing.calc_colors(nActiveROIs)
             for i,ROI_id in enumerate(self.Main.Options.ROI['active_ROIs']):
-                for n in range(self.Main.Data.nTrials):
+                for n in range(nActiveTrials):
                     pen = pg.mkPen(colors[i], width=2)
                     trace = self.plotItem.plot(pen=pen)
                     self.traces.append(trace)
         
         self.update_traces()
+
+    def update_traces(self):
+        """ update traces - for speed reasons via direct call"""
+        active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
+        nActiveTrials = sp.sum(self.Main.Options.view['show_flags'])
+        nActiveROIs = len(self.Main.Options.ROI['active_ROIs'])
+        
+        # do not run if no ROIs
+        if len(self.Main.ROIs.ROI_list) > 0:
+            
+            # if only one is selected: normal mode
+            if nActiveROIs == 1:
+                ROI = self.Main.ROIs.ROI_list[self.Main.Options.ROI['active_ROIs'][0]]
+                Traces = self.get_traces(ROI)
+                
+                for i in range(Traces.shape[1]):
+                    self.traces[i].setData(Traces[:,i])
+    
+#                for n,ind in enumerate(active_inds): # this becomes obsolete through the init_traces function. self.traces will always have the same shape as get_traces()
+#                    self.traces[ind].setData(Traces[:,n])
+                    
+            # if more than one: multi_ROI_mode
+            if nActiveROIs > 1:
+                for i,ROI_id in enumerate(self.Main.Options.ROI['active_ROIs']):
+
+                    ROI = self.Main.ROIs.ROI_list[ROI_id]
+                    Traces = self.get_traces(ROI)
+                    for j in range(Traces.shape[1]):
+                        
+                        self.traces[j+i*nActiveTrials].setData(Traces[:,j])
+#                        self.traces[j + i*nActiveROIs].setData(Traces[:,i])
+#                    for n,ind in enumerate(active_inds):
+#                        mapped_ind = ind + i * len(active_inds)
+#                        self.traces[mapped_ind].setData(Traces[:,n])
+                
+        
+        # if no ROIs, hide all
+        else:
+            [trace.hide() for trace in self.traces]
+            
+    def get_traces(self,ROI):
+        """ helper for calculating the traces matrix """
+        active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
+        # func bool mask slicing
+        mask, inds = self.Main.ROIs.get_ROI_mask(ROI)  ### FIXME signal needed?
+        
+        if self.Main.Options.view['show_dFF']:
+            sliced = self.Main.Data.dFF[mask,:,:][:,:,active_inds]
+        else:
+            sliced = self.Main.Data.raw[mask,:,:][:,:,active_inds]
+        Traces = sp.average(sliced,axis=0)
+        return Traces
     
     def update_stim_regions(self):
         """ delete all possibly present stimulus regions and draw new ones """
@@ -87,12 +148,12 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
                     
     def update_display_settings(self):
         """ this is handled via signal/slot mechanism"""
-        if len(self.Main.Options.ROI['active_ROIs']) > 0:
-            for n,val in enumerate(self.Main.Options.view['show_flags']):
-                if val == True:
-                    self.traces[n].show()
-                else:
-                    self.traces[n].hide()
+#        if len(self.Main.Options.ROI['active_ROIs']) > 0:
+#            for n,val in enumerate(self.Main.Options.view['show_flags']):
+#                if val == True:
+#                    self.traces[n].show()
+#                else:
+#                    self.traces[n].hide()
 
         # plot labels
         if self.Main.Options.view['show_dFF'] == True:
@@ -106,55 +167,10 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         
         pass
     
-    def update_traces(self):
-        """ update traces - for speed reasons via direct call"""
-        active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
-        nActiveROIs = len(self.Main.Options.ROI['active_ROIs'])
-        
-        # do not run if no ROIs
-        if len(self.Main.ROIs.ROI_list) > 0:
-            
-            # if only one is selected: normal mode
-            if nActiveROIs == 1:
-                ROI = self.Main.ROIs.ROI_list[self.Main.Options.ROI['active_ROIs'][0]]
-                Traces = self.get_traces(ROI)
-    
-                for n,ind in enumerate(active_inds):
-                    self.traces[ind].setData(Traces[:,n])
-                    
-            # if more than one: multi_ROI_mode
-            if nActiveROIs > 1:
-                for i,ROI_id in enumerate(self.Main.Options.ROI['active_ROIs']):
-                    ROI = self.Main.ROIs.ROI_list[ROI_id]
-                    Traces = self.get_traces(ROI)
-                    
-                    for n,ind in enumerate(active_inds):
-                        mapped_ind = ind + i * len(active_inds)
-                        self.traces[mapped_ind].setData(Traces[:,n])
-                
-        
-        # if no ROIs, hide all
-        else:
-            [trace.hide() for trace in self.traces]
-            
-    def get_traces(self,ROI):
-        """ helper for calculating the traces matrix """
-        active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
-        # func bool mask slicing
-        mask, inds = self.Main.ROIs.get_ROI_mask(ROI)  ### FIXME signal needed?
-        
-        if self.Main.Options.view['show_dFF']:
-            sliced = self.Main.Data.dFF[mask,:,:][:,:,active_inds]
-        else:
-            sliced = self.Main.Data.raw[mask,:,:][:,:,active_inds]
-        Traces = sp.average(sliced,axis=0)
-        return Traces
+
 
             
-    def reset(self):
-        for trace in self.traces:
-            trace.clear()
-        self.traces = []
+
 
     def update_vline(self,evt):
         """ updater for the zlayer change caused by the vline """

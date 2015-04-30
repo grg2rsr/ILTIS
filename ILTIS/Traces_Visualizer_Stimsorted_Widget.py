@@ -21,7 +21,6 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         self.Main = Main
         
         self.plotItems = []
-#        self.plotWidgets = []
         self.traces = []
         self.stim_regions = None # is a list of stimclass holding a list of stim_regions
         self.vlines = []
@@ -49,7 +48,6 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         for i,StimClass in enumerate(range(self.nStimClasses)):
             if self.Main.Options.view['trial_labels_on_traces_vis']:
                 print self.Main.Options.view['trial_labels_on_traces_vis']
-                print "in here???"
                 plot = self.plotWidget.addPlot(title=self.trial_labels_unique[StimClass])
             else:
                 plot = self.plotWidget.addPlot(title=None) # for inheriting from QWidget
@@ -62,18 +60,6 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
                 plot.setYLink(self.plotItems[0])
                 plot.setXLink(self.plotItems[0])
             
-            
-#            # color stimulus regions
-#            self.stim_regions.append([])
-#            for stim_id in range(self.Main.Options.preprocessing['nStimuli']):
-#                stim_frames = self.Main.Options.preprocessing['stimuli'][stim_id]
-#                stim_region = pg.LinearRegionItem(values=stim_frames,movable=False,brush=pg.mkBrush([50,50,50,100]))
-#                for line in stim_region.lines:
-#                    line.hide()
-#                stim_region.setZValue(-1000)
-#                plot.addItem(stim_region)
-#                self.stim_regions[i].append(stim_region)
-
             # vlines
             vline = plot.addLine(x=self.Data_Display.Frame_Visualizer.frame,movable=True)
             vline.sigPositionChanged.connect(self.update_vlines) # add interactivity
@@ -81,6 +67,18 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             
             # add the plot to the list of plots
             self.plotItems.append(plot)
+
+
+                                        
+        # set the layout
+        self.update_stim_regions()
+        self.Layout.addWidget(self.plotWidget)
+    
+    def init_traces(self):
+        """ creates the traces, depending on the number of ROIs selected. """
+        # delete all present
+        [trace.clear() for trace in self.traces]
+        self.traces = []
 
         for trial in self.trial_indices:
             # draw the trace in the correct panel
@@ -91,11 +89,11 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             pen = pg.mkPen(self.Main.Options.view['colors'][trial],width=2)
 
             self.traces.append(self.plotItems[correct_panel_index].plot(pen=pen))
-                                        
-        # set the layout
-        self.update_stim_regions()
-        self.Layout.addWidget(self.plotWidget)
-
+        
+        self.update_traces()
+        pass
+    
+    
     def update_stim_regions(self):
         """ delete all possibly present stimulus regions and draw new ones """
         # delete preset
@@ -119,15 +117,6 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         
     def update_display_settings(self):
         """ this is handled via signal/slot mechanism"""
-        if len(self.Main.ROIs.ROI_list) > 0:
-            active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
-            Traces = self.get_traces()
-            
-            [trace.hide() for trace in self.traces]
-                
-            for n,ind in enumerate(active_inds):
-                    self.traces[ind].setData(Traces[:,n])
-                    self.traces[ind].show()
             
         for i,StimClass in enumerate(range(self.nStimClasses)):
             if self.Main.Options.view['trial_labels_on_traces_vis']:
@@ -144,42 +133,38 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             
         # update stim regions
         self.update_stim_regions()
-    
-    def get_traces(self):
+        
+        # update_traces
+        self.update_traces()
+ 
+
+    def get_traces(self,ROI):
         """ helper for calculating the traces matrix """
         active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
-
-        # if only one is selected: normal mode
-        if len(self.Main.Options.ROI['active_ROIs']) == 1:
-                    
-            # implementation using the pyqtgraph internal slicing
-            ROI_ind = self.Main.Options.ROI['active_ROIs'][0]
-            ROI = self.Main.ROIs.ROI_list[ROI_ind]
-            
-            # func bool mask slicing
-            mask, inds = self.Main.ROIs.get_ROI_mask(ROI)  ### FIXME signal needed?
-            
-            if self.Main.Options.view['show_dFF']:
-                sliced = self.Main.Data.dFF[mask,:,:][:,:,active_inds]
-            else:
-                sliced = self.Main.Data.raw[mask,:,:][:,:,active_inds]
-    
-            Traces = sp.average(sliced,axis=0)
+        # func bool mask slicing
+        mask, inds = self.Main.ROIs.get_ROI_mask(ROI)  ### FIXME signal needed?
         
-            return Traces
-        if len(self.Main.Options.ROI['active_ROIs']) == 1:
-            print "multiROImode not supported"
+        if self.Main.Options.view['show_dFF']:
+            sliced = self.Main.Data.dFF[mask,:,:][:,:,active_inds]
+        else:
+            sliced = self.Main.Data.raw[mask,:,:][:,:,active_inds]
+        Traces = sp.average(sliced,axis=0)
+        return Traces
         
+            
     def update_traces(self):
         """ is called upon all ROI and Dataset changes """
         if len(self.Main.ROIs.ROI_list) > 0:
+            ROI_ind = self.Main.Options.ROI['last_active']
+            ROI = self.Main.ROIs.ROI_list[ROI_ind]
             active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
-            Traces = self.get_traces()
+            Traces = self.get_traces(ROI)
 
             for n,ind in enumerate(active_inds):
                 self.traces[ind].setData(Traces[:,n])
         else:
             [trace.hide() for trace in self.traces]
+
 
     def reset(self):
         for trace in self.traces:

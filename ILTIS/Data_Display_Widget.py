@@ -64,6 +64,7 @@ class Data_Display_Widget(QtGui.QMainWindow): # needs to be a QMainWindow to hav
 #        self.FrameDock = myDock('current frame',size=(10,10),autoOrientation=False)
 #        self.TracesDock = myDock('traces with common time base',size=(10,10))
 #        self.TracesStimsortedDock = myDock('traces sorted to stim class',size=(10,10))
+
         
         self.DockArea.addDock(dock=self.FrameDock,position='top')
         self.DockArea.addDock(dock=self.TracesDock,position='bottom')
@@ -74,6 +75,13 @@ class Data_Display_Widget(QtGui.QMainWindow): # needs to be a QMainWindow to hav
         self.TracesDock.addWidget(self.Traces_Visualizer)
         
         self.DockArea.getContainer(self.TracesDock).tabClicked(self.TracesDock.label)
+        
+        # sizing the FrameDock bigger than TracesDock
+        DesktopWidget = QtGui.QDesktopWidget()
+        qrect = DesktopWidget.screenGeometry()
+        height, width = qrect.height(), qrect.width()
+        self.FrameDock.setStretch(y=(height/3.0) * 2)
+        self.TracesDock.setStretch(y=(height/3.0) * 1)
 
 class myDock(pgd.Dock):
     def __init__(self,name,**kwargs):
