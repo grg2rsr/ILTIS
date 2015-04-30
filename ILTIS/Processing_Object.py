@@ -79,14 +79,68 @@ class Processing_Object(object):
 #==============================================================================
     ### dataset extraction related 
 #==============================================================================
+
     def calc_extraction_mask(self):
-        """ calculate the extraction mask based on ROIs """
+        """ calculates boolean extraction mask based on current ROIs 
+        extraction mask as the shape of (x,y,nROIs), True if pixel is inside
+        ROI """
+        
+        extraction_mask = sp.zeros((self.Main.Data.raw.shape[0],self.Main.Data.shape[1],len(self.Main.ROIs.ROI_list)),dtype='bool')
+        
+        for i,ROI in enumerate(self.Main.ROIs.ROI_list):
+            mask, inds = self.Main.ROIs.get_ROI_mask(ROI)
+            extraction_mask[mask,i] = 1
+            pass
+        
+        self.Main.Data.exctraction_mask = extraction_mask
+        
+    def calc_traces(self,extraction_mask):
+        """ calculates traces based on the extraction_mask 
+        definition: Traces is of shape (t,ID,stim), 
+        t,ID,stim,rep is Traces_sorted """
+        
+        self.Data.Traces = sp.zeros((self.Data.nFrames,extraction_mask.shape[2],self.Data.nTrials))
+
+        for stim_id in range(self.Data.nTrials): # iterate over trials
+            for ROI_id in range(extraction_mask.shape[2]): # iterate over ROIs
+                if self.Main.Options.export['data'] == 'raw':
+                    sliced = self.Main.Data.raw[extraction_mask[:,:,ROI_id],:,stim_id]
+                if self.Main.Options.export['data'] == 'dFF':
+                    sliced = self.Main.Data.dFF[extraction_mask[:,:,ROI_id],:,stim_id]
+                    
+                self.Data.Traces[:,ROI_id,stim_id] = sp.average(sliced,axis=0)
+
+
+    def sort_Traces(self):
+        """ creates a (t,ID,stim,rep) representation of the Traces """
+#        paths = get_path('*.csv',defaultdir='/home/georg/data_local',multiple=True)
+#
+#        nTrials = len(paths)
+#        stim_order = sp.array(stim_order[:nTrials]) # subset stim_order for only those trials used (2 instead of 3)
+#        stim_unique = sp.array(['A','B','AB','A50B','B50A','A250B','B250A','Oil']) # hardcode
+#        nStims = stim_unique.shape[0]
+#        nReps = 2 # hardcode
+#        
+#        nFrames = sp.genfromtxt(paths[0],delimiter=',').shape[0] -1 # removes header
+#        nCells = sp.genfromtxt(paths[0],delimiter=',').shape[1] -2 # removes infocolumns
+#        
+#        ### this is the multidim data structure definition
+#        # dims are t, cell, odor, rep
+#        data = sp.zeros((nFrames,nCells,nStims,nReps))
+#        
+#        for n,path in enumerate(paths):
+#            # get the correct indices
+#            stim_index = sp.where(stim_unique == stim_order[n])[0][0] # this finds the index in stim_unique of the corresponding stim of the trial
+#            rep_index = sp.where(sp.where(stim_order == stim_order[n])[0] == n)[0][0] # das wievielte mal kommt n in stim_order[n] vor? -> rep index
+#            
+#            # get the trace
+#            trace = sp.genfromtxt(path,delimiter=',',skiprows=1)[:,2:] # results in a mat with t x cell
+#            
+#            # put it in the data structure at the correct place
+#            data[:,:,stim_index,rep_index] = trace
+#            pass
         pass
     
-    def calc_traces(self):
-        """ """
-        pass
-
 #==============================================================================
     ### color calculations
 #==============================================================================

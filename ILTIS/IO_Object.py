@@ -47,7 +47,9 @@ class IO_Object(object):
         self.Main.Data = None # take care that no extra references are generated and kept!
         pass
 
+#==============================================================================
     ### Dialogs
+#==============================================================================
     def OpenFileDialog(self,title=None,default_dir=None,extension='*'):
         """ Opens a Qt Filedialoge window to read files from disk """
         
@@ -75,7 +77,7 @@ class IO_Object(object):
         return path
         
 #==============================================================================
-#     ### reading data sets
+    ### reading data sets
 #==============================================================================
 
     """ get paths to load. determine file format. open appropriate reader """
@@ -88,7 +90,7 @@ class IO_Object(object):
         # get paths
         paths = self.get_paths_to_read()
         if paths == None:
-            return None
+            pass
         
         # determine format
         file_format = self.determine_format(paths)
@@ -145,69 +147,112 @@ class IO_Object(object):
     
     def load_ids(path):
         pass
+
+
+#==============================================================================
+    ### writing datasets         
+#==============================================================================
+    def save_ids(self):
+        pass
+    
+    
+#==============================================================================
+    ### exporting traces
+#==============================================================================
+    
+    def export_traces(self):
+        """
+        calculate extraction mask
+        extract traces
+        save to disk
+        """
         
+        # calculate extraction mask
+        self.Main.Processing.calc_extraction_mask()
+        
+        # extract traces
+        self.Main.Processing.calc_traces(self.Main.Data.extraction_mask)
+        
+        
+        ## exporting to csv
+        if self.Main.Options.export['format'] == '.csv':
+            if self.Main.verbose:
+                print "extracting traces and writing to .csv"
+                
+#            labels = [ROI.label for ROI in self.ROIlist]
+#            if self.dt == None:
+#                tvec = sp.arange(self.Traces.shape[0],dtype='int32')
+#                labels.insert(0,'frame')
+#            else:
+#                tvec = sp.linspace(0,self.Traces.shape[0]/self.dt,self.Traces.shape[0])
+#                tvec = tvec - self.stimulus_onset / self.dt
+#                labels.insert(0,'time [s]')
+#                
+#            for n in range(self.nFiles):
+#                print os.path.splitext(self.paths[n])[0]
+#                outpath = os.path.splitext(self.paths[n])[0] + '_traces_' + str(n+1) + '.csv'
+#                data = sp.concatenate((tvec[:,sp.newaxis],self.Traces[:,:,n]),axis=1)
+#                pd.DataFrame(data,columns=labels).to_csv(outpath,delimiter='/t')
+#        
+#        ## exporting to gloDatamix
+#        if self.Main.Options.export['format'] == '.gloDatamix':
+#            print "extracting traces and writing to .gloDatamix format"
+#            if not(self.flags['lst_was_read']): # if lst file has not been read yet, do it now
+#                self.read_lst()
+#            
+#            # preparing the write
+#            labels = ['NGloTag','NConc','NStimON','NStimOff','NNoFrames','NFrameTime','TGloInfo','TOdour','T_dbb1','Tcomment','TLabel','Tanimal']
+#            data_labels = ['data'] * self.data.shape[2]
+#            for i,l in enumerate(data_labels):
+#                labels.append(l+str(i))
+#
+##            outpath = os.path.splitext(self.MainWindow.path)[0] + os.path.sep + self.LSTdata['DBB1'][0].strip().split('\\')[0] + '.gloDatamix'
+#            outpath = self.MainWindow.SaveFileDialog(title='saving to .gloDatamix',defaultdir=self.MainWindow.path)    
+#            if os.path.splitext(outpath)[1] != '.gloDatamix':
+#                outpath = outpath + '.gloDatamix'
+#            
+#            
+#            fh = open(outpath,'w')
+#            fh.write('\t'.join(labels))
+#            fh.write('\n')
+#
+#            for n,path in enumerate(self.paths):            
+#                inds_map = self.map_lst_inds_to_path_inds()
+#                for i in range(len(self.ROIlist)):
+#                    myInd = inds_map[n]
+##                    NGloTag = str(Coors[i,2])
+#                    NGloTag = str(self.ROIlist[i].label)
+#                    NOConc = str(self.LSTdata.loc[myInd]['OConc'])
+#                    NStimON = str(self.LSTdata.loc[myInd]['StimON'])
+#                    NStimOFF = str(self.LSTdata.loc[myInd]['StimOFF'])
+#                    NNoFrames = str(self.data.shape[2])
+#                    NFrameTime = 'dt' ### FIXME
+#                    pos = self.get_ROI_position(self.ROIlist[i])
+#                    TGloInfo = 'Coor' + str(int(sp.around(pos[0],decimals=0))) + ':' + str(int(sp.around(pos[1],decimals=0)))
+#                    TOdour = self.LSTdata.loc[myInd]['Odour']
+#                    T_dbb1 = self.LSTdata.loc[myInd]['DBB1']
+#                    Tcomment = self.LSTdata.loc[myInd]['Comment']
+#                    TLabel = self.LSTdata.loc[myInd]['Label']
+#                    Tanimal = self.LSTdata['DBB1'][myInd].strip().split('\\')[0] # see above, is the animal
+#                    
+#                    tmp = [NGloTag,NOConc,NStimON,NStimOFF,NNoFrames,NFrameTime,TGloInfo,TOdour,T_dbb1,Tcomment,TLabel,Tanimal]
+#                    tmp = tmp + self.Traces[:,i,n].astype('S20').tolist()
+#                    values = '\t'.join(tmp)
+#
+#                    fh.write(values)
+#                    fh.write('\n')
+#                
+#            fh.close()
+#            print "gloDatamix written to ", outpath
+            
+        
+        pass
+    
+    
     def convert_lsm2tif(paths):
         """ batch convert .lsm files to tiffs """
         pass
     
-    
-    
-#    def read_Data(self):
-#        """ data loader: opens a file dialog asking for  """
-#        # paths = self.OpenFileDialog(title='Open data set', default_dir=self.Main.Options.general['cwd'], extension='(*.tif *.ids *.lsm)')
-#        
-#        ### FIXME hacked in for fast testing start!
-#        paths = ['/home/georg/Dropbox/python/ILTIS/testdata/EXP6DO_R01_GR1_B1.tif','/home/georg/Dropbox/python/ILTIS/testdata/EXP6DO_R03_GR1_B1.tif','/home/georg/Dropbox/python/ILTIS/testdata/EXP6DO_R04_GR1_B1.tif']
-#
-#        if len(paths) == 0:
-#            return None
-#        if len(paths) == 1:
-#            if paths[0].endswith('.ids'):
-#                print "load ids"
-#            else:
-#                pass
-#            
-#        if len(paths) > 1:
-#            # take care of: no mixed data formats
-#            # no multiple ids
-#            if any([path.endswith('.ids') for path in paths]):
-#                print "reading multiple .ids files is not supported because of possible metadata conflict"
-#                return None
-#            
-#            self.Main.Data = Data_Object(self.Main)
-#            
-#            # FIXME hacked in tif read
-#            self.read_tifs(paths)
-#            
-#            # FIXME hacked in for now, initialize empty metadata object 
-#            self.Main.Data.Metadata = Metadata_Object(self.Main,self.Main.Data)
-#            self.Main.Data.Metadata.paths = paths
-#            self.Main.Data.Metadata.trial_labels = [os.path.basename(path) for path in paths]
-#            
-#            # FIXME think about where this will fit best
-#            self.Main.Data.nTrials = len(paths)
-#            self.Main.Data.nFrames = self.Main.Data.raw.shape[2]
-#        
-#        return None
-#        
-#    def read_tifs(self,paths):
-#        """ read tifs found at paths (list with paths) """
-#        # reading
-#        x,y,t = io.read_tiffstack(paths[0]).shape
-#        n = len(paths)
-#        
-#        self.Main.Data.raw = sp.zeros((x,y,t,n),dtype='uint16')
-#        self.Main.Data.dFF = sp.zeros((x,y,t,n),dtype='float32')
-#        
-#        for n,path in enumerate(paths):
-#            print "loading dataset from " + path
-#            print "Dataset size: " + str(os.stat(path).st_size / 1000000.0) + ' MB'
-##            self.Main.MainWindow.statusBar().showMessage("loading dataset: " + path) ### FIXME signal needed
-#            t_stack = io.read_tiffstack(path)
-#            self.Main.Data.raw[:,:,:,n] = t_stack
-#            
-#        pass
-
     def read_trial_labels(self):
         filepath = self.OpenFileDialog(title='load a textfile with trial labels',default_dir=self.Main.Options.general['cwd'])
         filepath = filepath[0]
