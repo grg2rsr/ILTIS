@@ -156,8 +156,8 @@ class MainWindow_Widget(QtGui.QMainWindow):
 
                         'ReadTrialLabelsAction':{'label':'Load trial labels file',
                                                  'status_tip':'Read trial labels from text file',
-                                                 'icon':None,
-                                                 'func':None,
+                                                 'icon':'/home/georg/python/ILTIS/ILTIS/icons/tags.svg',
+                                                 'func':self.Main.IO.read_trial_labels,
                                                  'checkable':False,
                                                  'no_data_disabled':True},                                    
 
@@ -333,4 +333,6 @@ class MainWindow_Widget(QtGui.QMainWindow):
 
 
 if __name__ == '__main__':
+    import Main
+    Main.main()
     pass

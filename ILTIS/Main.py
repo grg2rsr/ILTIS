@@ -58,7 +58,7 @@ class Main(QtCore.QObject):
         self.Signals = Signals(self)
         
         ### HACKED IN FOR TESTINGS START
-        self.IO.init_data()
+#        self.IO.init_data()
     
     ### initializers
     def initialize_paths(self):

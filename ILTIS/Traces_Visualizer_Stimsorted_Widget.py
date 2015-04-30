@@ -37,7 +37,7 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         pass
     
     def init_data(self):
-#        self.reset()
+        self.reset()
         
         # some preparations
         self.trial_labels = self.Main.Data.Metadata.trial_labels
@@ -172,9 +172,10 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
     def reset(self):
         for item in self.plotItems:
             self.plotWidget.removeItem(item)
-            
-        for trace in self.traces:
-            trace.clear()
+        self.plotItems = []
+        
+#        for trace in self.traces:
+#            trace.clear()
         self.traces = []
         pass
 

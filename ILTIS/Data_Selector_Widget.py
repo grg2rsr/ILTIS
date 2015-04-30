@@ -95,7 +95,6 @@ class Data_Selector_Widget(QtGui.QTableWidget):
     def labels_changed(self):
         """ entry point for manual label change """
         current_labels = self.get_current_labels()
-        print current_labels
         self.update_labels(current_labels)
         
     def get_current_labels(self):
@@ -103,15 +102,20 @@ class Data_Selector_Widget(QtGui.QTableWidget):
         labels = [str(self.item(row,0).text()) for row in range(self.rowCount())]
         return labels
     
-    def set_current_labels(self):
+    def set_current_labels(self,labels):
         """ writes the labels currently displayed """
-        pass
+        self.blockSignals(True)
+        for row in range(self.rowCount()):
+            self.item(row,0).setText(labels[row])
+        self.blockSignals(False)
+        self.labels_changed()
     
     def update_labels(self,labels):
         """ update the trial_labels of the Metadata object, reinitialize
         Stimsorted """
         self.Main.Data.Metadata.trial_labels = labels
         self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.init_data()
+        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.init_traces()
         pass
         
 
