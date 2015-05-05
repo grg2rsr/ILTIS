@@ -85,7 +85,7 @@ class Processing_Object(object):
         extraction mask as the shape of (x,y,nROIs), True if pixel is inside
         ROI """
         
-        extraction_mask = sp.zeros((self.Main.Data.raw.shape[0],self.Main.Data.shape[1],len(self.Main.ROIs.ROI_list)),dtype='bool')
+        extraction_mask = sp.zeros((self.Main.Data.raw.shape[0],self.Main.Data.raw.shape[1],len(self.Main.ROIs.ROI_list)),dtype='bool')
         
         for i,ROI in enumerate(self.Main.ROIs.ROI_list):
             mask, inds = self.Main.ROIs.get_ROI_mask(ROI)
@@ -98,17 +98,19 @@ class Processing_Object(object):
         """ calculates traces based on the extraction_mask 
         definition: Traces is of shape (t,ID,stim), 
         t,ID,stim,rep is Traces_sorted """
-        
-        self.Data.Traces = sp.zeros((self.Data.nFrames,extraction_mask.shape[2],self.Data.nTrials))
+        if extraction_mask == None:
+            extraction_mask = self.Main.Data.exctraction_mask
+            
+        self.Main.Data.Traces = sp.zeros((self.Main.Data.nFrames,extraction_mask.shape[2],self.Main.Data.nTrials))
 
-        for stim_id in range(self.Data.nTrials): # iterate over trials
+        for stim_id in range(self.Main.Data.nTrials): # iterate over trials
             for ROI_id in range(extraction_mask.shape[2]): # iterate over ROIs
                 if self.Main.Options.export['data'] == 'raw':
                     sliced = self.Main.Data.raw[extraction_mask[:,:,ROI_id],:,stim_id]
                 if self.Main.Options.export['data'] == 'dFF':
                     sliced = self.Main.Data.dFF[extraction_mask[:,:,ROI_id],:,stim_id]
                     
-                self.Data.Traces[:,ROI_id,stim_id] = sp.average(sliced,axis=0)
+                self.Main.Data.Traces[:,ROI_id,stim_id] = sp.average(sliced,axis=0)
 
 
     def sort_Traces(self):

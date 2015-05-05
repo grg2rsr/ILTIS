@@ -63,10 +63,9 @@ class Main(QtCore.QObject):
         path to the graphics files, path to tmp """
         
         self.cwd = os.getcwd()
-        self.cwd = '/home/georg/python/better_than_turner/testdata/testdata_multi' # FIXME
         self.program_dir = os.path.split(os.path.realpath(__file__))[0] # of the dir where this code is executed from!
         self.graphics_path = self.program_dir + os.path.sep + 'graphics' 
-        if os.name == 'posix': ### FIXME mac?
+        if os.name == 'posix':
             self.tmp_path = '/tmp'
         else:
             self.tmp_path = 'C:\\Windows\\temp'

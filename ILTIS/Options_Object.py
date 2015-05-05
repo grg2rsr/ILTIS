@@ -61,7 +61,8 @@ class Options_Object(QtCore.QObject):
                               'filter_xy':0.8,
                               'filter_t':1,
                               'filter_target':'raw',
-                              'filter_size':[0.8,1]
+                              'filter_size':[0.8,1],
+                              'dt':0.2
                               }
                               
         self.view = {'show_flags':sp.ones(self.Main.Data.nTrials,dtype='bool'),

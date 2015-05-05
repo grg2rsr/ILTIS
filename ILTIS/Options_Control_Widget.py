@@ -39,6 +39,7 @@ class Options_Control_Widget(QtGui.QTabWidget):
 #        FormLayout.addRow('start/stop frames of stimuli',ArrayWidget(self,'preprocessing','stimuli',self.Main.Options.preprocessing['nStimuli'],2,'i'))
         FormLayout.addRow('start/stop frames for background calculation',VectorWidget(self,'preprocessing','dFF_frames',2,'i'))
         FormLayout.addRow('[xy,t] filter size',VectorWidget(self,'preprocessing','filter_size',2,'f'))
+        FormLayout.addRow('dt frames [s]',SingleValueWidget(self,'preprocessing','dt','f'))
 
         ### view
         FormLayout = self.make_tab('View')

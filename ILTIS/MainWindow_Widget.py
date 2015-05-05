@@ -182,7 +182,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                         'WriteTracesAction':{'label':'export traces based on ROIs',
                                              'status_tip':'slice datasets along time at ROIs and extract traces',
                                              'icon':None,
-                                             'func':None,
+                                             'func':self.Main.IO.export_traces,
                                              'checkable':False,
                                              'no_data_disabled':True},
 

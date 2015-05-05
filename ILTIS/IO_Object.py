@@ -11,6 +11,7 @@ from Data_Object import Data_Object, Metadata_Object
 import os
 import sys
 import scipy as sp
+import pandas as pd
 
 class IO_Object(object):
     """ holds all IO functionality """
@@ -186,21 +187,24 @@ class IO_Object(object):
         if self.Main.Options.export['format'] == '.csv':
             if self.Main.verbose:
                 print "extracting traces and writing to .csv"
+            
+            labels = [ROI.label for ROI in self.Main.ROIs.ROI_list]
+            labels.insert(0,'time [s]')
+            
+            tvec = sp.linspace(0,self.Main.Data.Traces.shape[0]/self.Main.Options.preprocessing['dt'],self.Main.Data.Traces.shape[0])
+            tvec = tvec - self.Main.Options.preprocessing['stimuli'][0,0] * self.Main.Options.preprocessing['dt']
+            
+            for n in range(self.Main.Data.nTrials):
+#                if self.Main.verbose:
+#                    print ' writing to: ', os.path.splitext(self.paths[n])[0]
+                outpath = os.path.splitext(self.Main.Data.Metadata.paths[n])[0] + '_traces_' + str(n+1) + '.csv'
+                data = sp.concatenate((tvec[:,sp.newaxis],self.Main.Data.Traces[:,:,n]),axis=1)
+                pd.DataFrame(data,columns=labels).to_csv(outpath,delimiter=',')
                 
-#            labels = [ROI.label for ROI in self.ROIlist]
-#            if self.dt == None:
-#                tvec = sp.arange(self.Traces.shape[0],dtype='int32')
-#                labels.insert(0,'frame')
-#            else:
-#                tvec = sp.linspace(0,self.Traces.shape[0]/self.dt,self.Traces.shape[0])
-#                tvec = tvec - self.stimulus_onset / self.dt
-#                labels.insert(0,'time [s]')
+
+
 #                
-#            for n in range(self.nFiles):
-#                print os.path.splitext(self.paths[n])[0]
-#                outpath = os.path.splitext(self.paths[n])[0] + '_traces_' + str(n+1) + '.csv'
-#                data = sp.concatenate((tvec[:,sp.newaxis],self.Traces[:,:,n]),axis=1)
-#                pd.DataFrame(data,columns=labels).to_csv(outpath,delimiter='/t')
+
 #        
 #        ## exporting to gloDatamix
 #        if self.Main.Options.export['format'] == '.gloDatamix':
