@@ -53,7 +53,7 @@ class Options_Control_Widget(QtGui.QTabWidget):
         ### export
         FormLayout = self.make_tab('Export')
         FormLayout.addRow('Export traces from',StringChoiceWidget(self,'export','data',choices=['raw','dFF']))
-        FormLayout.addRow('Export format',StringChoiceWidget(self,'export','format',choices=['.csv','.gloDatamix']))
+        FormLayout.addRow('Export format',StringChoiceWidget(self,'export','format',choices=['.csv - normal','.csv - sorted','.gloDatamix']))
 
         self.get_options()
         self.nStimuli_old = self.Main.Options.preprocessing['nStimuli']

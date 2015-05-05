@@ -90,7 +90,7 @@ class Options_Object(QtCore.QObject):
                     'inactive_color':[255,255,255,100],
                     'show_labels':True}
                     
-        self.export = {'format':'.csv',
+        self.export = {'format':'.csv - normal',
                        'data':'dFF'
                        }
         self.flags = {'LST_was_read':False}

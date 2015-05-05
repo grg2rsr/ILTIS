@@ -119,34 +119,31 @@ class Processing_Object(object):
                 self.Main.Data.Traces[:,ROI_id,stim_id] = sp.average(sliced,axis=0)
 
 
-    def sort_Traces(self):
+    def sort_traces(self):
         """ creates a (t,ID,stim,rep) representation of the Traces """
-#        paths = get_path('*.csv',defaultdir='/home/georg/data_local',multiple=True)
-#
-#        nTrials = len(paths)
-#        stim_order = sp.array(stim_order[:nTrials]) # subset stim_order for only those trials used (2 instead of 3)
-#        stim_unique = sp.array(['A','B','AB','A50B','B50A','A250B','B250A','Oil']) # hardcode
-#        nStims = stim_unique.shape[0]
-#        nReps = 2 # hardcode
-#        
-#        nFrames = sp.genfromtxt(paths[0],delimiter=',').shape[0] -1 # removes header
-#        nCells = sp.genfromtxt(paths[0],delimiter=',').shape[1] -2 # removes infocolumns
-#        
-#        ### this is the multidim data structure definition
-#        # dims are t, cell, odor, rep
-#        data = sp.zeros((nFrames,nCells,nStims,nReps))
-#        
-#        for n,path in enumerate(paths):
-#            # get the correct indices
-#            stim_index = sp.where(stim_unique == stim_order[n])[0][0] # this finds the index in stim_unique of the corresponding stim of the trial
-#            rep_index = sp.where(sp.where(stim_order == stim_order[n])[0] == n)[0][0] # das wievielte mal kommt n in stim_order[n] vor? -> rep index
-#            
-#            # get the trace
-#            trace = sp.genfromtxt(path,delimiter=',',skiprows=1)[:,2:] # results in a mat with t x cell
-#            
-#            # put it in the data structure at the correct place
-#            data[:,:,stim_index,rep_index] = trace
-#            pass
+        
+        labels = self.Main.Data.Metadata.trial_labels
+
+        # inferrence 
+        stim_unique = sp.unique(labels)
+        nStims = stim_unique.shape[0]
+        nReps = len(labels) / nStims
+        
+        nFrames = self.Main.Data.nFrames
+        nROIs = len(self.Main.ROIs.ROI_list)
+        
+        ### this is the multidim data structure definition
+        # dims are t, cell, odor, rep
+        self.Main.Data.Traces_sorted = sp.zeros((nFrames,nROIs,nStims,nReps))
+        
+        for n in range(self.Main.Data.nTrials):
+            # get the correct indices
+            stim_index = sp.where(stim_unique == labels[n])[0][0] # this finds the index in stim_unique of the corresponding stim of the trial
+            rep_index = sp.where(sp.where(labels == labels[n])[0] == n)[0][0] # das wievielte mal kommt n in stim_order[n] vor? -> rep index
+            
+            # get the traces and put it in the data structure at the correct place
+            self.Main.Data.Traces_sorted[:,:,stim_index,rep_index] = self.Main.Data.Traces[:,:,n]
+            pass
         pass
     
 #==============================================================================

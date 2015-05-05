@@ -194,7 +194,7 @@ class IO_Object(object):
         
         
         ## exporting to csv
-        if self.Main.Options.export['format'] == '.csv':
+        if self.Main.Options.export['format'] == '.csv - normal':
             if self.Main.verbose:
                 print "extracting traces and writing to .csv"
             
@@ -212,6 +212,30 @@ class IO_Object(object):
                 if self.Main.verbose:
                     print 'written: ', outpath
 
+
+        ## exporting sorted csv
+        if self.Main.Options.export['format'] == '.csv - sorted':
+            
+            # sort traces
+            self.Main.Processing.sort_traces()
+            
+            # prepare
+            ROI_labels = [ROI.label for ROI in self.Main.ROIs.ROI_list]
+            unique_trial_labels = sp.unique(self.Main.Data.Metadata.trial_labels)
+            nStims = unique_trial_labels.shape[0]
+            nReps = len(self.Main.Data.Metadata.trial_labels) / nStims
+            
+            tvec = sp.linspace(0,self.Main.Data.Traces.shape[0]/self.Main.Options.preprocessing['dt'],self.Main.Data.Traces.shape[0])
+            tvec = tvec - self.Main.Options.preprocessing['stimuli'][0,0] * self.Main.Options.preprocessing['dt']
+            
+            for ROI_id,ROI_label in enumerate(ROI_labels):
+                for trial_ind,trial_label in enumerate(unique_trial_labels):
+                    data = self.Main.Data.Traces_sorted[:,ROI_id,trial_ind,:]
+                    data = sp.concatenate((tvec[:,sp.newaxis],data),axis=1)
+                    cols = 'time [s]' + range(nReps)
+                    outpath = self.Main.cwd + os.path.sep + self.Main.Options.general['experiment_name'] + '_' + trial_label + '_' + ROI_label + '.csv'
+                    pd.DataFrame(data,columns=cols).to_csv(outpath,delimiter=',')
+            
         ## exporting to gloDatamix
         if self.Main.Options.export['format'] == '.gloDatamix':
             if self.Main.verbose:
@@ -263,7 +287,9 @@ class IO_Object(object):
             print "gloDatamix written to ", outpath
             
         
-        pass
+
+
+
 #==============================================================================
     ### LST related
 #==============================================================================
