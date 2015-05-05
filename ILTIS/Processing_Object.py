@@ -28,18 +28,20 @@ class Processing_Object(object):
     
     def calc_gaussian_smooth(self):
         """ apply gaussian """
-        xy = sp.float32(self.OptionsWindow.Options['filter_xy'])
-        z = sp.float32(self.OptionsWindow.Options['filter_z'])
+        xy,z = self.Main.Options.preprocessing['filter_size']
         filter_size = (xy,xy,z)
         
-        for n in range(self.nTrials):
-#            self.Main.MainWindow.statusBar().showMessage("calculating gaussian smooth on Dataset " + str(n))  ### FIXME signal needed
-            if self.Main.Options.filter_target == 'raw':
-                self.raw[:,:,:,n] = ndimage.gaussian_filter(self.data[:,:,:,n],filter_size)
-            if self.Main.Options.filter_target == 'dFF':
-                self.dFF[:,:,:,n] = ndimage.gaussian_filter(self.dFF[:,:,:,n],filter_size)
-            pass
-#        self.Main.MainWindow.statusBar().clearMessage()  ### FIXME signal needed
+        for n in range(self.Main.Data.nTrials):
+            self.Main.MainWindow.statusBar().showMessage("calculating gaussian smooth on Dataset " + str(n))
+            if self.Main.Options.preprocessing['filter_target'] == 'raw':
+                self.Main.Data.raw[:,:,:,n] = ndimage.gaussian_filter(self.Main.Data.raw[:,:,:,n],filter_size)
+            if self.Main.Options.preprocessing['filter_target'] == 'dFF':
+                self.Main.Data.dFF[:,:,:,n] = ndimage.gaussian_filter(self.Main.Data.dFF[:,:,:,n],filter_size)
+        self.Main.MainWindow.statusBar().clearMessage()
+        
+        self.Main.Signals.updateDisplaySettingsSignal.emit()
+        self.Main.MainWindow.Data_Display.Traces_Visualizer.update_traces()
+        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
         pass
     
     def first_time_dFF(self):

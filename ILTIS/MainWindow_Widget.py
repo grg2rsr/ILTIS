@@ -237,7 +237,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                         'ApplyFilterAction':{'label':'Smooth data set',
                                              'status_tip':'Apply set filter to the data set',
                                              'icon':None,
-                                             'func':None,
+                                             'func':self.Main.Processing.calc_gaussian_smooth,
                                              'checkable':False,
                                              'no_data_disabled':True}
         }
