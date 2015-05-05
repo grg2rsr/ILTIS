@@ -24,6 +24,7 @@ class Options_Object(QtCore.QObject):
         self.segmentation = {} # all options for js ncc
         self.export = {} # all export options
         self.ROI = {} # all ROI related options
+        self.flags = {} # all misc flags
         
         # needed to be visible
         self.QtCompositionModes = ['SourceOver','DestinationOver','Clear','Source','Destination','SourceIn','DestinationIn','SourceOut','DestinationOut','SourceAtop','DestinationAtop','Xor','Plus','Multiply','Screen','Overlay','Darken','Lighten','ColorDodge','ColorBurn','HardLight','SoftLight','Difference','Exclusion','SourceOrDestination','SourceAndDestination','SourceXorDestination','NotSourceAndNotDestination','NotSourceOrNotDestination','NotSourceXorDestination','NotSource','NotSourceAndDestination','SourceAndNotDestination']
@@ -91,6 +92,7 @@ class Options_Object(QtCore.QObject):
         self.export = {'format':'.csv',
                        'data':'dFF'
                        }
+        self.flags = {'LST_was_read':False}
                        
         self.nStimuli_old = self.preprocessing['nStimuli']                       
         pass

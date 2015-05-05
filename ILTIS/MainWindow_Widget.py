@@ -150,7 +150,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                         'ReadLSTAction':{'label':'Load .lst file',
                                          'status_tip':'Read .lst file from disk',
                                          'icon':None,
-                                         'func':None,
+                                         'func':self.Main.IO.load_lst,
                                          'checkable':False,
                                          'no_data_disabled':True},
 

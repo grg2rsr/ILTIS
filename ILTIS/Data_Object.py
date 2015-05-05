@@ -34,6 +34,7 @@ class Metadata_Object(object):
         self.Data = parent
         self.paths = None
         self.trial_labels = None
+        self.LSTdata = None
         pass
 
 
