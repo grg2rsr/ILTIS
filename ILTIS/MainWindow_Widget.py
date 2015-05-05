@@ -66,12 +66,8 @@ class MainWindow_Widget(QtGui.QMainWindow):
         
         frac = 0.8
         self.Splitter.setSizes([int(self.Splitter.size().height() * frac), int(self.Splitter.size().height() * (1-frac))])
-        ### FIXME window size, keep following link in mind
-        # http://stackoverflow.com/questions/16280323/qt-set-size-of-qmainwindow
+        # note: http://stackoverflow.com/questions/16280323/qt-set-size-of-qmainwindow
         
-        # app crashes on windows at this call.
-        # http://stackoverflow.com/questions/29626948/pyqt-crashes-and-thread-safety
-        # apparently not a thread safety issue ... 
         self.show() 
 
         pass
@@ -100,26 +96,24 @@ class MainWindow_Widget(QtGui.QMainWindow):
 #        Process.addAction(self.RunSegmentationAction)
         
         Help = self.Menubar.addMenu('&Help')
-
         
         pass
     
     def setup_ToolBar(self):
-        left_spacer = QtGui.QWidget()
-        left_spacer.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-        # spacer widget for right
-        # you can't add the same widget to both left and right. you need two different widgets.
-        right_spacer = QtGui.QWidget()
-        right_spacer.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         
+        # spacer widget for right, have to be two different objects
+        spacers = [QtGui.QWidget(),QtGui.QWidget()]
+        for spacer in spacers:
+            spacer.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+
         self.ToolBar = self.addToolBar('Hide')
-        self.ToolBar.addWidget(left_spacer)
+        self.ToolBar.addWidget(spacers[0])
         self.ToolBar.addAction(self.toggledFFAction)
         self.ToolBar.addAction(self.toggleMonochromeAction)
         self.ToolBar.addAction(self.toggleAvgAction)
         self.ToolBar.addAction(self.toggleGlobalLevels)
         self.ToolBar.addAction(self.OpenOptionsAction)
-        self.ToolBar.addWidget(right_spacer)
+        self.ToolBar.addWidget(spacers[1])
         pass
     
     def setup_StatusBar(self):
@@ -127,7 +121,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
         pass
     
     def setup_Actions(self):
-        """ programatically generate actions """
+        """ generate actions """
         self.Actions = {
         
 #==============================================================================
@@ -261,11 +255,6 @@ class MainWindow_Widget(QtGui.QMainWindow):
             Action = setup_action(self,name,settings)
             setattr(self,name,Action)
 
-
-
-        ### Apply Filter    
-#        self.ApplyFilterAction = QtGui.QAction('Filter data set',self)
-#        self.ApplyFilterAction.setStatusTip('Apply selected filter of selected size to the data set')
         
 #        ### Moco Single
 #        self.RunMocoSingleAction =  QtGui.QAction('Movement correct trials',self)
@@ -285,9 +274,6 @@ class MainWindow_Widget(QtGui.QMainWindow):
             if settings['no_data_disabled'] == True:
                 getattr(self,name).setEnabled(True)
 
-
-    """ fix idea: move all togglers to the MainWindow
-    write all the changes to vars in the display widgets and request update """
     ### togglers view mode
     def toggle_dFF(self):     
         """ toggles the dFF show flag, button on the toolbar """
@@ -325,6 +311,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
     def closeEvent(self,event): # reimplementation
         reply=QtGui.QMessageBox.question(self,'Message',"Are you sure to quit?",QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
         if reply==QtGui.QMessageBox.Yes:
+            self.Main.IO.save_options()
             ### FIXME add cleanup!
             event.accept()
         else:

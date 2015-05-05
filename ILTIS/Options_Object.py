@@ -59,6 +59,7 @@ class Options_Object(QtCore.QObject):
         self.preprocessing = {'stimuli':sp.array([[25,50]]),
                               'nStimuli':1,
                               'dFF_frames':[0,20],
+                              'avg_frames':[0,self.Main.Data.nFrames-1],
                               'filter_xy':0.8,
                               'filter_t':1,
                               'filter_target':'raw',

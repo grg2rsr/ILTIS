@@ -28,7 +28,7 @@ class Processing_Object(object):
     
     def calc_gaussian_smooth(self):
         """ apply gaussian """
-        xy,z = self.Main.Options.preprocessing['filter_size']
+        xy,z = sp.float32(self.Main.Options.preprocessing['filter_size'])
         filter_size = (xy,xy,z)
         
         for n in range(self.Main.Data.nTrials):
@@ -77,6 +77,10 @@ class Processing_Object(object):
         bck = sp.average(data_tmp[:,:,f_start:f_stop,:],axis=2)[:,:,sp.newaxis,:]
         self.Main.Data.dFF = (data_tmp - bck) / bck
         self.Main.Options.general['dFF_was_calc'] = True
+        
+    def calc_avg(self):
+        f_start,f_stop = self.Main.Options.preprocessing['avg_frames']
+        sp.average(self.Main.Data.raw[:,:,f_start:f_stop,:],axis=2)
 
 #==============================================================================
     ### dataset extraction related 

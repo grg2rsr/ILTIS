@@ -21,10 +21,6 @@ from Signals import Signals
 
 pg.setConfigOptions(antialias=True)
 
-
-""" note: cleanup functionality is commented out. reimplement as soon as signal/
-slot mechanism is running """
-
 class Main(QtCore.QObject):
     
     def __init__(self,verbose=False):
@@ -37,14 +33,11 @@ class Main(QtCore.QObject):
         self.tmp_path = None
         self.Data = None
         self.verbose = verbose
-        
-        # initialize
-#        self.version = os.path.splitext(__file__)[0][-3:] # FIXME
-        
+                
         self.initialize_paths()
         self.print_startup_msg()
 
-        ## here is the ini order ...  first all nonGUI
+        # ini
         self.IO = IO_Object(self)
         self.Options = Options_Object(self)
         self.Options_Control = Options_Control_Widget(self)
@@ -53,7 +46,7 @@ class Main(QtCore.QObject):
 
         self.MainWindow = MainWindow_Widget(self)
         
-        ## Signals # centrally managed connections work, and all slots are ready at this timepoint in the code
+        # centrally managed signals
         self.Signals = Signals(self)
         
     

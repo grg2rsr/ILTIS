@@ -12,6 +12,7 @@ import os
 import sys
 import scipy as sp
 import pandas as pd
+import pickle
 
 class IO_Object(object):
     """ holds all IO functionality """
@@ -119,11 +120,14 @@ class IO_Object(object):
         # default settings if no metadata is read
         self.Main.Data.Metadata.paths = paths
         
+        # update cwd
+        self.Main.Options.general['cwd'] = os.path.dirname(paths[0])
+        
         # infer some Meta information
         self.Main.Data.infer()
 
         # load options
-        self.load_options(auto=True)
+        self.load_options(reset=False)
         
     def get_paths_to_read(self):
 #        paths = self.OpenFileDialog(title='Open data set', default_dir=self.Main.Options.general['cwd'], extension='(*.tif *.ids *.lsm)')
@@ -342,31 +346,35 @@ class IO_Object(object):
 #==============================================================================
     ### Options
 #==============================================================================
-    def load_options(self,auto=True):
-        """ get the options filepath and run read_options """
-        self.Main.Options.load_default_options()        
-#        if auto==True: # check for options file in the same path, if not, default
-        
-#            self.Main.IO.load_options() 
-    
-            # and this code is then moved to IO        
-#            if self.Main.options_filepath != None:
-#                if os.path.exists(self.options_filepath):
-#                    if self.Main.verbose:
-#                        print "loading options file from ", self.options_filepath
-#                        self.Main.IO.load_options()
-#            pass
-        
-#        else: # open filedialog and execute read options
-#            pass
-        pass
+    def load_options(self,reset=True):
+        if not(reset):
+            print "restoring last options"
+            try:
+                self.Main.IO.read_options() 
+            except:
+                print "no options to restore found, defaulting"
+                self.Main.Options.load_default_options()
+        else:
+            print "default options"
+            self.Main.Options.load_default_options()
+            pass
     
     def read_options(self):
-        """ options fileformat has yet to be specified ... """
+        """ unpickles the options dicts from ./settings """
+        dict_list = ['general','preprocessing','view','ROI','export','flags']
+        for d in dict_list:
+            dict_path = self.Main.program_dir + os.path.sep + 'settings' + os.path.sep + d
+            with open(dict_path,'r') as fh:
+                setattr(self.Main.Options,d,pickle.load(fh))
         pass
         
     def save_options(self):
-        """ save options to options_filepath """
+        """ pickle the current options dicts into the settings subfolder """
+        dict_list = ['general','preprocessing','view','ROI','export','flags']
+        for d in dict_list:
+            outpath = self.Main.program_dir + os.path.sep + 'settings' + os.path.sep + d
+            with open(outpath,'w') as fh:
+                pickle.dump(getattr(self.Main.Options,d),fh)
         pass
     
 #==============================================================================
