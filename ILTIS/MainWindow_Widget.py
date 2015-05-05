@@ -228,7 +228,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                                              'icon':'/home/georg/python/ILTIS/ILTIS/icons/sliders.svg',
                                              'func':self.open_Options_Widget,
                                              'checkable':False,
-                                             'no_data_disabled':False},
+                                             'no_data_disabled':True},
                                              
 #==============================================================================
 #           processing action

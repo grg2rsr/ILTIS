@@ -4,18 +4,14 @@ Created on Wed Apr  1 13:15:52 2015
 @author: georg
 """
 
-from Metadata_Object import Metadata_Object
+import os
 
-
-""" note: communication with statusBar is just commented out. no signal provided
-yet, waiting for stackoverlow answer """
-
-class Data_Object():
+class Data_Object(object):
     """ 
     specification of a Data Object:    
     """
-    def __init__(self,parent):
-        self.Main = parent
+    def __init__(self):
+#        self.Main = parent # never needs to access anything, therefore no parent
         self.raw = None
         self.dFF = None
         self.Traces = None
@@ -24,7 +20,21 @@ class Data_Object():
         self.nTrials = None # number of files = number of trials
         self.nFrames = None
         pass
+    
+    def infer(self):
+        """ infer some fields, self.raw and Metadata.paths have to be set """
+        self.Metadata.trial_labels = [os.path.basename(path) for path in self.Metadata.paths]
+        self.nTrials = len(self.Metadata.paths)
+        self.nFrames = self.raw.shape[2]
     pass
+
+class Metadata_Object(object):
+    def __init__(self,parent):
+        super(Metadata_Object,self).__init__()
+        self.Data = parent
+        self.paths = None
+        self.trial_labels = None
+        pass
 
 
 if __name__ == '__main__':

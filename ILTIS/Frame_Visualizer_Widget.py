@@ -21,7 +21,6 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
         self.ImageItems_dFF = [] # list with the image items
 
         self.frame = 0
-        self.active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
         
         # weakrefs to data object and Options object
         self.init_UI()
@@ -88,8 +87,6 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
             pass
 
         # set composition mode      
-#        import pdb
-#        pdb.set_trace()
         self.set_composition_mode(self.Main.Options.QtCompositionModes.index(self.Main.Options.view['composition_mode'])) ### FIXME
         self.update_frame()
         pass
@@ -132,7 +129,3 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
             
         for ImageItem in self.ImageItems_dFF:
             ImageItem.setCompositionMode(n)              
-        
-
-    
-    pass

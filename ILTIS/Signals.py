@@ -73,6 +73,7 @@ class Signals(QtCore.QObject):
                 self.initDataSignal.connect(GUI_object.init_data)
                 self.updateSignal.connect(GUI_object.update)
         self.initDataSignal.connect(self.Main.MainWindow.enable_actions)
+        self.initDataSignal.connect(self.Main.Options.init_data)
                 
         # display settings
         slots = [self.Main.MainWindow.Data_Display.Frame_Visualizer.update_display_settings,

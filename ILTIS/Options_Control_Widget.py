@@ -18,13 +18,16 @@ class Options_Control_Widget(QtGui.QTabWidget):
 
     ### UI generation
     def init_UI(self):
-        """ deactivate all Qt Signals from this object during init_UI 
+        """ init UI is called AFTER Options are initialized.
+        deactivate all Qt Signals from this object during init_UI 
         definition of options_string: row_label"""
+        
         self.setWindowTitle('Options')    
 
         ### general
         FormLayout = self.make_tab('General')
         FormLayout.addRow('verbose mode',BooleanChoiceWidget(self,'general','verbose'))
+        FormLayout.addRow('experiment name',SingleValueWidget(self,'general','experiment_name','S'))
 #        FormLayout.addRow('options filepath',self.BooleanChoiceWidget(self))
 #        options filepath
 #        cwd
@@ -65,9 +68,6 @@ class Options_Control_Widget(QtGui.QTabWidget):
         for tab_ind in range(self.count()):
             self.removeTab(0) # removes all ... 
         self.rows = []
-
-        
-        self.init_UI()
         pass
     
     def get_rows(self):
@@ -76,7 +76,6 @@ class Options_Control_Widget(QtGui.QTabWidget):
         rows = []
         # iterate over tabs
         for tab_ind in range(self.count()):
-#            tab = self.setCurrentIndex(tab_ind)
             tab = self.widget(tab_ind)
             FormLayout = tab.layout()
             for row_ind in range(FormLayout.rowCount()):
@@ -85,7 +84,6 @@ class Options_Control_Widget(QtGui.QTabWidget):
                 rows.append([label,widget])
         return rows
                 
-        # iterate over rows
     def make_tab(self,tab_label):
         """ helper: makes a tab page, pace QFormLayout inside and return it """
         tab_widget = QtGui.QWidget(self)
@@ -99,31 +97,6 @@ class Options_Control_Widget(QtGui.QTabWidget):
     def UI_changed(self):
         # set changes to the Options_object
         self.set_options()
-
-        # check if number of stim has changed
-#        nStimuli = self.Main.Options.preprocessing['nStimuli']
-#        if nStimuli != self.nStimuli_old:
-#            row_ind = [row[1].param_name for row in self.get_rows()].index('stimuli')
-##            self.widget(1).layout().setRowCount(5)
-#            table = self.get_rows()[row_ind][1]
-#            table.insertRow(table.rowCount())
-#            self.widget(1).layout().insertRow(row_ind,'replace',ArrayWidget(self,'preprocessing','stimuli',self.Main.Options.preprocessing['nStimuli'],2,'i'))
-            
-            
-#            if nStimuli == 1:
-#                self.Main.Options.preprocessing['stimuli'] = sp.array([self.Main.Options.preprocessing['stimuli'][0,:]])
-#            if nStimuli > 1:
-#                for i in range(1,nStimuli):
-#                    new_stim = sp.zeros((nStimuli,2),dtype='int32')
-#                    new_stim[i,0] = self.Main.Options.preprocessing['stimuli'][0,0] * i
-#                    new_stim[i,1] = self.Main.Options.preprocessing['stimuli'][0,1] * i
-#                self.Main.Options.preprocessing['stimuli'] = new_stim
-            
-#            self.reset_UI()
-#            self.setCurrentIndex(1)
-#            self.nStimuli_old = nStimuli # set n stim
-            
-            
         self.Main.Signals.updateDisplaySettingsSignal.emit()
         pass
     
@@ -198,7 +171,6 @@ class SingleValueWidget(QtGui.QLineEdit):
         self.param_name = param_name
         self.dtype = dtype
 
-    
     def connect(self):
         self.editingFinished.connect(self.parent.UI_changed)
         

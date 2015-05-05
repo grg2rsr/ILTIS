@@ -7,8 +7,7 @@ Created on Wed Apr 15 14:52:50 2015
 
 from PyQt4 import QtGui, QtCore # for the dialogs
 from lib import IOtools as io
-from Data_Object import Data_Object
-from Metadata_Object import Metadata_Object
+from Data_Object import Data_Object, Metadata_Object
 import os
 import sys
 import scipy as sp
@@ -33,9 +32,12 @@ class IO_Object(object):
         # read in new data
         self.load_data() # opens filedialog, sets meta_data.paths
 
+        # init the UI of Options Control
+        self.Main.Options_Control.init_UI()
+
         # initialize Data display again
         self.Main.Signals.initDataSignal.emit()
-        
+
         # and emit an update Signal
         self.Main.Signals.updateSignal.emit()      
         
@@ -84,8 +86,8 @@ class IO_Object(object):
     def load_data(self):
 
         # Data init        
-        self.Main.Data = Data_Object(self.Main)
-        self.Main.Data.Metadata = Metadata_Object(self.Main,self.Main.Data)
+        self.Main.Data = Data_Object()
+        self.Main.Data.Metadata = Metadata_Object(self.Main.Data)
         
         # get paths
         paths = self.get_paths_to_read()
@@ -99,18 +101,28 @@ class IO_Object(object):
         if file_format == '.tif':
             self.load_tif(paths)
             
-        if file_format == '.ids':
-            if len(paths) > 1:
-                print "trying to load multiple ids files, raise Exception"
-            path = paths[0]
-            self.load_ids(path)
+#        if file_format == '.ids':
+#            if len(paths) > 1:
+#                print "trying to load multiple ids files, raise Exception"
+#            path = paths[0]
+#            self.load_ids(path)
             
         if file_format == '.lsm':
             tifpaths = self.convert_lsm2tif(paths)
             self.load_tif(tifpaths)
+            
+        # default settings if no metadata is read
+        self.Main.Data.Metadata.paths = paths
+        
+        # infer some Meta information
+        self.Main.Data.infer()
+
+        # load options
+        self.load_options(auto=True)
         
     def get_paths_to_read(self):
-        paths = self.OpenFileDialog(title='Open data set', default_dir=self.Main.Options.general['cwd'], extension='(*.tif *.ids *.lsm)')
+#        paths = self.OpenFileDialog(title='Open data set', default_dir=self.Main.Options.general['cwd'], extension='(*.tif *.ids *.lsm)')
+        paths = self.OpenFileDialog(title='Open data set', default_dir=self.Main.Options.general['cwd'], extension='(*.tif *.lsm)')
         return paths
         
     def determine_format(self,paths):
@@ -138,22 +150,18 @@ class IO_Object(object):
             self.Main.Data.raw[:,:,:,n] = io.read_tiffstack(path)
         self.Main.MainWindow.statusBar().clearMessage()
             
-        # default settings if no metadata is read
-        self.Main.Data.Metadata.paths = paths
-        self.Main.Data.Metadata.trial_labels = [os.path.basename(path) for path in paths]
+
         
-        self.Main.Data.nTrials = len(paths)
-        self.Main.Data.nFrames = self.Main.Data.raw.shape[2]
     
-    def load_ids(path):
-        pass
+#    def load_ids(path):
+#        pass
 
 
 #==============================================================================
     ### writing datasets         
 #==============================================================================
-    def save_ids(self):
-        pass
+#    def save_ids(self):
+#        pass
     
     
 #==============================================================================
@@ -251,23 +259,45 @@ class IO_Object(object):
     
     def convert_lsm2tif(paths):
         """ batch convert .lsm files to tiffs """
+        # FIXME
         pass
     
-    def read_trial_labels(self):
+    def load_trial_labels(self):
+        """ opens a file dialog and runs read_trial_labels with the selected path """
         filepath = self.OpenFileDialog(title='load a textfile with trial labels',default_dir=self.Main.Options.general['cwd'])
         filepath = filepath[0]
-        self.load_trial_labels(filepath)
+        self.read_trial_labels(filepath)
         pass
         
-    def load_trial_labels(self,filepath):
+    def read_trial_labels(self,filepath):
+        """ reads the labels from the text file at path (newline separated) """
         with open(filepath, 'r') as fh:
             labels = [label.strip() for label in fh.readlines()]
         self.Main.Data.Metadata.labels = labels
         self.Main.MainWindow.Front_Control_Panel.Data_Selector.set_current_labels(labels)
         pass
     
-    def load_options(self):
-        """ load options from options_filepath """
+    def load_options(self,auto=True):
+        """ get the options filepath and run read_options """
+        self.Main.Options.load_default_options()        
+#        if auto==True: # check for options file in the same path, if not, default
+        
+#            self.Main.IO.load_options() 
+    
+            # and this code is then moved to IO        
+#            if self.Main.options_filepath != None:
+#                if os.path.exists(self.options_filepath):
+#                    if self.Main.verbose:
+#                        print "loading options file from ", self.options_filepath
+#                        self.Main.IO.load_options()
+#            pass
+        
+#        else: # open filedialog and execute read options
+#            pass
+        pass
+    
+    def read_options(self):
+        """ options fileformat has yet to be specified ... """
         pass
         
     def save_options(self):

@@ -17,7 +17,7 @@ class Options_Object(QtCore.QObject):
         self.Main = Main
         
         # emtpy dicts for all the options
-        self.general = {} # all options associated w os interaction
+        self.general = {'cwd':self.Main.cwd} # all options associated w os interaction
         self.view = {} # all options involved in data display 
         self.preprocessing = {} # all options that actually metadata but needed for vis (stimulus frame)
         self.registration = {} # all options for elasitx
@@ -27,50 +27,30 @@ class Options_Object(QtCore.QObject):
         
         # needed to be visible
         self.QtCompositionModes = ['SourceOver','DestinationOver','Clear','Source','Destination','SourceIn','DestinationIn','SourceOut','DestinationOut','SourceAtop','DestinationAtop','Xor','Plus','Multiply','Screen','Overlay','Darken','Lighten','ColorDodge','ColorBurn','HardLight','SoftLight','Difference','Exclusion','SourceOrDestination','SourceAndDestination','SourceXorDestination','NotSourceAndNotDestination','NotSourceOrNotDestination','NotSourceXorDestination','NotSource','NotSourceAndDestination','SourceAndNotDestination']
-#        self.nStimuli_old = None        
         
-        # temporarily included hack, removed later
-        self.options_filepath = None
-        self.load_default_options() ### FIXME
-#        self.nStimuli_old = self.preprocessing['nStimuli']
-        
-        # define user access for automatic generation of the Options_Control GUI
-#        self.settable_options = []
-#        self.make_settable_options()
-            
+        # default options have to exist so the UI can be initialized
+#        self.load_default_options()
+           
         pass
     pass
 
     def init_data(self):
-        """ IO reads the options_file from disk """
-        self.load_default_options()
-        print 'data default'
-        self.nStimuli_old = self.preprocessing['nStimuli']
-        
-        # for future implementation
-#        self.Main.IO.load_options() 
-
-#        and this code is then moved to IO        
-#        if self.Main.options_filepath != None:
-#            if os.path.exists(self.options_filepath):
-#                if self.Main.verbose:
-#                    print "loading options file from ", self.options_filepath
-#                    self.Main.IO.load_options()
+       pass
     
     def update(self):
- 
-#        self.Main.Signals.updateDisplaySettingsSignal.emit()
         pass
 
     def reset(self):
-        """ resets the object"""
-        self.load_default_options()
         pass
 
     def load_default_options(self):
+        if self.Main.verbose:
+            print "loading default options"
+
         self.general = {'verbose':True,
+                        'experiment_name':os.path.split(os.path.dirname(self.Main.Data.Metadata.paths[0]))[1], # defaults to folder name
                         'options_filepath':None,
-                        'cwd':None,
+                        'cwd':self.Main.cwd,
                         'lst_was_read':False,
                         'dFF_was_calc':False
                         }
@@ -84,7 +64,7 @@ class Options_Object(QtCore.QObject):
                               'filter_size':[0.8,1]
                               }
                               
-        self.view = {'show_flags':[0],
+        self.view = {'show_flags':sp.ones(self.Main.Data.nTrials,dtype='bool'),
                      'composition_mode':'Screen',
                      'last_selected':0,
                      'show_dFF':False,
@@ -108,9 +88,10 @@ class Options_Object(QtCore.QObject):
                     'show_labels':True}
                     
         self.export = {'format':'.csv',
-                       'data':'dFF',
+                       'data':'dFF'
                        }
                        
+        self.nStimuli_old = self.preprocessing['nStimuli']                       
         pass
     
 

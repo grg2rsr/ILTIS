@@ -48,7 +48,6 @@ class Main(QtCore.QObject):
         self.IO = IO_Object(self)
         self.Options = Options_Object(self)
         self.Options_Control = Options_Control_Widget(self)
-        self.Options_Control.init_UI() # this is necessary because of a circular reference btw Options and Options_Control
         self.Processing = Processing_Object(self)
         self.ROIs = ROIs_Object(self)
 
@@ -57,8 +56,6 @@ class Main(QtCore.QObject):
         ## Signals # centrally managed connections work, and all slots are ready at this timepoint in the code
         self.Signals = Signals(self)
         
-        ### HACKED IN FOR TESTINGS START
-#        self.IO.init_data()
     
     ### initializers
     def initialize_paths(self):
