@@ -36,10 +36,12 @@ class ROI_Manager_Widget(QtGui.QTableWidget):
         pass    
                
     def update(self):
-     # redraw the table
+        # redraw the table
+        self.blockSignals(True) # signal block because itemSelectionChange would be emitted
         self.setRowCount(len(self.Main.ROIs.ROI_list))
         for i,ROI in enumerate(self.Main.ROIs.ROI_list):
             self.setItem(i,0,QtGui.QTableWidgetItem(ROI.label))
+        self.blockSignals(False) # signal block because itemSelectionChange would be emitted
 #        self.set_current_selection(self.Main.Options.ROI['active_ROIs'])
         
     def reset(self):
@@ -62,9 +64,11 @@ class ROI_Manager_Widget(QtGui.QTableWidget):
         self.blockSignals(False)
         
     def selection_changed(self):     
-        """ ONLY used upon click in the table """
+        """ ONLY used upon click in the table
+        but: a removed active ROI also causes a itemSelectionChanged to be emitted"""
         selection = self.get_current_selection()
         
+        # dirty hack but when the last ROI is removed, the len
         for i,state in enumerate(selection):
             self.Main.ROIs.ROI_list[i].active = state
         

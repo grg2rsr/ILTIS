@@ -157,7 +157,7 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             
     def update_traces(self):
         """ is called upon all ROI and Dataset changes """
-        if len(self.Main.ROIs.ROI_list) > 0:
+        if len(self.Main.ROIs.ROI_list) > 0 and self.Main.Options.ROI['last_active'] != None:
             ROI_ind = self.Main.Options.ROI['last_active']
             ROI = self.Main.ROIs.ROI_list[ROI_ind]
             active_inds = sp.where(self.Main.Options.view['show_flags'])[0]

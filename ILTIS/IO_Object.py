@@ -233,7 +233,7 @@ class IO_Object(object):
                     data = self.Main.Data.Traces_sorted[:,ROI_id,trial_ind,:]
                     data = sp.concatenate((tvec[:,sp.newaxis],data),axis=1)
                     cols = 'time [s]' + range(nReps)
-                    outpath = self.Main.cwd + os.path.sep + self.Main.Options.general['experiment_name'] + '_' + trial_label + '_' + ROI_label + '.csv'
+                    outpath = self.Main.Options.general['cwd'] + os.path.sep + self.Main.Options.general['experiment_name'] + '_' + trial_label + '_' + ROI_label + '.csv'
                     pd.DataFrame(data,columns=cols).to_csv(outpath,delimiter=',')
             
         ## exporting to gloDatamix
@@ -251,7 +251,7 @@ class IO_Object(object):
             for i,l in enumerate(data_labels):
                 labels.append(l+str(i))
 
-            outpath = self.SaveFileDialog(title='saving to .gloDatamix',default_dir=self.Main.cwd)    
+            outpath = self.SaveFileDialog(title='saving to .gloDatamix',default_dir=self.Main.Options.general['cwd'])    
 
             fh = open(outpath,'w')
             fh.write('\t'.join(labels))
@@ -330,7 +330,7 @@ class IO_Object(object):
         update the names that are shown next to the viewboxes with the names of
         the odors """
         
-        lst_path = self.OpenFileDialog(title='load lst',default_dir=self.Main.cwd,extension='*.lst')[0]
+        lst_path = self.OpenFileDialog(title='load lst',default_dir=self.Main.Options.general['cwd'],extension='*.lst')[0]
         LSTdata = pd.read_csv(lst_path,header=0,delimiter='\t')
                     
         # remove the weird random amount of whitespaces in the column names
@@ -387,16 +387,25 @@ class IO_Object(object):
     
     def read_options(self):
         """ unpickles the options dicts from ./settings """
-        dict_list = ['general','preprocessing','view','ROI','export','flags']
+
+        # this is for reading all defaults
+        self.Main.Options.load_default_options() 
+        
+        # and then replace
+        dict_list = ['general','preprocessing','ROI','export','flags']
         for d in dict_list:
             dict_path = self.Main.program_dir + os.path.sep + 'settings' + os.path.sep + d
             with open(dict_path,'r') as fh:
                 setattr(self.Main.Options,d,pickle.load(fh))
+                
+        # some fixes because these values have to be reset
+        self.Main.Options.ROI['active_ROIs'] = []
+        self.Main.Options.ROI['last_active'] =  None
         pass
         
     def save_options(self):
         """ pickle the current options dicts into the settings subfolder """
-        dict_list = ['general','preprocessing','view','ROI','export','flags']
+        dict_list = ['general','preprocessing','ROI','export','flags']
         for d in dict_list:
             outpath = self.Main.program_dir + os.path.sep + 'settings' + os.path.sep + d
             with open(outpath,'w') as fh:

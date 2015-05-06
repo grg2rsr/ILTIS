@@ -96,14 +96,22 @@ class ROIs_Object(QtCore.QObject):
         
     def remove_ROI(self,evt):
         """ remove a ROI, right click from popup menu"""
+
         ROI = evt.sender()
         self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI)
         self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI.labelItem)
         
-        ROI.removeTimer.stop() # fix from luke campagnola (pyqtgraph mailinglist) # seems to be unnecessary now?
+        ROI.removeTimer.stop() # fix suggestion from luke campagnola (pyqtgraph mailinglist) # seems to be unnecessary now?
+        
+        # if the removed ROI was the last active, then set the var to none
+        if self.ROI_list.index(ROI) == self.Main.Options.ROI['last_active']:
+            self.Main.Options.ROI['last_active'] = None
+        
+        # remove reference from ROI_list
         self.ROI_list.remove(ROI)
-
+        
         self.Main.MainWindow.Front_Control_Panel.ROI_Manager.update()
+        self.Main.MainWindow.Front_Control_Panel.ROI_Manager.set_current_selection()
         self.update_active_ROIs()
         
                
