@@ -190,9 +190,9 @@ class ROIs_Object(QtCore.QObject):
         else:
             [roi.deactivate() for roi in self.ROI_list]
             ROI.toggle_state()
-            
-        self.update_active_ROIs()
+        
         self.Main.Options.ROI['last_active'] = self.ROI_list.index(ROI)
+        self.update_active_ROIs()
         self.update_display_settings()
         
     def update_display_settings(self):

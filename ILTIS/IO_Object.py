@@ -127,7 +127,7 @@ class IO_Object(object):
         self.Main.Data.infer()
 
         # load options
-        self.load_options(reset=False)
+        self.load_options(reset=True)
         
     def get_paths_to_read(self):
 #        paths = self.OpenFileDialog(title='Open data set', default_dir=self.Main.Options.general['cwd'], extension='(*.tif *.ids *.lsm)')

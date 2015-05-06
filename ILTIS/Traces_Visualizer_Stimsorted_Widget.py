@@ -65,6 +65,7 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             
             # vlines
             vline = plot.addLine(x=self.Data_Display.Frame_Visualizer.frame,movable=True)
+            vline.setBounds((0, self.Main.Data.nFrames -1))
             vline.sigPositionChanged.connect(self.vline_pos_changed) # add interactivity
             self.vlines.append(vline)
             
@@ -157,8 +158,10 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             
     def update_traces(self):
         """ is called upon all ROI and Dataset changes """
-        if len(self.Main.ROIs.ROI_list) > 0 and self.Main.Options.ROI['last_active'] != None:
+        if len(self.Main.Options.ROI['active_ROIs']) >= 1 and len(self.Main.ROIs.ROI_list) > 0 and self.Main.Options.ROI['last_active'] != None: 
+
             ROI_ind = self.Main.Options.ROI['last_active']
+
             ROI = self.Main.ROIs.ROI_list[ROI_ind]
             active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
             Traces = self.get_traces(ROI)
