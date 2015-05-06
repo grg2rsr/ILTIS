@@ -35,7 +35,7 @@ class IO_Object(object):
         self.load_data() # opens filedialog, sets meta_data.paths
 
         # init the UI of Options Control
-        self.Main.Options_Control.init_UI()
+        self.Main.MainWindow.Options_Control.init_UI()
 
         # initialize Data display again
         self.Main.Signals.initDataSignal.emit()
@@ -61,7 +61,7 @@ class IO_Object(object):
             default_dir = os.getcwd()
         if title==None:
             title='Open File'
-        
+            
         qpaths = QtGui.QFileDialog.getOpenFileNames(parent=self.Main.MainWindow, caption=title, directory=default_dir, filter=extension)
         paths = []
         for i in range(len(qpaths)):            
@@ -121,6 +121,7 @@ class IO_Object(object):
         self.Main.Data.Metadata.paths = paths
         
         # update cwd
+        self.Main.cwd = os.path.dirname(paths[0])
         self.Main.Options.general['cwd'] = os.path.dirname(paths[0])
         
         # infer some Meta information
@@ -130,7 +131,6 @@ class IO_Object(object):
         self.load_options(reset=True)
         
     def get_paths_to_read(self):
-#        paths = self.OpenFileDialog(title='Open data set', default_dir=self.Main.Options.general['cwd'], extension='(*.tif *.ids *.lsm)')
         paths = self.OpenFileDialog(title='Open data set', default_dir=self.Main.Options.general['cwd'], extension='(*.tif *.lsm)')
         return paths
         

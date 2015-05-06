@@ -10,7 +10,7 @@ sys.path.append(os.path.split(os.path.realpath(__file__))[0] + os.path.sep + os.
 from PyQt4 import QtGui, QtCore
 import pyqtgraph as pg
 from Options_Object import Options_Object
-from Options_Control_Widget import Options_Control_Widget
+
 from Processing_Object import Processing_Object
 from MainWindow_Widget import MainWindow_Widget
 from ROIs_Object import ROIs_Object
@@ -40,7 +40,6 @@ class Main(QtCore.QObject):
         # ini
         self.IO = IO_Object(self)
         self.Options = Options_Object(self)
-        self.Options_Control = Options_Control_Widget(self)
         self.Processing = Processing_Object(self)
         self.ROIs = ROIs_Object(self)
 

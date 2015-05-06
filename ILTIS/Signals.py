@@ -36,7 +36,7 @@ class Signals(QtCore.QObject):
             self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted,
             self.Main.MainWindow.Front_Control_Panel.Data_Selector,
             self.Main.MainWindow.Front_Control_Panel.ROI_Manager,
-            self.Main.Options_Control]
+            self.Main.MainWindow.Options_Control]
             
         self.non_GUI_objects = [
             self.Main.Options,
@@ -56,7 +56,7 @@ class Signals(QtCore.QObject):
 #                        ]
 #
 #        for GUI_object in self.GUI_Objects:
-#            if not(GUI_object == self.Main.Options_Control):
+#            if not(GUI_object == self.Main.MainWindow.Options_Control):
 #            self.updateSignal.connect(slot)
         
         
@@ -69,7 +69,7 @@ class Signals(QtCore.QObject):
         
         # init_data and update
         for GUI_object in self.GUI_Objects:
-            if not(GUI_object == self.Main.Options_Control):
+            if not(GUI_object == self.Main.MainWindow.Options_Control):
                 self.initDataSignal.connect(GUI_object.init_data)
                 self.updateSignal.connect(GUI_object.update)
         self.initDataSignal.connect(self.Main.MainWindow.enable_actions)

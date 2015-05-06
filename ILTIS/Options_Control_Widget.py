@@ -10,11 +10,11 @@ import scipy as sp
 
 class Options_Control_Widget(QtGui.QTabWidget):
     """ the GUI widget to set the options, possibly one with tabs """
-    def __init__(self,Main):
+    def __init__(self,Main,parent):
         super(Options_Control_Widget,self).__init__()
         
         self.Main = Main
-        self.parent = Main
+        self.parent = parent
 
     ### UI generation
     def init_UI(self):

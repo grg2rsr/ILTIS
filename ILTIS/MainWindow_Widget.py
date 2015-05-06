@@ -8,6 +8,7 @@ from PyQt4 import QtGui, QtCore
 import os
 from Data_Display_Widget import Data_Display_Widget
 from Front_Control_Panel_Widget import Front_Control_Panel_Widget
+from Options_Control_Widget import Options_Control_Widget
 
 class MainWindow_Widget(QtGui.QMainWindow):
 
@@ -52,6 +53,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
         self.Data_Display = Data_Display_Widget(self.Main,self)
         self.Front_Control_Panel = Front_Control_Panel_Widget(self.Main,self)
         self.Container = QtGui.QWidget()
+        self.Options_Control = Options_Control_Widget(self.Main,self)
 #        
 #        # splitter variant
         self.Splitter = QtGui.QSplitter(QtCore.Qt.Horizontal)
@@ -304,14 +306,15 @@ class MainWindow_Widget(QtGui.QMainWindow):
         
 
     def open_Options_Widget(self):
-        self.Main.Options_Control.show()
-        self.Main.Options_Control.raise_()
+        self.Options_Control.show()
+        self.Options_Control.raise_()
         pass
         
     def closeEvent(self,event): # reimplementation
         reply=QtGui.QMessageBox.question(self,'Message',"Are you sure to quit?",QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
         if reply==QtGui.QMessageBox.Yes:
             self.Main.IO.save_options()
+            self.Options_Control.close()
             ### FIXME add cleanup!
             event.accept()
         else:
