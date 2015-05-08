@@ -128,7 +128,8 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
             ImageItem.setCompositionMode(n)
             
         for ImageItem in self.ImageItems_dFF:
-            ImageItem.setCompositionMode(n)       
+            ImageItem.setCompositionMode(n)      
+            
             
     def keyPressEvent(self, event): # reimplementation
         if event.key() == 16777234:
