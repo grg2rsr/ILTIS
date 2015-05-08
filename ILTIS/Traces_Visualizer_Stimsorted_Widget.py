@@ -208,8 +208,6 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         self.Main.Data_Display.Frame_Visualizer.update_frame()
         
         
-        
-        
 if __name__ == '__main__':
     import Main
     Main.main()

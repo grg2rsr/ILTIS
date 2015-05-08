@@ -128,4 +128,19 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
             ImageItem.setCompositionMode(n)
             
         for ImageItem in self.ImageItems_dFF:
-            ImageItem.setCompositionMode(n)              
+            ImageItem.setCompositionMode(n)       
+            
+    def keyPressEvent(self, event): # reimplementation
+        if event.key() == 16777234:
+#            print " left arrow "
+            self.frame = self.frame - 1
+            self.frame = sp.clip(self.frame,0,self.Main.Data.nFrames-1)
+        
+        if event.key() == 16777236:
+#            print " right arrow "            
+            self.frame = self.frame + 1
+            self.frame = sp.clip(self.frame,0,self.Main.Data.nFrames-1)
+
+                               
+        self.update_frame()
+        self.Main.MainWindow.Data_Display.Traces_Visualizer.update_vline(self.frame) # one call is enougth because this one calls the other as well
