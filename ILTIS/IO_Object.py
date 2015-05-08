@@ -116,6 +116,10 @@ class IO_Object(object):
         if file_format == '.lsm':
             tifpaths = self.convert_lsm2tif(paths)
             self.load_tif(tifpaths)
+        
+        if file_format == '.pst':
+            tifpaths = self.convert_pst2tif(paths)
+            self.load_tif(tifpaths)
             
         # default settings if no metadata is read
         self.Main.Data.Metadata.paths = paths
@@ -131,7 +135,7 @@ class IO_Object(object):
         self.load_options(reset=True)
         
     def get_paths_to_read(self):
-        paths = self.OpenFileDialog(title='Open data set', default_dir=self.Main.Options.general['cwd'], extension='(*.tif *.lsm)')
+        paths = self.OpenFileDialog(title='Open data set', default_dir=self.Main.Options.general['cwd'], extension='(*.tif *.lsm *.pst)')
         return paths
         
     def determine_format(self,paths):
@@ -313,7 +317,7 @@ class IO_Object(object):
                 if len(info) == 3: # here is the compatibility Aljas .lst vs Michis .lst files
                     Tanimal, tmp, Experiment = info
                 if len(info) == 2:
-                    Tanimal, Experiment
+                    Tanimal, Experiment = info
                 Experiment = os.path.splitext(Experiment)[0]
                 if Experiment == filename:
                     myInd = ind
@@ -417,7 +421,18 @@ class IO_Object(object):
 #==============================================================================
 
     
-    def convert_lsm2tif(paths):
+    def convert_lsm2tif(self,paths):
         """ batch convert .lsm files to tiffs """
-        # FIXME
-        pass
+        for path in paths:
+            io.lsm2tiff(path)
+        
+        tifpaths = [os.path.splitext(path)[0]+'.tif' for path in paths]
+        return tifpaths
+    
+    def convert_pst2tif(self,paths):
+        """ batch convert .lsm files to tiffs """
+        for path in paths:
+            io.pst2tiff(path)
+            
+        tifpaths = [os.path.splitext(path)[0]+'.tif' for path in paths]
+        return tifpaths

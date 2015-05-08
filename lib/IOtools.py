@@ -130,7 +130,29 @@ def read_mhd(mhd_path):
                
     return data_reshape
     
+def read_pst(pst_path):
+    """ read tillvision based .pst files as uint16 """
 
+    inf_path = os.path.splitext(pst_path)[0] + '.inf'
+    
+    # reading stack size from inf
+    meta = {}
+    with open(inf_path,'r') as fh:
+    #    fh.next()
+        for line in fh.readlines():
+            try:
+                k,v = line.strip().split('=')
+                meta[k] = v
+            except:
+                pass
+    
+    shape = sp.int32((meta['Width'],meta['Height'],meta['Frames']))
+    
+    
+    raw = sp.fromfile(pst_path,dtype='int16')
+    data = sp.reshape(raw,shape,order='F')
+    return data.astype('uint16')
+    
 #==============================================================================
 # writers    
 #==============================================================================
@@ -219,6 +241,14 @@ def save_mhd(data,path,dtype=None):
 def lsm2tiff(path,outpath=None):
     """ convinence function for converting a .lsm to a .tiff """
     Stack = read_lsm(path)
+    if not(outpath):
+        outpath = os.path.splitext(path)[0] + '.tif'
+    save_tstack(Stack,outpath)
+    pass
+
+def pst2tiff(path,outpath=None):
+    """ convinence function for converting a .pst to a .tiff """
+    Stack = read_pst(path)
     if not(outpath):
         outpath = os.path.splitext(path)[0] + '.tif'
     save_tstack(Stack,outpath)
