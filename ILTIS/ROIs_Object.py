@@ -24,9 +24,7 @@ class ROIs_Object(QtCore.QObject):
         super(ROIs_Object,self).__init__()
                 
         self.Main = Main
-
         self.ROI_list = []
-        self.proxies = []
         
         pass
     
@@ -81,15 +79,6 @@ class ROIs_Object(QtCore.QObject):
                 ROI = myPolyLineROI(self.Main, pos_list, label,  closed=True, removable=True, pen=current_pen)
         
             
-        # link signals
-        ROI.sigRemoveRequested.connect(self.remove_ROI_request)
-        ROI.sigRegionChanged.connect(self.ROI_region_changed)        
-#        ROI.sigHoverEvent.connect(self.ROI_hover)
-        ROI.setAcceptedMouseButtons(QtCore.Qt.LeftButton)
-        ROI.sigClicked.connect(self.ROI_clicked)
-        
-        # rate limit movement
-        self.proxies.append(pg.SignalProxy(ROI.sigRegionChanged, rateLimit=30, slot=self.ROI_region_changed)) # FIXME this creates more and more proxies which are never destroyed
 
         # set only the current ROI active
         [roi.deactivate() for roi in self.ROI_list]
@@ -164,10 +153,6 @@ class ROIs_Object(QtCore.QObject):
     
     def ROI_region_changed(self,evt):
         """ interactive dragging of the ROI causes traces update """
-        print "region changed", evt
-        if type(evt) == myCircleROI or type(evt) == myPolyLineROI: # what is this for??
-            return None
-
         ROI = evt[0]
         if not(ROI.active):
             [roi.deactivate() for roi in self.ROI_list]
@@ -241,7 +226,14 @@ class myROI(object):
         self.labelItem = pg.TextItem(text=label,anchor=(0.5,0.5))
         self.update_center()
         self.Main.Data_Display.Frame_Visualizer.ViewBox.addItem(self.labelItem)
+    
+        # link signals
+        self.sigRemoveRequested.connect(self.Main.ROIs.remove_ROI_request)
+        self.proxy = pg.SignalProxy(self.sigRegionChanged, rateLimit=30, slot=self.Main.ROIs.ROI_region_changed) # rate limit movement
+        self.setAcceptedMouseButtons(QtCore.Qt.LeftButton)
+        self.sigClicked.connect(self.Main.ROIs.ROI_clicked)
         
+
     def activate(self):
         self.active = True
         self.setPen(pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8))
