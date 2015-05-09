@@ -30,9 +30,13 @@ class ROIs_Object(QtCore.QObject):
     
     def reset(self):
         """ removes all ROIs """
-        nROIs = len(self.ROI_list)
-        for i in range(nROIs):
-            self.remove_ROI(self.ROI_list[0])
+
+        while len(self.ROI_list) > 0:
+            ROI = self.ROI_list.pop()
+            self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI)
+            self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI.labelItem)
+        
+        self.Main.Options.ROI['last_active'] = None
                     
     def add_ROI_request(self, evt):
         """ for ROI placement
@@ -100,11 +104,7 @@ class ROIs_Object(QtCore.QObject):
         self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI)
         self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI.labelItem)
         
-        try:
-            ROI.removeTimer.stop() # fix suggestion from luke campagnola (pyqtgraph mailinglist) # seems to be unnecessary now?
-            print "ROI", ROI, "had a timer"
-        except AttributeError:
-            print "ROI", ROI, "doesn't have timer"
+        ROI.removeTimer.stop() # fix suggestion from luke campagnola (pyqtgraph mailinglist) # seems to be unnecessary now?
         
         # if the removed ROI was the last active, then set the var to none
         if ROI == self.Main.Options.ROI['last_active']:
@@ -117,12 +117,13 @@ class ROIs_Object(QtCore.QObject):
         self.Main.MainWindow.Front_Control_Panel.ROI_Manager.set_current_selection()
         self.update_active_ROIs()
         
-               
+        
     def get_active_ROIs(self):
         """ returns both boolean vector and indices """
         boolvec = [ROI.active for ROI in self.ROI_list]
         inds = sp.where(boolvec)[0]
         return boolvec,inds
+
         
     def update_active_ROIs(self):
         """ sets the ROI['active_ROIs'] """
@@ -144,9 +145,10 @@ class ROIs_Object(QtCore.QObject):
         """ helper for slicing the pixels out of the image below a ROI 
         calculates a boolean mask containing true if pixel inside ROI """
         mask = sp.zeros((self.Main.Data.raw.shape[0],self.Main.Data.raw.shape[1]),dtype='bool')
-        
+
         # getArraySlice gets 1) array to slice 2) ImageItem
         inds = ROI.getArraySlice(self.Main.Data.raw[:,:,0,0], self.Main.Data_Display.Frame_Visualizer.ImageItems[0], returnSlice=False)[0]
+
         valinds = sp.where(ROI.getArrayRegion(self.Main.Data.raw[:,:,0,0], self.Main.Data_Display.Frame_Visualizer.ImageItems[0]) != 0)
         inds = sp.array([inds[0],inds[1]])
        
