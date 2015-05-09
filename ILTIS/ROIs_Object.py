@@ -30,7 +30,13 @@ class ROIs_Object(QtCore.QObject):
         
         pass
     
-    def request_ROI_placement(self, evt):
+    def reset(self):
+        """ removes all ROIs """
+        nROIs = len(self.ROI_list)
+        for i in range(nROIs):
+            self.remove_ROI(self.ROI_list[0])
+                    
+    def add_ROI_request(self, evt):
         """ for ROI placement
         add functionality: watch for ROI placing toggle/switch        
         """
@@ -39,6 +45,14 @@ class ROIs_Object(QtCore.QObject):
                 # get correct position of mouse click
                 pos = self.Main.Data_Display.Frame_Visualizer.ViewBox.mapToView(evt.pos())
                 self.add_ROI(pos=sp.array([pos.x(),pos.y()]))
+                
+    def remove_ROI_request(self,evt):
+        """ for ROI removal, clicked from popup menu """
+        ROI = evt.sender()
+        print "removing ROI", self.ROI_list.index(ROI)
+        self.remove_ROI(ROI)
+        pass
+        
     
     def add_ROI(self,label=None,kind=None,pos=None,ROI_diameter=None,pos_list=None):
         """ this function is called and takes care of the proper ROI instantiation 
@@ -67,10 +81,9 @@ class ROIs_Object(QtCore.QObject):
                 pos_list = [[pos[0]-ROI_diameter,pos[1]-ROI_diameter], [pos[0]+ROI_diameter,pos[1]-ROI_diameter], [pos[0]+ROI_diameter,pos[1]+ROI_diameter], [pos[0]-ROI_diameter,pos[1]+ROI_diameter]]
                 ROI = myPolyLineROI(self.Main, pos_list, label,  closed=True, removable=True, pen=current_pen)
         
-        
             
         # link signals
-        ROI.sigRemoveRequested.connect(self.remove_ROI)
+        ROI.sigRemoveRequested.connect(self.remove_ROI_request)
         ROI.sigRegionChanged.connect(self.ROI_region_changed)        
 #        ROI.sigHoverEvent.connect(self.ROI_hover)
         ROI.setAcceptedMouseButtons(QtCore.Qt.LeftButton)
@@ -93,11 +106,9 @@ class ROIs_Object(QtCore.QObject):
         self.update_active_ROIs()
         
         
+    def remove_ROI(self,ROI):
+        """ remove a ROI, update all necessary  """
         
-    def remove_ROI(self,evt):
-        """ remove a ROI, right click from popup menu"""
-
-        ROI = evt.sender()
         self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI)
         self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI.labelItem)
         
@@ -108,6 +119,7 @@ class ROIs_Object(QtCore.QObject):
             self.Main.Options.ROI['last_active'] = None
         
         # remove reference from ROI_list
+        print "still same index?", self.ROI_list.index(ROI)
         self.ROI_list.remove(ROI)
         
         self.Main.MainWindow.Front_Control_Panel.ROI_Manager.update()
@@ -154,7 +166,8 @@ class ROIs_Object(QtCore.QObject):
     
     def ROI_region_changed(self,evt):
         """ interactive dragging of the ROI causes traces update """
-        if type(evt) == myCircleROI or type(evt) == myPolyLineROI:
+        print "region changed", evt
+        if type(evt) == myCircleROI or type(evt) == myPolyLineROI: # what is this for??
             return None
 
         ROI = evt[0]
@@ -192,6 +205,7 @@ class ROIs_Object(QtCore.QObject):
             ROI.toggle_state()
         
         self.Main.Options.ROI['last_active'] = self.ROI_list.index(ROI)
+        print self.Main.Options.ROI['last_active']
         self.update_active_ROIs()
         self.update_display_settings()
         

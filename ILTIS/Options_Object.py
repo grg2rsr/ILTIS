@@ -95,7 +95,8 @@ class Options_Object(QtCore.QObject):
                        }
         self.flags = {'LST_was_read':False}
                        
-        self.nStimuli_old = self.preprocessing['nStimuli']                       
+        self.nStimuli_old = self.preprocessing['nStimuli']       
+        self.view['heatmap'], self.view['graymap'] = self.Main.Processing.calc_preset_colormaps()
         pass
     
 

@@ -24,11 +24,11 @@ class Data_Selector_Widget(QtGui.QTableWidget):
     
     def init_data(self):
                 
-        self.paths = self.Main.Data.Metadata.paths
-        self.setRowCount(len(self.paths))
+        self.Main.Data.Metadata.paths = self.Main.Data.Metadata.paths
+        self.setRowCount(len(self.Main.Data.Metadata.paths))
         
         # table entries
-        for n,path in enumerate(self.paths):
+        for n,path in enumerate(self.Main.Data.Metadata.paths):
             self.setItem(n,0,QtGui.QTableWidgetItem(self.Main.Data.Metadata.trial_labels[n]))
             
             color = self.Main.Options.view['colors'][n]
@@ -50,7 +50,7 @@ class Data_Selector_Widget(QtGui.QTableWidget):
         self.itemChanged.connect(self.labels_changed)
         
         # select all on startup
-        selection = QtGui.QTableWidgetSelectionRange(0,0,len(self.paths)-1,0)
+        selection = QtGui.QTableWidgetSelectionRange(0,0,len(self.Main.Data.Metadata.paths)-1,0)
         self.setRangeSelected(selection,True)
         
         self.verticalHeader().setStyle(QtGui.QStyleFactory.create('Cleanlooks')) # check on windows machines
@@ -72,16 +72,25 @@ class Data_Selector_Widget(QtGui.QTableWidget):
     
     def reset(self):
         """ emtpy table """
-        for n,path in enumerate(self.paths):
-            item = self.takeItem(n,0)
-            item = None
-        pass
+        try:
+            self.itemChanged.disconnect()
+        except:
+            pass
+        
+        self.clear()
+        self.setRowCount(0)
+
+#        
+#        for i in range(self.rowCount()):
+#            item = self.takeItem(i,0)
+#            pass
+        
     
     def selection_changed(self):     
         selection = [item.row() for item in self.selectedItems()]
         if len(selection) > 0:
             last_selected = selection[-1] # FIXME this sometimes throws errors
-            show_flags_updated = sp.zeros(len(self.paths),dtype='bool')
+            show_flags_updated = sp.zeros(len(self.Main.Data.Metadata.paths),dtype='bool')
             show_flags_updated[selection] = 1
             self.Main.Options.view['show_flags'] = show_flags_updated
             self.Main.Options.view['last_selected'] = last_selected

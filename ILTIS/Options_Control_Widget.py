@@ -60,10 +60,8 @@ class Options_Control_Widget(QtGui.QTabWidget):
         for row in self.get_rows():
             row[1].connect()
         
-    def reset_UI(self):
-        """ if number of stim changes, redo the whole UI with the new settable 
-        ones """
-        print "resetting UI"
+    def reset(self):
+        """  """
         for tab_ind in range(self.count()):
             self.removeTab(0) # removes all ... 
         self.rows = []

@@ -34,7 +34,7 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
         self.setCentralItem(self.ViewBox)
         
         # mouse interaction
-        self.scene().sigMouseClicked.connect(self.Main.ROIs.request_ROI_placement)
+        self.scene().sigMouseClicked.connect(self.Main.ROIs.add_ROI_request)
         pass
     
     def init_data(self):

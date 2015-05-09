@@ -308,9 +308,17 @@ class IO_Object(object):
                 
         for n,path in enumerate(self.Main.Data.Metadata.paths):            
             filename = os.path.splitext(os.path.split(path)[1])[0]
-            ### FIXME BUG this kills if there is no _whatever shit appended...
-            filename = '_'.join(filename.split('_')[:-1]) # dirty dirty hack to remove the _affine.tif or the _full.tif. Will not work with two underscores like _bspline_transformed.tif
             
+            # this parser is specifically designed to handle 
+            # a) lsm style .lst files
+            # b) tillvision wide-field .lst files
+            # c) output of the motion correction scripts
+
+            # if last part is in suffixes, take it out
+            suffixes = ['affine','full','affineglobal','fullglobal']          
+            if os.path.splitext(filename.split('_')[-1])[0] in suffixes:
+                filename = '_'.join(filename.split('_')[:-1])
+                    
             myInd = None
             for ind in self.Main.Data.Metadata.LSTdata.index:
                 info = self.Main.Data.Metadata.LSTdata['DBB1'][ind].strip().split('\\')

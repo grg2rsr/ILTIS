@@ -18,7 +18,7 @@ class Signals(QtCore.QObject):
     
     updateDisplaySettingsSignal = QtCore.pyqtSignal()
 
-    optionsUpdateSignal = QtCore.pyqtSignal()    
+#    optionsUpdateSignal = QtCore.pyqtSignal()    
     
     resetSignal = QtCore.pyqtSignal()
     initDataSignal= QtCore.pyqtSignal()
@@ -38,42 +38,28 @@ class Signals(QtCore.QObject):
             self.Main.MainWindow.Front_Control_Panel.ROI_Manager,
             self.Main.MainWindow.Options_Control]
             
-        self.non_GUI_objects = [
+        self.non_GUI_Objects = [
             self.Main.Options,
             self.Main.Processing,
             self.Main.IO,
             self.Main.Data,
             self.Main.ROIs]
-        
+                
 
-#        # update signal
-#        update_slots = [self.Main.MainWindow.Data_Display.Frame_Visualizer.update,
-#                        self.Main.MainWindow.Data_Display.LUT_Controlers.update,
-#                        self.Main.MainWindow.Data_Display.Traces_Visualizer.update,
-#                        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update,
-#                        self.Main.MainWindow.Front_Control_Panel.Data_Selector.update, # unclear if needed
-#                        self.Main.MainWindow.Front_Control_Panel.ROI_Manager.update # unclear if needed
-#                        ]
-#
-#        for GUI_object in self.GUI_Objects:
-#            if not(GUI_object == self.Main.MainWindow.Options_Control):
-#            self.updateSignal.connect(slot)
+        # reset signal
+        for GUI_Object in self.GUI_Objects:
+            self.resetSignal.connect(GUI_Object.reset)
+        self.resetSignal.connect(self.Main.ROIs.reset)
         
-        
-        # update Traces signal
-#        self.updateTracesSignal.connect(self.Main.MainWindow.Data_Display.Traces_Visualizer.update)
-#        self.updateTracesSignal.connect(self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update)
-        
-        # update Frame
-#        self.updateFrameSignal.connect(self.Main.MainWindow.Data_Display.Frame_Visualizer.update)
         
         # init_data and update
-        for GUI_object in self.GUI_Objects:
-            if not(GUI_object == self.Main.MainWindow.Options_Control):
-                self.initDataSignal.connect(GUI_object.init_data)
-                self.updateSignal.connect(GUI_object.update)
+        for GUI_Object in self.GUI_Objects:
+            if not(GUI_Object == self.Main.MainWindow.Options_Control):
+                self.initDataSignal.connect(GUI_Object.init_data)
+                self.updateSignal.connect(GUI_Object.update)
         self.initDataSignal.connect(self.Main.MainWindow.enable_actions)
         self.initDataSignal.connect(self.Main.Options.init_data)
+                
                 
         # display settings
         slots = [self.Main.MainWindow.Data_Display.Frame_Visualizer.update_display_settings,
@@ -85,6 +71,7 @@ class Signals(QtCore.QObject):
                  
         for slot in slots:
             self.updateDisplaySettingsSignal.connect(slot)
+            
             
         # active ROIs changed
         slots = [self.Main.MainWindow.Data_Display.Traces_Visualizer.init_traces,

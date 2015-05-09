@@ -68,8 +68,6 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
             vline.setBounds((0, self.Main.Data.nFrames -1))
             vline.sigPositionChanged.connect(self.vline_pos_changed) # add interactivity
             self.vlines.append(vline)
-            
-            # 
 
             # add the plot to the list of plots
             self.plotItems.append(plot)
@@ -161,8 +159,11 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         if len(self.Main.Options.ROI['active_ROIs']) >= 1 and len(self.Main.ROIs.ROI_list) > 0 and self.Main.Options.ROI['last_active'] != None: 
 
             ROI_ind = self.Main.Options.ROI['last_active']
-
-            ROI = self.Main.ROIs.ROI_list[ROI_ind]
+            
+            try:
+                ROI = self.Main.ROIs.ROI_list[ROI_ind]
+            except IndexError:
+                print "error with" , ROI_ind
             active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
             Traces = self.get_traces(ROI)
 

@@ -18,10 +18,6 @@ class Processing_Object(object):
     def __init__(self,Main):
         self.Main = Main
         self.Data = None
-        
-        heatmap, graymap = self.calc_preset_colormaps()
-        self.Main.Options.view['heatmap'] = heatmap
-        self.Main.Options.view['graymap'] = graymap
         pass
 
 
