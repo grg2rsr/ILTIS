@@ -100,7 +100,11 @@ class ROIs_Object(QtCore.QObject):
         self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI)
         self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI.labelItem)
         
-        ROI.removeTimer.stop() # fix suggestion from luke campagnola (pyqtgraph mailinglist) # seems to be unnecessary now?
+        try:
+            ROI.removeTimer.stop() # fix suggestion from luke campagnola (pyqtgraph mailinglist) # seems to be unnecessary now?
+            print "ROI", ROI, "had a timer"
+        except AttributeError:
+            print "ROI", ROI, "doesn't have timer"
         
         # if the removed ROI was the last active, then set the var to none
         if ROI == self.Main.Options.ROI['last_active']:

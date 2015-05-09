@@ -46,10 +46,10 @@ class Processing_Object(object):
         ## from dFF toggler
         if self.Main.Options.view['show_dFF'] == True:
             # if no dFF has been calculated, do so now. 
-            if not(self.Main.Options.general['dFF_was_calc']):
+            if not(self.Main.Options.flags['dFF_was_calc']):
 
                 self.calc_dFF()
-                self.Main.Options.general['dFF_was_calc'] = True
+                self.Main.Options.flags['dFF_was_calc'] = True
                 self.Main.Data_Display.LUT_Controlers.reset_levels()
         
  
@@ -72,7 +72,7 @@ class Processing_Object(object):
             
         bck = sp.average(data_tmp[:,:,f_start:f_stop,:],axis=2)[:,:,sp.newaxis,:]
         self.Main.Data.dFF = (data_tmp - bck) / bck
-        self.Main.Options.general['dFF_was_calc'] = True
+        self.Main.Options.flags['dFF_was_calc'] = True
         
     def calc_avg(self):
         f_start,f_stop = self.Main.Options.preprocessing['avg_frames']

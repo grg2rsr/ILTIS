@@ -404,7 +404,7 @@ class IO_Object(object):
         self.Main.Options.load_default_options() 
         
         # and then replace
-        dict_list = ['general','preprocessing','ROI','export','flags']
+        dict_list = ['general','preprocessing','ROI','export']
         for d in dict_list:
             dict_path = self.Main.program_dir + os.path.sep + 'settings' + os.path.sep + d
             with open(dict_path,'r') as fh:
@@ -417,7 +417,7 @@ class IO_Object(object):
         
     def save_options(self):
         """ pickle the current options dicts into the settings subfolder """
-        dict_list = ['general','preprocessing','ROI','export','flags']
+        dict_list = ['general','preprocessing','ROI','export']
         for d in dict_list:
             outpath = self.Main.program_dir + os.path.sep + 'settings' + os.path.sep + d
             with open(outpath,'w') as fh:

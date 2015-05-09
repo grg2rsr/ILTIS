@@ -19,6 +19,8 @@ from IO_Object import IO_Object
 import scipy as sp
 from Signals import Signals
 
+
+#pg.setConfigOption("useOpenGL", True)
 pg.setConfigOptions(antialias=True)
 
 class Main(QtCore.QObject):

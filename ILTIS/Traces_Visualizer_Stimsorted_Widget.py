@@ -183,6 +183,8 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
 #        for trace in self.traces:
 #            trace.clear()
         self.traces = []
+        self.stim_regions = None
+        self.vlines = []
         pass
 
     def vline_pos_changed(self,evt):

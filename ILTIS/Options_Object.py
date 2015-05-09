@@ -52,8 +52,7 @@ class Options_Object(QtCore.QObject):
                         'experiment_name':os.path.split(os.path.dirname(self.Main.Data.Metadata.paths[0]))[1], # defaults to folder name
                         'options_filepath':None,
                         'cwd':self.Main.cwd,
-                        'lst_was_read':False,
-                        'dFF_was_calc':False
+
                         }
                         
         self.preprocessing = {'stimuli':sp.array([[25,50]]),
@@ -93,7 +92,8 @@ class Options_Object(QtCore.QObject):
         self.export = {'format':'.csv - normal',
                        'data':'dFF'
                        }
-        self.flags = {'LST_was_read':False}
+        self.flags = {'LST_was_read':False,
+                      'dFF_was_calc':False}
                        
         self.nStimuli_old = self.preprocessing['nStimuli']       
         self.view['heatmap'], self.view['graymap'] = self.Main.Processing.calc_preset_colormaps()
