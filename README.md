@@ -18,10 +18,10 @@ The program is still in a very early developmental stage, but already useable. L
 
 and in your experiment trial 1 and 3 were stimulus A, 2 and 4 were stimulus B, then the label file has to look like
 
-> stimulus_A
-stimulus_B
-stimulus_A
-stimulus_B
+> stimulus_A  
+stimulus_B  
+stimulus_A  
+stimulus_B  
 
 #### file support
 Fully supported are only `.tif` files, `.lsm` files from Zeiss confocal are likely supported (at least the ones from the LSM 510 pre-Zen software). Imports for other formats are being developed, please leave a post and send me a example file.
