@@ -49,7 +49,6 @@ class ROIs_Object(QtCore.QObject):
     def remove_ROI_request(self,evt):
         """ for ROI removal, clicked from popup menu """
         ROI = evt.sender()
-        print "removing ROI", self.ROI_list.index(ROI)
         self.remove_ROI(ROI)
         pass
         
@@ -98,7 +97,7 @@ class ROIs_Object(QtCore.QObject):
         
         # add ROI
         self.ROI_list.append(ROI)
-        self.Main.Options.ROI['last_active'] = self.ROI_list.index(ROI)
+        self.Main.Options.ROI['last_active'] = ROI
         self.Main.Data_Display.Frame_Visualizer.ViewBox.addItem(ROI)
         
         # update
@@ -115,11 +114,10 @@ class ROIs_Object(QtCore.QObject):
         ROI.removeTimer.stop() # fix suggestion from luke campagnola (pyqtgraph mailinglist) # seems to be unnecessary now?
         
         # if the removed ROI was the last active, then set the var to none
-        if self.ROI_list.index(ROI) == self.Main.Options.ROI['last_active']:
+        if ROI == self.Main.Options.ROI['last_active']:
             self.Main.Options.ROI['last_active'] = None
         
         # remove reference from ROI_list
-        print "still same index?", self.ROI_list.index(ROI)
         self.ROI_list.remove(ROI)
         
         self.Main.MainWindow.Front_Control_Panel.ROI_Manager.update()
@@ -177,7 +175,7 @@ class ROIs_Object(QtCore.QObject):
             self.update_active_ROIs()
         
         ROI.update_center()
-        self.Main.Options.ROI['last_active'] = self.ROI_list.index(ROI)
+        self.Main.Options.ROI['last_active'] = ROI
         
         self.Main.MainWindow.Data_Display.Traces_Visualizer.update_traces()
         self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
@@ -204,8 +202,7 @@ class ROIs_Object(QtCore.QObject):
             [roi.deactivate() for roi in self.ROI_list]
             ROI.toggle_state()
         
-        self.Main.Options.ROI['last_active'] = self.ROI_list.index(ROI)
-        print self.Main.Options.ROI['last_active']
+        self.Main.Options.ROI['last_active'] = ROI
         self.update_active_ROIs()
         self.update_display_settings()
         

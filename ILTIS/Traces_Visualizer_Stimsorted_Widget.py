@@ -158,12 +158,14 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         """ is called upon all ROI and Dataset changes """
         if len(self.Main.Options.ROI['active_ROIs']) >= 1 and len(self.Main.ROIs.ROI_list) > 0 and self.Main.Options.ROI['last_active'] != None: 
 
-            ROI_ind = self.Main.Options.ROI['last_active']
-            
-            try:
-                ROI = self.Main.ROIs.ROI_list[ROI_ind]
-            except IndexError:
-                print "error with" , ROI_ind
+#            ROI_ind = self.Main.Options.ROI['last_active']
+#            
+#            try:
+#                ROI = self.Main.ROIs.ROI_list[ROI_ind]
+#            except IndexError:
+#                print "error with" , ROI_ind
+
+            ROI = self.Main.Options.ROI['last_active']
             active_inds = sp.where(self.Main.Options.view['show_flags'])[0]
             Traces = self.get_traces(ROI)
 
