@@ -153,7 +153,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                         'ReadTrialLabelsAction':{'label':'Load trial labels file',
                                                  'status_tip':'Read trial labels from text file',
                                                  'icon':self.Main.graphics_path + os.path.sep + 'icons' + os.path.sep +  'tags.svg',
-                                                 'func':self.Main.IO.read_trial_labels,
+                                                 'func':self.Main.IO.load_trial_labels,
                                                  'checkable':False,
                                                  'no_data_disabled':True},                                    
 

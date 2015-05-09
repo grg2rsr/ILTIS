@@ -25,7 +25,6 @@ class ROIs_Object(QtCore.QObject):
                 
         self.Main = Main
         self.ROI_list = []
-        
         pass
     
     def reset(self):

@@ -314,15 +314,18 @@ class IO_Object(object):
             # b) tillvision wide-field .lst files
             # c) output of the motion correction scripts
 
-            # if last part is in suffixes, take it out
+            # moco compatibility
             suffixes = ['affine','full','affineglobal','fullglobal']          
             if os.path.splitext(filename.split('_')[-1])[0] in suffixes:
                 filename = '_'.join(filename.split('_')[:-1])
-                    
+            
+#            import pdb
+#            pdb.set_trace()
+            
             myInd = None
             for ind in self.Main.Data.Metadata.LSTdata.index:
                 info = self.Main.Data.Metadata.LSTdata['DBB1'][ind].strip().split('\\')
-                if len(info) == 3: # here is the compatibility Aljas .lst vs Michis .lst files
+                if len(info) == 3: # here is the compatibility lsm vs tillvision
                     Tanimal, tmp, Experiment = info
                 if len(info) == 2:
                     Tanimal, Experiment = info
