@@ -1,11 +1,10 @@
-# ILTIS
-an _Interactive Labeled-Trial Image-stack Slicer_
+# ILTIS - an _Interactive Labeled-Trial Image-stack Slicer_
 
 ## Description
 
-this program was designed to interactively and flexibly slice datasets from functional imaging experiments along the time domain. A classical imaging experiment consists of high dimensional data sets: The individual imaging trials, e.g. the response of a certain area to a stimulus is ususally imaged as (x,y) images over time (t), resulting in 3d image stacks. Additionally, different stimuli (S) are given with a certain number of repetitons (R), resulting in 5 dimensional data (x,y,t,S,R)
+this program was designed to interactively and flexibly slice datasets from functional imaging experiments along the time domain. A classical imaging experiment consists of high dimensional data sets: The individual imaging _trials_, e.g. the response of a certain area to a stimulus is ususally imaged as `(x,y)` images over time `(t)`, resulting in 3d image stacks. Additionally, different _stimuli_ (S) are given with a certain number of _repetitions_ `(R)`, resulting in 5 dimensional data `(x,y,t,S,R)`.
 
-This program is designed to extract time traces from these kind of data sets and sort them according to stimulus class S and repetiton R. While this is in principle possible with ImageJ/Fiji macros (because basically anything is in principle possible with their macros), this program offers great flexibility in terms of data display, scaling, color maps, overlays, data subselection and trace visualization.
+This program is designed to slice this type of data along the temporal axis to in _time traces_, and sort them according to _stimulus class_ `S` and _repetition `R`. While this is in principle possible with ImageJ/Fiji macros (because basically anything is in principle possible with their macros), this program offers great flexibility in terms of data display, scaling, color maps, overlays, ROI handling, data subselection and trace visualization.
 
 ## Usage
 ### loading data
@@ -16,7 +15,7 @@ The program is still in a very early developmental stage, but already useable. L
 + my_trial_3.tif
 + my_trial_4.tif
 
-and in your experiment trial 1 and 3 were stimulus A, 2 and 4 were stimulus B, then the label file has to look like
+and in your experiment trial 1 and 3 were `stimulus A`, 2 and 4 were `stimulus B`, then the label file has to look like
 
 > stimulus_A  
 stimulus_B  
