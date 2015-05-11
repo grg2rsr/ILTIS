@@ -172,7 +172,10 @@ class SingleValueWidget(QtGui.QLineEdit):
         self.editingFinished.connect(self.parent.UI_changed)
         
     def get_value(self):
-        return sp.array(str(self.text())).astype(self.dtype)
+        if self.dtype == 'S':
+            return str(self.text())
+        else:
+            return sp.array(str(self.text())).astype(self.dtype)
     
     def set_value(self,value):
         value = sp.array(value)

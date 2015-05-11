@@ -23,10 +23,10 @@ class Data_Object(object):
     
     def infer(self):
         """ infer some fields, self.raw and Metadata.paths have to be set """
-        self.Metadata.trial_labels = [os.path.basename(path) for path in self.Metadata.paths]
+        self.Metadata.trial_labels = [os.path.splitext(os.path.basename(path))[0] for path in self.Metadata.paths]
         self.nTrials = len(self.Metadata.paths)
         self.nFrames = self.raw.shape[2]
-    pass
+        pass
 
 class Metadata_Object(object):
     def __init__(self,parent):
@@ -34,7 +34,10 @@ class Metadata_Object(object):
         self.Data = parent
         self.paths = None
         self.trial_labels = None
+        self.stim = None
         self.LSTdata = None
+        self.dt = None
+        self.tvec = None
         pass
 
 

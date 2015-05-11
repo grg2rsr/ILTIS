@@ -196,6 +196,9 @@ class IO_Object(object):
         # extract traces
         self.Main.Processing.calc_traces(self.Main.Data.extraction_mask)
         
+        # calculate time vector
+        self.Main.Processing.calc_tvec()
+        
         
         ## exporting to csv
         if self.Main.Options.export['format'] == '.csv - normal':
@@ -205,8 +208,7 @@ class IO_Object(object):
             labels = [ROI.label for ROI in self.Main.ROIs.ROI_list]
             labels.insert(0,'time [s]')
             
-            tvec = sp.linspace(0,self.Main.Data.Traces.shape[0]/self.Main.Options.preprocessing['dt'],self.Main.Data.Traces.shape[0])
-            tvec = tvec - self.Main.Options.preprocessing['stimuli'][0,0] * self.Main.Options.preprocessing['dt']
+            tvec = self.Main.Data.Metadata.tvec
             
             for n in range(self.Main.Data.nTrials):
                 outpath = os.path.splitext(self.Main.Data.Metadata.paths[n])[0] + '_traces_' + str(n+1) + '.csv'
@@ -229,14 +231,13 @@ class IO_Object(object):
             nStims = unique_trial_labels.shape[0]
             nReps = len(self.Main.Data.Metadata.trial_labels) / nStims
             
-            tvec = sp.linspace(0,self.Main.Data.Traces.shape[0]/self.Main.Options.preprocessing['dt'],self.Main.Data.Traces.shape[0])
-            tvec = tvec - self.Main.Options.preprocessing['stimuli'][0,0] * self.Main.Options.preprocessing['dt']
+            tvec = self.Main.Data.Metadata.tvec
             
             for ROI_id,ROI_label in enumerate(ROI_labels):
                 for trial_ind,trial_label in enumerate(unique_trial_labels):
                     data = self.Main.Data.Traces_sorted[:,ROI_id,trial_ind,:]
                     data = sp.concatenate((tvec[:,sp.newaxis],data),axis=1)
-                    cols = 'time [s]' + range(nReps)
+                    cols = ['time [s]'] + [str(ind+1) for ind in range(nReps)]
                     outpath = self.Main.Options.general['cwd'] + os.path.sep + self.Main.Options.general['experiment_name'] + '_' + trial_label + '_' + ROI_label + '.csv'
                     pd.DataFrame(data,columns=cols).to_csv(outpath,delimiter=',')
             

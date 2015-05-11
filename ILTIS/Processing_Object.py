@@ -82,6 +82,26 @@ class Processing_Object(object):
     ### dataset extraction related 
 #==============================================================================
 
+    def calc_tvec(self,t0=None):
+        """ calculates a time vector based on dt. if t0 is not given, the 
+        start of the first stimulus is t0 """
+        
+        # get
+        dt = self.Main.Options.preprocessing['dt']
+        nFrames = self.Main.Data.nFrames
+        if t0 == None:
+            t0 = self.Main.Options.preprocessing['stimuli'][0,0] * dt
+            
+        # calc
+        tvec = sp.arange(0,nFrames*dt,dt)
+        tvec = tvec - t0
+        
+        # store        
+        self.Main.Data.Metadata.dt = dt
+        self.Main.Data.Metadata.tvec = tvec
+        return tvec
+            
+
     def calc_extraction_mask(self):
         """ calculates boolean extraction mask based on current ROIs 
         extraction mask as the shape of (x,y,nROIs), True if pixel is inside
@@ -118,7 +138,7 @@ class Processing_Object(object):
     def sort_traces(self):
         """ creates a (t,ID,stim,rep) representation of the Traces """
         
-        labels = self.Main.Data.Metadata.trial_labels
+        labels = sp.array(self.Main.Data.Metadata.trial_labels)
 
         # inferrence 
         stim_unique = sp.unique(labels)
@@ -138,7 +158,11 @@ class Processing_Object(object):
             rep_index = sp.where(sp.where(labels == labels[n])[0] == n)[0][0] # das wievielte mal kommt n in stim_order[n] vor? -> rep index
             
             # get the traces and put it in the data structure at the correct place
-            self.Main.Data.Traces_sorted[:,:,stim_index,rep_index] = self.Main.Data.Traces[:,:,n]
+            try:
+                self.Main.Data.Traces_sorted[:,:,stim_index,rep_index] = self.Main.Data.Traces[:,:,n]
+            except IndexError:
+                import pdb
+                pdb.set_trace()
             pass
         pass
     
