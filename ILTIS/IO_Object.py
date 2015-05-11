@@ -8,6 +8,7 @@ Created on Wed Apr 15 14:52:50 2015
 from PyQt4 import QtGui, QtCore # for the dialogs
 from lib import IOtools as io
 from Data_Object import Data_Object, Metadata_Object
+from ROIs_Object import myCircleROI,myPolyLineROI
 import os
 import sys
 import scipy as sp
@@ -79,8 +80,8 @@ class IO_Object(object):
         qpath = QtGui.QFileDialog.getSaveFileName(parent=self.Main.MainWindow, caption=title, directory=default_dir, filter=extension)
         path = str(qpath)
         
-        if os.path.splitext(path)[1] != extension:
-            path = path + '.gloDatamix'
+#        if os.path.splitext(path)[1] != extension:
+#            path = path + '.gloDatamix'
             
         return path
         
@@ -177,6 +178,60 @@ class IO_Object(object):
 #        pass
     
     def save_tif(self):
+        pass
+    
+    
+#    def write_extraction_mask(self,evt):
+    def write_extraction_mask(self):
+        """ write both the .coor file and the tif pages
+        ROI file format specification: each row a ROI,
+        first col: 0 or 1 (0 is circle, 1 is poly)
+        if circle: label, layer, pos x, pos y, diameter
+        if poly: label, layer, pos x_1, pos_y1, ... pos x_n, pos y_n
+        """
+#        self.Main.Processing.
+            
+        outpath = self.SaveFileDialog(title='saving ROIs',default_dir = self.Main.Options.general['cwd'], extension='*.coor')
+        if os.path.splitext(outpath)[1] == '':
+            outpath = outpath + '.coor'
+            
+        fh = open(outpath,'w')
+#        fh.write(str(len(self.ROIlist)) + '\n')
+        
+        # iterate over ROIs
+        for i,ROI in enumerate(self.Main.ROIs.ROI_list):
+            label = str(ROI.label)
+            
+            if type(ROI) == myCircleROI:
+#                pos = sp.array([ROI.pos().x(),ROI.pos().y()])
+#                pos = self.get_ROI_position(ROI)
+                x = str(sp.around(ROI.center[0],decimals=2))
+                y = str(sp.around(ROI.center[1],decimals=2))
+                d = str(sp.around(ROI.diameter,decimals=2))
+                
+                fh.write('\t'.join([str(0),label,x,y,d,'\n']))
+                
+            if type(ROI) == myPolyLineROI:
+                 fh.write('\t'.join([str(1),label]))
+                 fh.write('\t')
+                 for j in range(len(ROI.getSceneHandlePositions())):
+
+                     pos = self.Main.Data_Display.Frame_Visualizer.mapFromScene(ROI.getSceneHandlePositions()[j][1])
+                     x = pos.x()
+                     y = pos.y()
+
+                     fh.write('\t'.join([str(sp.around(x,decimals=2)),str(sp.around(y,decimals=2))]))
+                     fh.write('\t')
+                 fh.write('\n')
+                 
+        fh.close()
+        
+        print "saved ROIs in .coor format to", outpath
+#        outpath = os.path.splitext(outpath)[0] + '_mask.tif'
+#        outpath = self.MainWindow.SaveFileDialog(title='saving ROIs',defaultdir=self.path,extension='.tif')
+#        io.save_tstack(self.ex_mask.astype('uint16'),outpath)
+#        print "saved ROIs in .tif format to", outpath
+        
         pass
     
 #==============================================================================

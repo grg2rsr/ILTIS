@@ -269,6 +269,7 @@ class myCircleROI(pg.CircleROI,myROI):
     def __init__(self,Main,pos,size,label,**kwargs):
         pg.CircleROI.__init__(self,pos,size,**kwargs)
         myROI.__init__(self, Main, label)
+        self.diameter = self.size()[0]
         
     def get_center(self):
         """ returns ROI center, used for label show """
@@ -276,6 +277,11 @@ class myCircleROI(pg.CircleROI,myROI):
         pos = sp.array([pos.x(),pos.y()])
         pos = pos + self.size()[0] / 2.0 # here is is a plus. probably a ROI has it's coordinate 0,0 at the upper left corner, whereas the image 0,0 is bottom left
         return pos
+        
+    def update_center(self):
+        self.center = self.get_center()
+        self.labelItem.setPos(self.center[0],self.center[1])
+        self.diameter = self.size()[0]
 
         
 class myPolyLineROI(pg.PolyLineROI,myROI):

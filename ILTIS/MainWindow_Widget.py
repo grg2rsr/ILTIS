@@ -164,7 +164,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                         'WriteROIAction':{'label':'save ROIs',
                                           'status_tip':'save current ROIs as specified in options',
                                           'icon':None,
-                                          'func':None,
+                                          'func':self.Main.IO.write_extraction_mask,
                                           'checkable':False,
                                           'no_data_disabled':True},
 
