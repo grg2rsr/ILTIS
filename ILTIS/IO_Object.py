@@ -181,22 +181,46 @@ class IO_Object(object):
         pass
     
     
-#    def write_extraction_mask(self,evt):
+#==============================================================================
+    ### ROI related    
+#==============================================================================
+    def load_ROIs(self):
+        """ reads a .roifile and updates the ROIs """
+        self.Main.ROIs.reset()
+                
+        roi_file_path = self.OpenFileDialog(title='load ROIs',default_dir = self.Main.Options.general['cwd'], extension='*.roi')[0]
+        
+        with open(roi_file_path, 'r') as fh:
+            for line in fh.readlines():
+                line = line.strip().split('\t')
+                
+                kind = line[0]
+                label = line[1]
+                
+                info = sp.array(line[2:],dtype=float)
+                if kind == 'circle':
+                    self.Main.ROIs.add_ROI(kind='circle',label=label,pos=(info[0],info[1]),ROI_diameter=info[2])
+                if kind == 'polygon':
+                    pos_list = []
+                    for i in range(0,info.shape[0],2):
+                        pos = self.Main.Data_Display.Frame_Visualizer.ViewBox.mapToView(QtCore.QPointF(info[i],info[i+1]))
+                        pos_list.append([pos.x(),pos.y()])
+                        pass
+                    self.Main.ROIs.add_ROI(kind='polygon',label=label,pos_list=pos_list)
+                    pass
+                pass
+        
     def write_extraction_mask(self):
-        """ write both the .coor file and the tif pages
+        """ write both the .roi file and the tif pages
         ROI file format specification: each row a ROI,
-        first col: 0 or 1 (0 is circle, 1 is poly)
+        first col: kw for roi type
         if circle: label, layer, pos x, pos y, diameter
         if poly: label, layer, pos x_1, pos_y1, ... pos x_n, pos y_n
         """
-#        self.Main.Processing.
-            
-        outpath = self.SaveFileDialog(title='saving ROIs',default_dir = self.Main.Options.general['cwd'], extension='*.coor')
-        if os.path.splitext(outpath)[1] == '':
-            outpath = outpath + '.coor'
+        outpath = self.SaveFileDialog(title='saving ROIs',default_dir = self.Main.Options.general['cwd'], extension='*.roi')
+        outpath = self.append_extension(outpath, '.roi')
             
         fh = open(outpath,'w')
-#        fh.write(str(len(self.ROIlist)) + '\n')
         
         # iterate over ROIs
         for i,ROI in enumerate(self.Main.ROIs.ROI_list):
@@ -209,10 +233,10 @@ class IO_Object(object):
                 y = str(sp.around(ROI.center[1],decimals=2))
                 d = str(sp.around(ROI.diameter,decimals=2))
                 
-                fh.write('\t'.join([str(0),label,x,y,d,'\n']))
+                fh.write('\t'.join(['circle',label,x,y,d,'\n']))
                 
             if type(ROI) == myPolyLineROI:
-                 fh.write('\t'.join([str(1),label]))
+                 fh.write('\t'.join(['polygon',label]))
                  fh.write('\t')
                  for j in range(len(ROI.getSceneHandlePositions())):
 
@@ -226,7 +250,7 @@ class IO_Object(object):
                  
         fh.close()
         
-        print "saved ROIs in .coor format to", outpath
+        print "saved ROIs in .roi format to", outpath
 #        outpath = os.path.splitext(outpath)[0] + '_mask.tif'
 #        outpath = self.MainWindow.SaveFileDialog(title='saving ROIs',defaultdir=self.path,extension='.tif')
 #        io.save_tstack(self.ex_mask.astype('uint16'),outpath)
@@ -311,7 +335,9 @@ class IO_Object(object):
             for i,l in enumerate(data_labels):
                 labels.append(l+str(i))
 
-            outpath = self.SaveFileDialog(title='saving to .gloDatamix',default_dir=self.Main.Options.general['cwd'])    
+            outpath = self.SaveFileDialog(title='saving to .gloDatamix',default_dir=self.Main.Options.general['cwd'])   
+            
+            outpath = self.append_extension('.gloDatamix')
 
             fh = open(outpath,'w')
             fh.write('\t'.join(labels))
@@ -503,3 +529,10 @@ class IO_Object(object):
             
         tifpaths = [os.path.splitext(path)[0]+'.tif' for path in paths]
         return tifpaths
+        
+    def append_extension(self,fname,ext):
+        """ if filename does not end with extension, append it """
+        if os.path.splitext(fname)[1] == '':
+            fname = fname + ext
+        return fname
+        

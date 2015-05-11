@@ -79,7 +79,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
         self.Menubar = self.menuBar()
         Open = self.Menubar.addMenu('&Open')
         Open.addAction(self.OpenAction)
-        Open.addAction(self.ReadCoorAction)
+        Open.addAction(self.ReadROIAction)
         Open.addAction(self.ReadLSTAction)
         Open.addAction(self.ReadTrialLabelsAction)
         
@@ -136,10 +136,10 @@ class MainWindow_Widget(QtGui.QMainWindow):
                                       'checkable':False,
                                       'no_data_disabled':False},
                                     
-                        'ReadCoorAction':{'label':'Load .coor file',
-                                          'status_tip':'Read .coor file from disk',
+                        'ReadROIAction':{'label':'Load .roi file',
+                                          'status_tip':'Read .roi file from disk',
                                           'icon':None,
-                                          'func':None,
+                                          'func':self.Main.IO.load_ROIs,
                                           'checkable':False,
                                           'no_data_disabled':True},
                                     
