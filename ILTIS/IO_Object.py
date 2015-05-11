@@ -337,7 +337,7 @@ class IO_Object(object):
 
             outpath = self.SaveFileDialog(title='saving to .gloDatamix',default_dir=self.Main.Options.general['cwd'])   
             
-            outpath = self.append_extension('.gloDatamix')
+            outpath = self.append_extension(outpath,'.gloDatamix')
 
             fh = open(outpath,'w')
             fh.write('\t'.join(labels))
