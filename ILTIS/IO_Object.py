@@ -79,30 +79,31 @@ class IO_Object(object):
             
         qpath = QtGui.QFileDialog.getSaveFileName(parent=self.Main.MainWindow, caption=title, directory=default_dir, filter=extension)
         path = str(qpath)
-        
-#        if os.path.splitext(path)[1] != extension:
-#            path = path + '.gloDatamix'
             
         return path
         
 #==============================================================================
-    ### reading data sets
+    ### General reading
 #==============================================================================
 
-    """ get paths to load. determine file format. open appropriate reader """
+   
     def load_data(self):
+        """ get paths to load. determine file format. open appropriate reader """
 
         # Data init        
         self.Main.Data = Data_Object()
         self.Main.Data.Metadata = Metadata_Object(self.Main.Data)
         
         # get paths
-        paths = self.get_paths_to_read()
+        paths = self.OpenFileDialog(title='Open data set', default_dir=self.Main.Options.general['cwd'], extension='(*.tif *.lsm *.pst)')
         if paths == None:
             pass
         
         # determine format
-        file_format = self.determine_format(paths)
+        endings = sp.array([os.path.splitext(path)[1] for path in paths])
+        if not(sp.all(endings[0] == endings)):
+            raise "not all file formats are equal!"
+        file_format = endings[0]
         
         # open appropriate reader
         if file_format == '.tif':
@@ -135,17 +136,7 @@ class IO_Object(object):
         # load options
         self.load_options(reset=True)
         
-    def get_paths_to_read(self):
-        paths = self.OpenFileDialog(title='Open data set', default_dir=self.Main.Options.general['cwd'], extension='(*.tif *.lsm *.pst)')
-        return paths
-        
-    def determine_format(self,paths):
-        """ goes through the paths and raises an exception if there are incompatibilities """
-        # check for mixed file formats
-        endings = sp.array([os.path.splitext(path)[1] for path in paths])
-        if not(sp.all(endings[0] == endings)):
-            print "raise error here, not all fileformats are equal"
-        return endings[0]
+
     
     def load_tif(self,paths):
         """ read tifs found at paths (list with paths) """
@@ -165,10 +156,6 @@ class IO_Object(object):
         self.Main.MainWindow.statusBar().clearMessage()
             
 
-        
-    
-#    def load_ids(path):
-#        pass
 
 
 #==============================================================================
@@ -178,11 +165,12 @@ class IO_Object(object):
 #        pass
     
     def save_tif(self):
+        """ rgb color merge, crop """
         pass
     
     
 #==============================================================================
-    ### ROI related    
+    ### ROI IO
 #==============================================================================
     def load_ROIs(self):
         """ reads a .roifile and updates the ROIs """
@@ -259,7 +247,7 @@ class IO_Object(object):
         pass
     
 #==============================================================================
-    ### exporting traces
+    ### Traces IO
 #==============================================================================
     
     def export_traces(self):
@@ -377,7 +365,7 @@ class IO_Object(object):
 
 
 #==============================================================================
-    ### LST related
+    ### lst parser / gloDatamix compatibility
 #==============================================================================
         
     def map_lst_inds_to_path_inds(self):
@@ -448,24 +436,53 @@ class IO_Object(object):
         self.Main.MainWindow.Front_Control_Panel.Data_Selector.set_current_labels(self.Main.Data.Metadata.trial_labels)
         pass
 #==============================================================================
-    ### trial labels
+    ### trial labels as text files
 #==============================================================================
-
     
     def load_trial_labels(self):
-        """ opens a file dialog and runs read_trial_labels with the selected path """
+        """ if only one string per line, then the order of lines corresponds the 
+        order of the stimulus presentations, and the filenames contain this 
+        ordering in their alphabetical / alphanumeric structure.
+        
+        Alternatively, a line can contain 2 strings (comma separated), then the 
+        first is the filename without extension, and the second is the label """
+
+        # get filepath per UI
         filepath = self.OpenFileDialog(title='load a textfile with trial labels',default_dir=self.Main.Options.general['cwd'])
         filepath = filepath[0]
-        self.read_trial_labels(filepath)
+        
+        # check which whay to parse
+        with open(filepath,'r') as fh:
+            firstline = fh.readline()
+            
+        if len(firstline.split(',')) == 1:
+            mode = 'single'
+        if len(firstline.split(',')) == 2:
+            mode = 'mappable'
+        if len(firstline.split(',')) > 2:
+            raise "trial labels file contains more than 2 strings per line, cannot parse that."
+            
+        self.read_trial_labels(filepath,mode=mode)
         pass
         
-    def read_trial_labels(self,filepath):
+    def read_trial_labels(self,filepath,mode='single'):
         """ reads the labels from the text file at path (newline separated) """
-        with open(filepath, 'r') as fh:
-            labels = [label.strip() for label in fh.readlines()]
+        
+        if mode == 'single':
+            with open(filepath, 'r') as fh:
+                labels = [label.strip() for label in fh.readlines()]
+        
+        if mode == 'mappable':
+            with open(filepath, 'r') as fh:
+                lines = [line.strip() for line in fh.readlines()]
+                ordered = [line.split(',') for line in lines]
+                names = [entries[0] for entries in ordered]
+                labels = [entries[1] for entries in ordered]
+                
         self.Main.Data.Metadata.labels = labels
         self.Main.MainWindow.Front_Control_Panel.Data_Selector.set_current_labels(labels)
         pass
+    
 #==============================================================================
     ### Options
 #==============================================================================

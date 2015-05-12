@@ -6,6 +6,7 @@ Created on Wed Apr 15 14:54:33 2015
 """
 import scipy as sp
 from scipy import ndimage
+from scipy import random
 #from PyQt4 import QtGui,QtCore
 from PyQt4.QtGui import QColor
 from pyqtgraph import ColorMap as PGColorMap
@@ -203,7 +204,25 @@ class Processing_Object(object):
         graymap = PGColorMap(pos,cols)
         
         return heatmap, graymap
-        
+    
+    def calc_levels(self,data,fraction=(0.1,0.9),nbins=500,samples=None):
+        """ fraction is a tuple with (low, high) in the range of 0 to 1 
+        nbins is the number of bins for the histogram resolution
+
+        if samples: draw this number of samples (random inds) for faster
+        calculation
+        """
+        if samples:
+            data = data.flatten()[random.randint(sp.prod(data.shape),size=samples)]
+        else:
+            data = data.flatten()
+        y,x = sp.histogram(data,bins=nbins)
+        cy = sp.cumsum(y).astype('float32')
+        cy = cy / cy.max()
+        minInd = sp.argmin(sp.absolute(cy - fraction[0]))
+        maxInd = sp.argmin(sp.absolute(cy - fraction[1]))
+        levels = (x[minInd],x[maxInd])
+        return levels
     
     def add_circular_offset(self,array,offset,bound):
         """ helper function to rotate the color wheel"""

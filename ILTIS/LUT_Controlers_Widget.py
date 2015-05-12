@@ -43,7 +43,7 @@ class LUT_Controlers_Widget(QtGui.QWidget):
         # ini and connect
         for n in range(self.Main.Data.nTrials):
             # for raw
-            self.raw_levels.append(self.calc_levels(self.Main.Data.raw[:,:,:,n],fraction=(0.3,0.9995),nbins=100,samples=2000))
+            self.raw_levels.append(self.Main.Processing.calc_levels(self.Main.Data.raw[:,:,:,n],fraction=(0.3,0.9995),nbins=200,samples=4000))
             LUTwidget = pg.HistogramLUTWidget()
             LUTwidget.setImageItem(self.Data_Display.Frame_Visualizer.ImageItems[n])
             LUTwidget.item.setHistogramRange(self.Main.Data.raw.min(),self.Main.Data.raw.max()) # disables autoscaling
@@ -52,7 +52,7 @@ class LUT_Controlers_Widget(QtGui.QWidget):
             self.LUTwidgets.addWidget(LUTwidget)
     
             # for dFF        
-            self.dFF_levels.append(self.calc_levels(self.Main.Data.dFF[:,:,:,n],fraction=(0.7,0.9995),nbins=100,samples=2000))
+            self.dFF_levels.append(self.Main.Processing.calc_levels(self.Main.Data.dFF[:,:,:,n],fraction=(0.7,0.9995),nbins=200,samples=4000))
             LUTwidget = pg.HistogramLUTWidget()
             LUTwidget.setImageItem(self.Data_Display.Frame_Visualizer.ImageItems_dFF[n])
             LUTwidget.item.setHistogramRange(self.Main.Data.dFF.min(),self.Main.Data.dFF.max()) # disables autoscaling
@@ -125,40 +125,18 @@ class LUT_Controlers_Widget(QtGui.QWidget):
 
         pass
 
-     
-    def calc_levels(self,data,fraction=(0.1,0.9),nbins=100,samples=None):
-        # this function could be part of processing as well ... 
-        """ fraction is a tuple with (low, high) in the range of 0 to 1 
-        nbins is the number of bins for the histogram resolution
-
-        if samples: draw this number of samples (random inds) for faster
-        calculation
-        """
-        
-        if samples:
-#            data = data.flatten()[random.permutation(sp.arange(sp.prod(data.shape)))[:samples]]
-            data = data.flatten()[random.randint(sp.prod(data.shape),size=samples)]
-        else:
-            data = data.flatten()
-        y,x = sp.histogram(data,bins=nbins)
-        cy = sp.cumsum(y).astype('float32')
-        cy = cy / cy.max()
-        minInd = sp.argmin(sp.absolute(cy - fraction[0]))
-        maxInd = sp.argmin(sp.absolute(cy - fraction[1]))
-        levels = (x[minInd],x[maxInd])
-        return levels
         
     def reset_levels(self,which='dFF'):
         """ (re)calculate levels and set them """
         for n in range(self.Main.Data.nTrials):
             if which == 'dFF':
-                levels = self.calc_levels(self.Main.Data.dFF[:,:,:,n],fraction=(0.7,0.9995),nbins=100,samples=2000)
+                levels = self.Main.Processing.calc_levels(self.Main.Data.dFF[:,:,:,n],fraction=(0.7,0.9995),nbins=100,samples=2000)
                 self.dFF_levels[n] = levels
                 self.LUTwidgets_dFF.widget(n).item.setLevels(levels[0],levels[1])
                 pass
             
             if which == 'raw':
-                levels = self.calc_levels(self.Main.Data.raw[:,:,:,n],fraction=(0.3,0.9995),nbins=100,samples=2000)
+                levels = self.Main.Processing.calc_levels(self.Main.Data.raw[:,:,:,n],fraction=(0.3,0.9995),nbins=100,samples=2000)
                 self.dFF_levels[n] = levels
                 self.LUTwidgets_dFF.widget(n).item.setLevels(levels[0],levels[1])                
                 pass
