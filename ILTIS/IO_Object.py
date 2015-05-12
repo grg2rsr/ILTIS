@@ -14,6 +14,8 @@ import sys
 import scipy as sp
 import pandas as pd
 import pickle
+import re
+import time
 
 class IO_Object(object):
     """ holds all IO functionality """
@@ -437,6 +439,12 @@ class IO_Object(object):
         
         self.Main.MainWindow.Front_Control_Panel.Data_Selector.set_current_labels(self.Main.Data.Metadata.trial_labels)
         pass
+    
+    def convert_log2lst(self):
+        """ opens file dialog to chose a log file to convert """
+        log_path = self.OpenFileDialog(title='load .vws.log',default_dir=self.Main.Options.general['cwd'],extension='*.log')[0]
+        self.log2lst(log_path)
+        
 #==============================================================================
     ### trial labels as text files
 #==============================================================================
@@ -554,4 +562,123 @@ class IO_Object(object):
         if os.path.splitext(fname)[1] == '':
             fname = fname + ext
         return fname
+    
+    def log2lst(self,fname):
+        """ converts a till photonics .vws.log into a lst """
         
+        # some constants and declarations
+        block_starts = []
+        block_names = []
+        read_length = 18 # const
+        lst_labels = ["Measu","Label","Odour","DBB1","Cycle","MTime","OConc","Control","StimON","StimOFF","Pharma","PhTime","PhConc","Comment","ShiftX","ShiftY","StimISI","setting","dbb2","dbb3","PxSzX","PxSzY","PosZ","Lambda","Countl","slvFlip","Stim2ON","Stim2OFF","Age","Analyze"]
+        last_time = 0
+        lst_fname = os.path.splitext(os.path.splitext(fname)[0])[0] + '.lst'
+        
+        # read log and parse
+        with open(fname, 'r') as fh:
+            lines = [line.strip() for line in fh.readlines()]
+        
+        for i,line in enumerate(lines):
+            match = re.search('^\[(.*)\]',line)
+            if match:
+                block_starts.append(i)
+                block_names.append(match.group(1))
+                
+        valid_blocks = []
+        for i,name in enumerate(block_names):
+            if name.count('Snapshot') > 0 or name.count('Delta') > 0:
+                pass
+            else:
+                valid_blocks.append([i,block_starts[i],name])
+        
+        Measurements = []
+        for i,block_info in enumerate(valid_blocks):
+            Measurements.append({'index':block_info[0],'label':block_info[2]})
+            
+            ind = block_info[1]
+            block = lines[ind+1:ind+read_length]
+        
+            for line in block:
+                line_split = line.split(':')
+                if len(line_split) == 2:
+                    key,value = line_split
+                if len(line_split) > 2:
+                    key = line_split[0]
+                    value = ':'.join(line_split[1:]).strip()
+                Measurements[i][key] = value
+        
+        # loop and write
+        lst_handle = open(lst_fname,'w')  
+        lst_handle.write('\t'.join(lst_labels))
+        
+        for Measurement in Measurements:
+            label_split = Measurement['label'].split('_')
+            if len(label_split) == 3:
+                setting,Odour, OConc = label_split
+            if len(label_split) == 2:
+                setting,OConc = label_split
+                Odour = 'Missing'
+        
+            # time
+            """ it is unclear what mtime is exactly supposed to be. In this calc, there
+            is some kind of bug, leaving a 1s approx offst """
+            try:
+                times = Measurement['timing [ms]'].strip()
+                times = sp.array(times.split(' '),dtype='int32')
+                times_hhmmss = [time.strftime('%H:%M:%S',time.gmtime((t+last_time)/1000.0)) for t in times]
+                last_time = times[-1] + last_time
+                mtime = times_hhmmss[len(times)/2]
+                dt = str(sp.diff(times)[0])
+            except:
+                mtime = '-1'
+                dt = '-1'
+        
+            # location, check if pst, else -1
+            ext = os.path.splitext(Measurement['Location'])[1]
+            if ext != '.pst':
+                Location = '-1'
+            else:
+                tanimal = os.path.splitext(os.path.splitext(os.path.basename(fname))[0])[0] # tanimal
+                dbb = os.path.splitext(Measurement['Location'].split('\\')[-1])[0] # dbb wo pst
+                Location = '\\'.join([tanimal + '.pst',dbb])
+                
+            # Countl
+            Countl = 'subloop,\''+str(Measurement['index']+1)+'\';  '+Measurement['label']
+            
+            Measu = str(Measurement['index']+1)
+            Label = Measurement['label']
+            Odour = Odour
+            DBB1 = Location
+            Cycle = dt
+            MTime = mtime
+            OConc = OConc
+            Control = '0'
+            StimON = '24'
+            StimOFF = '28'
+            Pharma = 'Ringer'
+            PhTime = mtime
+            PhConc = '0'
+            Comment = 'log2lst.py'
+            ShiftX = '0'
+            ShiftY = '0'
+            StimISI = '0'
+            setting = setting
+            dbb2 = 'noDBB2'
+            dbb3 = 'noDBB3'
+            PxSzX = '1.57'
+            PxSzY = '1.57'
+            PosZ = '0'
+            Lambda = Measurement['Monochromator wavelength [nm]'].strip()
+            Countl = Countl
+            slvFlip = '0'
+            Stim2ON = '36'
+            Stim2OFF = '40'
+            Age = '-1'
+            Analyze = '-2'
+            
+            values = '\t'.join([Measu,Label,Odour,DBB1,Cycle,MTime,OConc,Control,StimON,StimOFF,Pharma,PhTime,PhConc,Comment,ShiftX,ShiftY,StimISI,setting,dbb2,dbb3,PxSzX,PxSzY,PosZ,Lambda,Countl,slvFlip,Stim2ON,Stim2OFF,Age,Analyze])
+            lst_handle.write('\n')
+            lst_handle.write(values)
+            
+            
+        lst_handle.close()

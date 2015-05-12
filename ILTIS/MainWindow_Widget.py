@@ -88,6 +88,8 @@ class MainWindow_Widget(QtGui.QMainWindow):
         Save.addAction(self.WriteMovieAction)
         Save.addAction(self.WriteTracesAction)
         
+        Converters = self.Menubar.addMenu('&Convert')
+        Converters.addAction(self.log2lstAction)
 #        Options = self.Menubar.addMenu('&Options')
 #        Options.addAction(self.OpenOptionsAction)
         
@@ -235,9 +237,23 @@ class MainWindow_Widget(QtGui.QMainWindow):
                                              'icon':None,
                                              'func':self.Main.Processing.calc_gaussian_smooth,
                                              'checkable':False,
-                                             'no_data_disabled':True}
-        }
+                                             'no_data_disabled':True},
                                     
+
+#==============================================================================
+#           Converters action
+#==============================================================================
+
+                        'log2lstAction':{'label':'Generate .lst from .vws.log',
+                                         'status_tip':'reads a .vws.log from till vision imaging setups and generates a .lst file',
+                                         'icon':None,
+                                         'func':self.Main.IO.convert_log2lst,
+                                         'checkable':False,
+                                         'no_data_disabled':False}
+                                             
+                        }
+
+
 
         # programatically generate Actions from self.Actions
         def setup_action(self,name,settings):
