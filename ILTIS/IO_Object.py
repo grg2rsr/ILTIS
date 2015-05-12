@@ -431,8 +431,10 @@ class IO_Object(object):
         
         # update labels
         ind_map = self.map_lst_inds_to_path_inds()
-
-        self.Main.Data.Metadata.trial_labels = [LSTdata.loc[ind_map[n]]['Odour'] for n in range(self.Main.Data.nTrials)]
+        
+        
+        self.Main.Data.Metadata.trial_labels = [LSTdata.loc[ind_map[n]]['Odour']+str(LSTdata.loc[ind_map[n]]['OConc']) for n in range(self.Main.Data.nTrials)]
+        
         self.Main.MainWindow.Front_Control_Panel.Data_Selector.set_current_labels(self.Main.Data.Metadata.trial_labels)
         pass
 #==============================================================================
