@@ -413,11 +413,25 @@ class IO_Object(object):
         
 
     def load_lst(self):
-        """ opens a file dialoge and asks for a lst file. when it's read, 
-        update the names that are shown next to the viewboxes with the names of
-        the odors """
+        """ reads metadata from a .lst file. Needed to generate output in the
+        .gloDatamix format """
         
         lst_path = self.OpenFileDialog(title='load lst',default_dir=self.Main.Options.general['cwd'],extension='*.lst')[0]
+        
+        # read
+        self.Main.Data.Metadata.LSTdata = self.read_lst(lst_path)
+        self.Main.Options.flags['LST_was_read'] = True
+        
+        # update labels
+        ind_map = self.map_lst_inds_to_path_inds()
+        
+        self.Main.Data.Metadata.trial_labels = [self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['Odour']+str(self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['OConc']) for n in range(self.Main.Data.nTrials)]
+        self.Main.MainWindow.Front_Control_Panel.Data_Selector.set_current_labels(self.Main.Data.Metadata.trial_labels)
+        
+        pass
+    
+    def read_lst(self,lst_path):
+        """ reads the .lst file at lst_path to a pd.DataFrame """
         LSTdata = pd.read_csv(lst_path,header=0,delimiter='\t')
                     
         # remove the weird random amount of whitespaces in the column names
@@ -427,19 +441,9 @@ class IO_Object(object):
             pass
         LSTdata.columns = columns
         
-        # store
-        self.Main.Data.Metadata.LSTdata = LSTdata
-        self.Main.Options.flags['LST_was_read'] = True
-        
-        # update labels
-        ind_map = self.map_lst_inds_to_path_inds()
+        return LSTdata
         
         
-        self.Main.Data.Metadata.trial_labels = [LSTdata.loc[ind_map[n]]['Odour']+str(LSTdata.loc[ind_map[n]]['OConc']) for n in range(self.Main.Data.nTrials)]
-        
-        self.Main.MainWindow.Front_Control_Panel.Data_Selector.set_current_labels(self.Main.Data.Metadata.trial_labels)
-        pass
-    
     def convert_log2lst(self):
         """ opens file dialog to chose a log file to convert """
         log_path = self.OpenFileDialog(title='load .vws.log',default_dir=self.Main.Options.general['cwd'],extension='*.log')[0]
@@ -472,7 +476,9 @@ class IO_Object(object):
         if len(firstline.split(',')) > 2:
             raise "trial labels file contains more than 2 strings per line, cannot parse that."
             
-        self.read_trial_labels(filepath,mode=mode)
+        labels = self.read_trial_labels(filepath,mode=mode)
+        self.Main.Data.Metadata.labels = labels
+        self.Main.MainWindow.Front_Control_Panel.Data_Selector.set_current_labels(labels)
         pass
         
     def read_trial_labels(self,filepath,mode='single'):
@@ -488,10 +494,8 @@ class IO_Object(object):
                 ordered = [line.split(',') for line in lines]
                 names = [entries[0] for entries in ordered]
                 labels = [entries[1] for entries in ordered]
-                
-        self.Main.Data.Metadata.labels = labels
-        self.Main.MainWindow.Front_Control_Panel.Data_Selector.set_current_labels(labels)
-        pass
+        
+        return labels
     
 #==============================================================================
     ### Options
@@ -679,6 +683,5 @@ class IO_Object(object):
             values = '\t'.join([Measu,Label,Odour,DBB1,Cycle,MTime,OConc,Control,StimON,StimOFF,Pharma,PhTime,PhConc,Comment,ShiftX,ShiftY,StimISI,setting,dbb2,dbb3,PxSzX,PxSzY,PosZ,Lambda,Countl,slvFlip,Stim2ON,Stim2OFF,Age,Analyze])
             lst_handle.write('\n')
             lst_handle.write(values)
-            
             
         lst_handle.close()
