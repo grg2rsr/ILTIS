@@ -430,7 +430,7 @@ class IO_Object(object):
         new_concs = []        
         for conc in concs:
             if sp.int32(conc) > 0: # info is in dilutions
-                new_conc = str(-1 * sp.log10(sp.int32(conc)))
+                new_conc = str(-1 * sp.around(sp.log10(sp.int32(conc))))
                 new_concs.append(new_conc)
             else:
                 new_concs.append(conc)
