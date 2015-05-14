@@ -377,7 +377,7 @@ class IO_Object(object):
         lst styles."""
         
         ind_map = []
-                
+                       
         for n,path in enumerate(self.Main.Data.Metadata.paths):            
             filename = os.path.splitext(os.path.split(path)[1])[0]
             
@@ -387,7 +387,7 @@ class IO_Object(object):
             # c) output of the motion correction scripts
 
             # moco compatibility
-            suffixes = ['affine','full','affineglobal','fullglobal']          
+            suffixes = ['affine','full','fullaffineglobal','fullbsplineglobal']          
             if os.path.splitext(filename.split('_')[-1])[0] in suffixes:
                 filename = '_'.join(filename.split('_')[:-1])
             
@@ -425,7 +425,24 @@ class IO_Object(object):
         # update labels
         ind_map = self.map_lst_inds_to_path_inds()
         
-        self.Main.Data.Metadata.trial_labels = [self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['Odour']+str(self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['OConc']) for n in range(self.Main.Data.nTrials)]
+        #concentration
+        concs = [str(self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['OConc']) for n in range(self.Main.Data.nTrials)]
+        new_concs = []        
+        for conc in concs:
+            if sp.int32(conc) > 0: # info is in dilutions
+                new_conc = str(-1 * sp.log10(sp.int32(conc)))
+                new_concs.append(new_conc)
+            else:
+                new_concs.append(conc)
+                
+        # label
+        labels = [self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['Odour'] for n in range(self.Main.Data.nTrials)]
+
+        # combine
+        new_labels = [labels[i]+new_concs[i] for i in range(len(labels))]
+        
+#        self.Main.Data.Metadata.trial_labels = [self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['Odour']+str(self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['OConc']) for n in range(self.Main.Data.nTrials)]
+        self.Main.Data.Metadata.trial_labels = new_labels
         self.Main.MainWindow.Front_Control_Panel.Data_Selector.set_current_labels(self.Main.Data.Metadata.trial_labels)
         
         pass
