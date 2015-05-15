@@ -181,7 +181,7 @@ class IO_Object(object):
         self.Main.ROIs.reset()
         file_path = self.OpenFileDialog(title='load ROIs',default_dir = self.Main.Options.general['cwd'], extension='*.roi *.coor')[0]
         
-        kind = os.splitext(file_path)[1]
+        kind = os.path.splitext(file_path)[1]
         
         if kind == '.roi': # new style
             with open(file_path, 'r') as fh:
