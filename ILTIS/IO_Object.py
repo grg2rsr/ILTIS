@@ -177,22 +177,44 @@ class IO_Object(object):
     ### ROI IO
 #==============================================================================
     def load_ROIs(self):
-        """ reads a .roifile and updates the ROIs """
+        """ reads a .roi or .coor file and updates the ROIs """
         self.Main.ROIs.reset()
-                
-        roi_file_path = self.OpenFileDialog(title='load ROIs',default_dir = self.Main.Options.general['cwd'], extension='*.roi')[0]
+        file_path = self.OpenFileDialog(title='load ROIs',default_dir = self.Main.Options.general['cwd'], extension='*.roi *.coor')[0]
         
-        with open(roi_file_path, 'r') as fh:
+        kind = os.splitext(file_path)[1]
+        
+        if kind == '.roi': # new style
+            with open(file_path, 'r') as fh:
+                for line in fh.readlines():
+                    line = line.strip().split('\t')
+                    
+                    kind = line[0]
+                    label = line[1]
+                    
+                    info = sp.array(line[2:],dtype=float)
+                    if kind == 'circle':
+                        self.Main.ROIs.add_ROI(kind='circle',label=label,pos=(info[0],info[1]),ROI_diameter=info[2])
+                    if kind == 'polygon':
+                        pos_list = []
+                        for i in range(0,info.shape[0],2):
+                            pos = self.Main.Data_Display.Frame_Visualizer.ViewBox.mapToView(QtCore.QPointF(info[i],info[i+1]))
+                            pos_list.append([pos.x(),pos.y()])
+                            pass
+                        self.Main.ROIs.add_ROI(kind='polygon',label=label,pos_list=pos_list)
+                        pass
+                    pass
+                
+        if kind == '.coor': # old style compatibility 
+            fh = open(file_path,'r')
             for line in fh.readlines():
                 line = line.strip().split('\t')
-                
-                kind = line[0]
+                kind = int(line[0])
                 label = line[1]
-                
-                info = sp.array(line[2:],dtype=float)
-                if kind == 'circle':
+                layer = int(line[2]) # deprecated 
+                info = sp.array(line[3:],dtype=float)
+                if kind == 0:
                     self.Main.ROIs.add_ROI(kind='circle',label=label,pos=(info[0],info[1]),ROI_diameter=info[2])
-                if kind == 'polygon':
+                if kind == 1:
                     pos_list = []
                     for i in range(0,info.shape[0],2):
                         pos = self.Main.Data_Display.Frame_Visualizer.ViewBox.mapToView(QtCore.QPointF(info[i],info[i+1]))
