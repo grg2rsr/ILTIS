@@ -17,6 +17,7 @@ import pandas as pd
 import pickle
 import re
 import time
+from collections import OrderedDict
 
 class IO_Object(object):
     """ holds all IO functionality """
@@ -317,7 +318,7 @@ class IO_Object(object):
         if self.Main.Options.export['format'] == '.gloDatamix':
             if self.Main.verbose:
                 print "extracting traces and writing to .gloDatamix format"
-#
+                
             # if no .lst has been read, do so now
             if self.Main.Options.flags['LST_was_read'] == False:
                 QtGui.QMessageBox.question(self.Main.MainWindow,'Message',"No .lst file has been loaded yet, you have to do so now",QtGui.QMessageBox.Yes)
@@ -325,49 +326,15 @@ class IO_Object(object):
                 
             outpath = self.SaveFileDialog(title='saving to .gloDatamix',default_dir=self.Main.Options.general['cwd'])   
             outpath = self.append_extension(outpath,'.gloDatamix')                
-#            
-#            # preparing the write
-#            labels = ['NGloTag','NConc','NStimON','NStimOff','NNoFrames','NFrameTime','TGloInfo','TOdour','T_dbb1','Tcomment','TLabel','Tanimal']
-#            data_labels = ['data'] * self.Main.Data.nFrames
-#            for i,l in enumerate(data_labels):
-#                labels.append(l+str(i))
-#
 
-#
-#            fh = open(outpath,'w')
-#            fh.write('\t'.join(labels))
-#            fh.write('\n')
-#
-#            for n,path in enumerate(self.Main.Data.Metadata.paths):            
-#                inds_map = self.map_lst_inds_to_path_inds()
-#                for i in range(len(self.Main.ROIs.ROI_list)):
-#                    myInd = inds_map[n]
-##                    NGloTag = str(Coors[i,2])
-#                    NGloTag = str(self.Main.ROIs.ROI_list[i].label)
-#                    NOConc = str(self.Main.Data.Metadata.LSTdata.loc[myInd]['NOConc'])
-#                    NStimON = str(self.Main.Data.Metadata.LSTdata.loc[myInd]['StimON'])
-#                    NStimOFF = str(self.Main.Data.Metadata.LSTdata.loc[myInd]['StimOFF'])
-#                    NNoFrames = str(self.Main.Data.nFrames)
-#                    NFrameTime = 'dt' ### FIXME
-#                    pos = self.Main.ROIs.ROI_list[i].get_center()
-#                    TGloInfo = 'Coor' + str(int(sp.around(pos[0],decimals=0))) + ':' + str(int(sp.around(pos[1],decimals=0)))
-#                    TOdour = self.Main.Data.Metadata.LSTdata.loc[myInd]['Odour']
-#                    T_dbb1 = self.Main.Data.Metadata.LSTdata.loc[myInd]['DBB1']
-#                    Tcomment = self.Main.Data.Metadata.LSTdata.loc[myInd]['Comment']
-#                    TLabel = self.Main.Data.Metadata.LSTdata.loc[myInd]['Label']
-#                    Tanimal = self.Main.Data.Metadata.LSTdata['DBB1'][myInd].strip().split('\\')[0] # see above, is the animal
-#                    
-#                    tmp = [NGloTag,NOConc,NStimON,NStimOFF,NNoFrames,NFrameTime,TGloInfo,TOdour,T_dbb1,Tcomment,TLabel,Tanimal]
-#                    tmp = tmp + self.Main.Data.Traces[:,i,n].astype('S20').tolist()
-#                    values = '\t'.join(tmp)
-#
-#                    fh.write(values)
-#                    fh.write('\n')
-#                
-#            fh.close()
-#            print "gloDatamix written to ", outpath
+            # metadata
+            gloMeta = self.generate_gloDatamix_Meta()
+
+            # resorted traces
+            traces = self.glo_sort_traces()
             
-        
+            gioIO.write_gloDatamix(gloMeta,traces,outpath)
+                
 
 
 
@@ -376,62 +343,79 @@ class IO_Object(object):
 #==============================================================================
 
     def generate_gloDatamix_Meta(self):
-        """ has to generate a Data and a Meta in the format of read_gloDatamix
-        does not write
-        
-        Traces is my standart (t,ROI,stim) not (ROI/stim,t) (gloDatamix style)
-        
-        LSTdata is in the format of read_lst
-        """
+        """ generates a pd.Dataframe with the Metadata ordered in such a way that
+        it fits the .gloDatamix definition. """
         
         # preparations
-        
-        # infer in writer
-        nFrames = Traces.shape[0]
-        # preparing the write
-        labels = ['NGloTag','NConc','NStimON','NStimOff','NNoFrames','NFrameTime','TGloInfo','TOdour','T_dbb1','Tcomment','TLabel','Tanimal']
-        data_labels = ['data'] * nFrames
-        
-        
-        
-        for i,l in enumerate(data_labels):
-            labels.append(l+str(i))
-    
-    #    outpath = self.SaveFileDialog(title='saving to .gloDatamix',default_dir=self.Main.Options.general['cwd'])   
-    #    outpath = self.append_extension(outpath,'.gloDatamix')
-    
-    #    fh = open(outpath,'w')
-    #    fh.write('\t'.join(labels))
-    #    fh.write('\n')
-        
+
+                  
         gloMeta = []
+        
         for n,path in enumerate(self.Main.Data.Metadata.paths):            
             inds_map = self.map_lst_inds_to_path_inds()
             for i in range(len(self.Main.ROIs.ROI_list)):
-                myInd = inds_map[n]
-                NGloTag = str(self.Main.ROIs.ROI_list[i].label)
-                NOConc = str(self.Main.Data.Metadata.LSTdata.loc[myInd]['OConc'])
-                NStimON = str(self.Main.Data.Metadata.LSTdata.loc[myInd]['StimON'])
-                NStimOFF = str(self.Main.Data.Metadata.LSTdata.loc[myInd]['StimOFF'])
-                NNoFrames = str(self.Main.Data.nFrames)
-                NFrameTime = 'dt' ### FIXME
+                
                 pos = self.Main.ROIs.ROI_list[i].get_center()
-                TGloInfo = 'Coor' + str(int(sp.around(pos[0],decimals=0))) + ':' + str(int(sp.around(pos[1],decimals=0)))
-                TOdour = self.Main.Data.Metadata.LSTdata.loc[myInd]['Odour']
-                T_dbb1 = self.Main.Data.Metadata.LSTdata.loc[myInd]['DBB1']
-                Tcomment = self.Main.Data.Metadata.LSTdata.loc[myInd]['Comment']
-                TLabel = self.Main.Data.Metadata.LSTdata.loc[myInd]['Label']
-                Tanimal = self.Main.Data.Metadata.LSTdata['DBB1'][myInd].strip().split('\\')[0] # see above, is the animal
                 
-                gloMeta.append([NGloTag,NOConc,NStimON,NStimOFF,NNoFrames,NFrameTime,TGloInfo,TOdour,T_dbb1,Tcomment,TLabel,Tanimal])
+                lst_values = self.Main.Data.Metadata.LSTdata.loc[inds_map[n]]
                 
-        return gloMeta
+                # stim                
+                if self.Main.Options.preprocessing['stimuli'].shape[0] == 2:
+                    stim2on,stim2off = self.Main.Options.preprocessing['stimuli'][1,:]
+                else:
+                    stim2on,stim2off = ['-1','-1']
+                    
+                # age
+                if lst_values['Age'] != -1:
+                    try:
+                        NAge,NAgeMax = lst_values['Age'].split('-')
+                    except:
+                        NAge = '-1'
+                        NAgeMax = '-1'
+                else:
+                    NAge = '-1'
+                    NAgeMax = '-1'
+                    
+                row = OrderedDict()
+                row['NGloTag'] = str(self.Main.ROIs.ROI_list[i].label)
+                row['NOdorNr'] = '-999'
+                row['NOConc'] = str(lst_values['OConc'])
+                row['NStim_ON'] = str(self.Main.Options.preprocessing['stimuli'][0,0])
+                row['NStim_Off'] = str(self.Main.Options.preprocessing['stimuli'][0,1])
+                row['NNoFrames'] = str(self.Main.Data.nFrames)
+                row['NFrameTime'] = str(sp.int32(self.Main.Options.preprocessing['dt'] * 1000))
+                row['NRealTime'] = str(lst_values['MTime'])
+                row['NPhConc'] = str(lst_values['PhConc'])
+                row['NshiftX'] = str(lst_values['ShiftX'])
+                row['NshiftY'] = str(lst_values['ShiftY'])
+                row['NcontMeasu'] = '0'
+                row['NNumMeasu'] = '0'
+                row['Nstim_ISI'] = '0'
+                row['NodorN'] = '1'
+                row['Nstim2ON'] = str(stim2on)
+                row['Nstim2OFF'] = str(stim2off)
+                row['NAge'] = str(NAge)
+                row['NAgeMax'] = str(NAgeMax)
+                row['TGloInfo'] = 'Coor' + str(int(sp.around(pos[0],decimals=0))) + ':' + str(int(sp.around(pos[1],decimals=0)))
+                row['TOdour'] = str(lst_values['Odour'])
+                row['T_dbb1'] = str(lst_values['DBB1'])
+                row['Tcomment'] = str(lst_values['Comment'])
+                row['TPharma'] = str(lst_values['Pharma'])
+                row['TPhtime'] = str(lst_values['PhTime'])
+                row['Tos9time'] = str(lst_values['PhTime'])
+                row['TLabel'] = lst_values['Label']
+                row['Tanimal'] = lst_values['DBB1'].strip().split('\\')[0]
+                row['T_dbb2'] = 'noDBB2'
+                      
+                gloMeta.append(row)
                 
+        # make a pd.DataFrame out of it:
+        gloMetaDF = pd.DataFrame(columns=gloMeta[0].keys())
+        for i in range(len(gloMeta)):
+            gloMetaDF = gloMetaDF.append(pd.Series(gloMeta[i]),ignore_index=True)
+
+        return gloMetaDF
                 
-#                tmp = tmp + self.Main.Data.Traces[:,i,n].astype('S20').tolist()
-#                values = '\t'.join(tmp)
-#                fh.write(values)
-#                fh.write('\n')
                 
     def map_lst_inds_to_path_inds(self):
         """ establishes a mapping between the order of the datasets in paths
@@ -490,7 +474,7 @@ class IO_Object(object):
         ind_map = self.map_lst_inds_to_path_inds()
         
         #concentration
-        concs = [str(self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['NOConc']) for n in range(self.Main.Data.nTrials)]
+        concs = [str(self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['OConc']) for n in range(self.Main.Data.nTrials)]
         new_concs = []        
         for conc in concs:
             if sp.int32(conc) > 0: # info is in dilutions
@@ -505,9 +489,11 @@ class IO_Object(object):
         # combine
         new_labels = [labels[i]+new_concs[i] for i in range(len(labels))]
         
-#        self.Main.Data.Metadata.trial_labels = [self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['Odour']+str(self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['OConc']) for n in range(self.Main.Data.nTrials)]
         self.Main.Data.Metadata.trial_labels = new_labels
         self.Main.MainWindow.Front_Control_Panel.Data_Selector.set_current_labels(self.Main.Data.Metadata.trial_labels)
+        
+        # set stimulus timing
+        # cycle time
         
         pass
         
@@ -568,6 +554,7 @@ class IO_Object(object):
 #==============================================================================
     ### Options
 #==============================================================================
+    
     def load_options(self,reset=True):
         if not(reset):
             print "restoring last options"
@@ -634,183 +621,17 @@ class IO_Object(object):
         if os.path.splitext(fname)[1] == '':
             fname = fname + ext
         return fname
+
+        
     
-#    def log2lst(self,fname):
-#        """ converts a till photonics .vws.log into a lst """
-#        
-#        # some constants and declarations
-#        block_starts = []
-#        block_names = []
-#        read_length = 18 # const
-#        lst_labels = ["Measu","Label","Odour","DBB1","Cycle","MTime","NOConc","Control","StimON","StimOFF","Pharma","PhTime","PhConc","Comment","ShiftX","ShiftY","StimISI","setting","dbb2","dbb3","PxSzX","PxSzY","PosZ","Lambda","Countl","slvFlip","Stim2ON","Stim2OFF","Age","Analyze"]
-#        last_time = 0
-#        lst_fname = os.path.splitext(os.path.splitext(fname)[0])[0] + '.lst'
-#        
-#        # read log and parse
-#        with open(fname, 'r') as fh:
-#            lines = [line.strip() for line in fh.readlines()]
-#        
-#        for i,line in enumerate(lines):
-#            match = re.search('^\[(.*)\]',line)
-#            if match:
-#                block_starts.append(i)
-#                block_names.append(match.group(1))
-#                
-#        valid_blocks = []
-#        for i,name in enumerate(block_names):
-#            if name.count('Snapshot') > 0 or name.count('Delta') > 0:
-#                pass
-#            else:
-#                valid_blocks.append([i,block_starts[i],name])
-#        
-#        Measurements = []
-#        for i,block_info in enumerate(valid_blocks):
-#            Measurements.append({'index':block_info[0],'label':block_info[2]})
-#            
-#            ind = block_info[1]
-#            block = lines[ind+1:ind+read_length]
-#        
-#            for line in block:
-#                line_split = line.split(':')
-#                if len(line_split) == 2:
-#                    key,value = line_split
-#                if len(line_split) > 2:
-#                    key = line_split[0]
-#                    value = ':'.join(line_split[1:]).strip()
-#                Measurements[i][key] = value
-#        
-#        # loop and write
-#        lst_handle = open(lst_fname,'w')  
-#        lst_handle.write('\t'.join(lst_labels))
-#        
-#        for Measurement in Measurements:
-#            label_split = Measurement['label'].split('_')
-#            if len(label_split) == 3:
-#                setting,Odour, NOConc = label_split
-#            if len(label_split) == 2:
-#                setting,NOConc = label_split
-#                Odour = 'Missing'
-#        
-#            # time
-#            """ it is unclear what mtime is exactly supposed to be. In this calc, there
-#            is some kind of bug, leaving a 1s approx offst """
-#            try:
-#                times = Measurement['timing [ms]'].strip()
-#                times = sp.array(times.split(' '),dtype='int32')
-#                times_hhmmss = [time.strftime('%H:%M:%S',time.gmtime((t+last_time)/1000.0)) for t in times]
-#                last_time = times[-1] + last_time
-#                mtime = times_hhmmss[len(times)/2]
-#                dt = str(sp.diff(times)[0])
-#            except:
-#                mtime = '-1'
-#                dt = '-1'
-#        
-#            # location, check if pst, else -1
-#            ext = os.path.splitext(Measurement['Location'])[1]
-#            if ext != '.pst':
-#                Location = '-1'
-#            else:
-#                tanimal = os.path.splitext(os.path.splitext(os.path.basename(fname))[0])[0] # tanimal
-#                dbb = os.path.splitext(Measurement['Location'].split('\\')[-1])[0] # dbb wo pst
-#                Location = '\\'.join([tanimal + '.pst',dbb])
-#                
-#            # Countl
-#            Countl = 'subloop,\''+str(Measurement['index']+1)+'\';  '+Measurement['label']
-#            
-#            Measu = str(Measurement['index']+1)
-#            Label = Measurement['label']
-#            Odour = Odour
-#            DBB1 = Location
-#            Cycle = dt
-#            MTime = mtime
-#            NOConc = NOConc
-#            Control = '0'
-#            StimON = '24'
-#            StimOFF = '28'
-#            Pharma = 'Ringer'
-#            PhTime = mtime
-#            PhConc = '0'
-#            Comment = 'log2lst.py'
-#            ShiftX = '0'
-#            ShiftY = '0'
-#            StimISI = '0'
-#            setting = setting
-#            dbb2 = 'noDBB2'
-#            dbb3 = 'noDBB3'
-#            PxSzX = '1.57'
-#            PxSzY = '1.57'
-#            PosZ = '0'
-#            Lambda = Measurement['Monochromator wavelength [nm]'].strip()
-#            Countl = Countl
-#            slvFlip = '0'
-#            Stim2ON = '36'
-#            Stim2OFF = '40'
-#            Age = '-1'
-#            Analyze = '-2'
-#            
-#            values = '\t'.join([Measu,Label,Odour,DBB1,Cycle,MTime,NOConc,Control,StimON,StimOFF,Pharma,PhTime,PhConc,Comment,ShiftX,ShiftY,StimISI,setting,dbb2,dbb3,PxSzX,PxSzY,PosZ,Lambda,Countl,slvFlip,Stim2ON,Stim2OFF,Age,Analyze])
-#            lst_handle.write('\n')
-#            lst_handle.write(values)
-#            
-#        lst_handle.close()
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-    def map_lst_inds_to_path_inds(self):
-        """ establishes a mapping between the order of the datasets in paths
-        and their corresponding rows in the lst file """
-        
-        ind_map = []
-                       
-        for n,path in enumerate(self.Main.Data.Metadata.paths):            
-            filename = os.path.splitext(os.path.split(path)[1])[0]
-            
-            # this parser is specifically designed to handle 
-            # a) lsm style .lst files
-            # b) tillvision wide-field .lst files
-            # c) output of the motion correction scripts
-    
-            # moco compatibility
-            suffixes = ['affine','full','fullaffineglobal','fullbsplineglobal']          
-            if os.path.splitext(filename.split('_')[-1])[0] in suffixes:
-                filename = '_'.join(filename.split('_')[:-1])
-            
-            myInd = None
-            for ind in self.Main.Data.Metadata.LSTdata.index:
-                info = self.Main.Data.Metadata.LSTdata['DBB1'][ind].strip().split('\\')
-                if len(info) == 3: # here is the compatibility lsm vs tillvision
-                    Tanimal, tmp, Experiment = info
-                if len(info) == 2:
-                    Tanimal, Experiment = info
-                Experiment = os.path.splitext(Experiment)[0]
-                if Experiment == filename:
-                    myInd = ind
-                    ind_map.append(ind)
-                    
-            if myInd == None:
-                print "Experiment not found in the .lst file!"
-                print Experiment, filename
-        return ind_map
-    
-    
-    def convert_traces(self):
+    def glo_sort_traces(self):
         """ converts a Traces np.array from the definition (t,ROI,trial) into the 
         .gloDatamix style (ROI/trial,t) where iteration is first over ROI and then
         over trial """
-        
+        for n,path in enumerate(self.Main.Data.Metadata.paths):            
+            inds_map = self.map_lst_inds_to_path_inds()
+            for i in range(len(self.Main.ROIs.ROI_list)):            
+                tmp = tmp + self.Main.Data.Traces[:,i,n].astype('S20').tolist()
+
         return Traces_conv
 
