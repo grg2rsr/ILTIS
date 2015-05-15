@@ -245,8 +245,11 @@ class IO_Object(object):
         print "saved ROIs in .roi format to", outpath
 #        outpath = os.path.splitext(outpath)[0] + '_mask.tif'
 #        outpath = self.MainWindow.SaveFileDialog(title='saving ROIs',defaultdir=self.path,extension='.tif')
-#        io.save_tstack(self.ex_mask.astype('uint16'),outpath)
-#        print "saved ROIs in .tif format to", outpath
+        
+        # extraction mask
+        self.Main.Processing.calc_extraction_mask()
+        io.save_tstack(self.Main.Data.extraction_mask.astype('uint16'),os.path.splitext(outpath)[0] + '_mask.tif')
+        print "saved ROIs in .tif format to", outpath
         
         pass
     

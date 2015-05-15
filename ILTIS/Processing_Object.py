@@ -115,14 +115,26 @@ class Processing_Object(object):
             extraction_mask[mask,i] = 1
             pass
         
-        self.Main.Data.exctraction_mask = extraction_mask
+        self.Main.Data.extraction_mask = extraction_mask
+        
+    def calc_polylineROI_from_mask(self,mask):
+        """ mask is a 2d image """
+        
+        # make ROIs out of each segment
+        submask, n = ndimage.label(mask > 0)
+        if n > 1:
+            pass
+            
+        
+        #
+        pass
         
     def calc_traces(self,extraction_mask):
         """ calculates traces based on the extraction_mask 
         definition: Traces is of shape (t,ID,stim), 
         t,ID,stim,rep is Traces_sorted """
         if extraction_mask == None:
-            extraction_mask = self.Main.Data.exctraction_mask
+            extraction_mask = self.Main.Data.extraction_mask
             
         self.Main.Data.Traces = sp.zeros((self.Main.Data.nFrames,extraction_mask.shape[2],self.Main.Data.nTrials))
 

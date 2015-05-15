@@ -103,7 +103,13 @@ class ROIs_Object(QtCore.QObject):
         self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI)
         self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI.labelItem)
         
-        ROI.removeTimer.stop() # fix suggestion from luke campagnola (pyqtgraph mailinglist) # seems to be unnecessary now?
+        
+        # fix suggestion from luke campagnola (pyqtgraph mailinglist)
+        # problem: ROI object doensn't have a removeTimer on all machines!        
+        try:
+            ROI.removeTimer.stop() 
+        except:
+            pass
         
         # if the removed ROI was the last active, then set the var to none
         if ROI == self.Main.Options.ROI['last_active']:
@@ -319,7 +325,10 @@ class myPolyLineROI(pg.PolyLineROI,myROI):
         
     pass
 
-
+class myNonparametricROI(myROI):
+        def __init__(self,Main,mask,label,**kwargs):
+            myROI.__init__(self, Main, label)
+            
 if __name__ == '__main__':
     import Main
     Main.main()

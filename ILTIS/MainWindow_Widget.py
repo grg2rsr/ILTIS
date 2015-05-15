@@ -9,6 +9,7 @@ import os
 from Data_Display_Widget import Data_Display_Widget
 from Front_Control_Panel_Widget import Front_Control_Panel_Widget
 from Options_Control_Widget import Options_Control_Widget
+import scipy as sp
 
 class MainWindow_Widget(QtGui.QMainWindow):
 
@@ -325,6 +326,20 @@ class MainWindow_Widget(QtGui.QMainWindow):
         self.Options_Control.show()
         self.Options_Control.raise_()
         pass
+    
+    def keyPressEvent(self, event): # reimplementation
+        if event.key() == 16777234:
+#            print " left arrow "
+            self.Data_Display.Frame_Visualizer.frame = self.Data_Display.Frame_Visualizer.frame - 1
+            self.Data_Display.Frame_Visualizer.frame = sp.clip(self.Data_Display.Frame_Visualizer.frame,0,self.Main.Data.nFrames-1)
+        
+        if event.key() == 16777236:
+#            print " right arrow "            
+            self.Data_Display.Frame_Visualizer.frame = self.Data_Display.Frame_Visualizer.frame + 1
+            self.Data_Display.Frame_Visualizer.frame = sp.clip(self.Data_Display.Frame_Visualizer.frame,0,self.Main.Data.nFrames-1)
+
+        self.Data_Display.Frame_Visualizer.update_frame()
+        self.Data_Display.Traces_Visualizer.update_vline(self.Data_Display.Frame_Visualizer.frame) # one call is enougth because this one calls the other as well
         
     def closeEvent(self,event): # reimplementation
         reply=QtGui.QMessageBox.question(self,'Message',"Are you sure to quit?",QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
