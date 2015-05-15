@@ -80,7 +80,7 @@ def write_gloDatamix(Meta,Data,outpath):
         fh.write('\n')
     fh.close()
 
-def log2lst(self,fname):
+def log2lst(fname):
     """ converts a till photonics .vws.log into a lst. Function is not split into
     read and write because that is never needed """
     
