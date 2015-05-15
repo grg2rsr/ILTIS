@@ -333,7 +333,7 @@ class IO_Object(object):
             # resorted traces
             traces = self.glo_sort_traces()
             
-            gioIO.write_gloDatamix(gloMeta,traces,outpath)
+            gio.write_gloDatamix(gloMeta,traces,outpath)
                 
 
 
@@ -347,17 +347,17 @@ class IO_Object(object):
         it fits the .gloDatamix definition. """
         
         # preparations
-
-                  
         gloMeta = []
+        inds_map = self.map_lst_inds_to_path_inds()
         
         for n,path in enumerate(self.Main.Data.Metadata.paths):            
-            inds_map = self.map_lst_inds_to_path_inds()
             for i in range(len(self.Main.ROIs.ROI_list)):
                 
+                lst_values = self.Main.Data.Metadata.LSTdata.loc[inds_map[n]]                
+
+
+                # roi centroid                
                 pos = self.Main.ROIs.ROI_list[i].get_center()
-                
-                lst_values = self.Main.Data.Metadata.LSTdata.loc[inds_map[n]]
                 
                 # stim                
                 if self.Main.Options.preprocessing['stimuli'].shape[0] == 2:
@@ -628,10 +628,14 @@ class IO_Object(object):
         """ converts a Traces np.array from the definition (t,ROI,trial) into the 
         .gloDatamix style (ROI/trial,t) where iteration is first over ROI and then
         over trial """
-        for n,path in enumerate(self.Main.Data.Metadata.paths):            
-            inds_map = self.map_lst_inds_to_path_inds()
+        
+        Traces_conv = sp.zeros((len(self.Main.ROIs.ROI_list) * self.Main.Data.nTrials , self.Main.Data.nFrames))
+        
+        k = 0
+        for n in range(self.Main.Data.nTrials):
             for i in range(len(self.Main.ROIs.ROI_list)):            
-                tmp = tmp + self.Main.Data.Traces[:,i,n].astype('S20').tolist()
+                Traces_conv[k,:] = self.Main.Data.Traces[:,i,n]
+                k = k +1
 
         return Traces_conv
 

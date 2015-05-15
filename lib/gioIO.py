@@ -67,24 +67,6 @@ def write_gloDatamix(Meta,Data,outpath):
     
     labels = '\t'.join(Meta.columns.tolist() + ['data'+ str(number) for number in range(Data.shape[1])]) # this generates a "real" glodatamix header
     
-#    # preparing the write
-#    labels = ['NGloTag','NConc','NStimON','NStimOff','NNoFrames','NFrameTime','TGloInfo','TOdour','T_dbb1','Tcomment','TLabel','Tanimal']
-#    data_labels = ['data'] * self.Main.Data.nFrames
-#    for i,l in enumerate(data_labels):
-#        labels.append(l+str(i))
-
-    # infer in writer
-#    nFrames = self.Main.Data.nFrames
-#    
-#    # preparing the write
-#    labels = ['NGloTag','NConc','NStimON','NStimOff','NNoFrames','NFrameTime','TGloInfo','TOdour','T_dbb1','Tcomment','TLabel','Tanimal']
-#    data_labels = ['data'] * nFrames
-#    
-#
-#    for i,l in enumerate(data_labels):
-#        labels.append(l+str(i))
-
-    
     fh = open(outpath,'w')
     fh.write(labels)
     fh.write('\n')
