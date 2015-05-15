@@ -329,7 +329,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
     def closeEvent(self,event): # reimplementation
         reply=QtGui.QMessageBox.question(self,'Message',"Are you sure to quit?",QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
         if reply==QtGui.QMessageBox.Yes:
-            self.Main.IO.save_options()
+#            self.Main.IO.save_options()
             self.Options_Control.close()
             ### FIXME add cleanup!
             event.accept()

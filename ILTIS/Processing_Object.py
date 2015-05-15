@@ -137,7 +137,7 @@ class Processing_Object(object):
 
 
     def sort_traces(self):
-        """ creates a (t,ID,stim,rep) representation of the Traces """
+        """ creates a (t,ID,stim,rep) np.array of the Traces """
         
         labels = sp.array(self.Main.Data.Metadata.trial_labels)
 
@@ -149,7 +149,6 @@ class Processing_Object(object):
         nFrames = self.Main.Data.nFrames
         nROIs = len(self.Main.ROIs.ROI_list)
         
-        ### this is the multidim data structure definition
         # dims are t, cell, odor, rep
         self.Main.Data.Traces_sorted = sp.zeros((nFrames,nROIs,nStims,nReps))
         
