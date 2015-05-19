@@ -1,5 +1,5 @@
 # ILTIS - an _Interactive Labeled-Trial Image-stack Slicer_
-
+wudeldiwudel
 ## Description
 
 this program was designed to interactively and flexibly slice datasets from functional imaging experiments along the time domain. A classical imaging experiment consists of high dimensional data sets: The individual imaging _trials_, e.g. the response of a certain area to a stimulus is usually imaged as `(x,y)` images over time `(t)`, resulting in 3d image stacks. Additionally, different _stimuli_ (S) are given with a certain number of _repetitions_ `(R)`, resulting in 5 dimensional data `(x,y,t,S,R)`.
