@@ -63,7 +63,7 @@ class ROIs_Object(QtCore.QObject):
             label = str(len(self.ROI_list) + 1)
         if kind == None:
             kind = self.Main.Options.ROI['type']
-        if pos == None:
+        if pos == None and pos_list == None:
             ### FIXME raise error
             print "trying to instantiate ROI without position!"
         if ROI_diameter == None:
@@ -213,19 +213,34 @@ class ROIs_Object(QtCore.QObject):
         nActiveROIs = len(self.Main.Options.ROI['active_ROIs'])
         
         # one ROI active, active/inactive color scheme
-        if nActiveROIs == 1:
+        if nActiveROIs <= 1:
             for ROI in self.ROI_list:
                 if ROI.active == True:
-                    ROI.setPen(pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8))
+                    pen = pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8)
+                    if type(ROI) == myCircleROI:
+                        ROI.setPen(pen)
+                    if type(ROI) == myPolyLineROI:
+                        for segment in ROI.segments:
+                            segment.setPen(pen)
                 if ROI.active == False:
-                    ROI.setPen(pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8))
-                
+                    pen = pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8)
+                    if type(ROI) == myCircleROI:
+                        ROI.setPen(pen)
+                    if type(ROI) == myPolyLineROI:
+                        for segment in ROI.segments:
+                            segment.setPen(pen)
+                            
         # multiple ROI active, traces colored to ROI
         if nActiveROIs > 1:
             colors = self.Main.Processing.calc_colors(nActiveROIs)
             for i,ROI_id in enumerate(self.Main.Options.ROI['active_ROIs']):
-                self.ROI_list[ROI_id].setPen(pg.mkPen(colors[i],width=1.8))
-                
+                ROI = self.ROI_list[ROI_id]
+                pen = pg.mkPen(colors[i],width=1.8)
+                if type(ROI) == myCircleROI:
+                    ROI.setPen(pen)
+                if type(ROI) == myPolyLineROI:
+                    for segment in ROI.segments:
+                        segment.setPen(pen)
         pass
     
 class myROI(object):
@@ -322,12 +337,7 @@ class myPolyLineROI(pg.PolyLineROI,myROI):
             h_pos = sp.array([[p.x(),p.y()] for p in pos_mapped])
         pos = sp.average(h_pos,axis=0)
         return pos
-        
     pass
-
-class myNonparametricROI(myROI):
-        def __init__(self,Main,mask,label,**kwargs):
-            myROI.__init__(self, Main, label)
             
 if __name__ == '__main__':
     import Main

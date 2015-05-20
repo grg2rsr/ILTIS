@@ -274,7 +274,46 @@ class IO_Object(object):
         print "saved ROIs in .tif format to", outpath
         
         pass
+
+    def load_nonparametric_ROIs(self):
+        """ reads a *_mask.tif """
+        self.Main.ROIs.reset()    
+        file_path = self.OpenFileDialog(title='load nonparametric ROIs',default_dir = self.Main.Options.general['cwd'], extension='*.tif')[0]
+        masks = io.read_tiffstack(file_path)
+        
+        label = 0
+        # iterate over masks
+        for i in range(masks.shape[2]):
+            mask = masks[:,:,i]
+            
+            
+            # find contour
+            segments = self.Main.Processing.find_contour(mask)
+            for seg in segments:
+                label = label + 1
+                
+                # convert to coordinates            
+#                pos_list = []
+#                for i in range(len(X)):
+#                    x = X[i]
+#                    y = Y[i]
+#                    pos = self.Main.Data_Display.Frame_Visualizer.ViewBox.mapToView(QtCore.QPointF(x,y))
+#                    pos_list.append([pos.x(),pos.y()])
     
+                # add PolyLineROI
+                X = seg[:,0]
+                Y = seg[:,1]
+                pos_list = zip(X,Y)
+                self.Main.ROIs.add_ROI(kind='polygon',label=str(label),pos_list=pos_list)
+                pass
+#        import pdb
+#        pdb.set_trace()
+
+        # remove all handles
+        for ROI in self.Main.ROIs.ROI_list:
+            [handle.hide() for handle in ROI.getHandles()]
+        
+        
 #==============================================================================
     ### Traces IO
 #==============================================================================

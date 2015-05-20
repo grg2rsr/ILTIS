@@ -10,18 +10,13 @@ from scipy import random
 #from PyQt4 import QtGui,QtCore
 from PyQt4.QtGui import QColor
 from pyqtgraph import ColorMap as PGColorMap
-#import pyqtgraph as pg
-#from Metadata_Object import Metadata_Object
-#from lib import IOtools as io
-#import os
+import matplotlib.pyplot as plt
 
 class Processing_Object(object):
     def __init__(self,Main):
         self.Main = Main
         self.Data = None
         pass
-
-
     
     def calc_gaussian_smooth(self):
         """ apply gaussian """
@@ -116,19 +111,7 @@ class Processing_Object(object):
             pass
         
         self.Main.Data.extraction_mask = extraction_mask
-        
-    def calc_polylineROI_from_mask(self,mask):
-        """ mask is a 2d image """
-        
-        # make ROIs out of each segment
-        submask, n = ndimage.label(mask > 0)
-        if n > 1:
-            pass
-            
-        
-        #
-        pass
-        
+                
     def calc_traces(self,extraction_mask):
         """ calculates traces based on the extraction_mask 
         definition: Traces is of shape (t,ID,stim), 
@@ -240,7 +223,28 @@ class Processing_Object(object):
         rotated = sp.array([val % bound if val > bound else val for val in (array + offset)])
         return rotated
     pass
+
+#==============================================================================
+    ### parametric / nonparametric mask conversions
+#==============================================================================       
+
+#    def find_contour(self,mask):
+#        """ returns x and y coordinates of a boolean mask """
+#        cs = plt.contour(mask,1)
+#        p = cs.collections[0].get_paths()[0]
+#        v = p.vertices
+#        x = v[:,0]
+#        y = v[:,1]
+#        return x,y
         
+    def find_contour(self,mask,level=0.5):
+        """ returns a list of segments """
+        import matplotlib._cntr as cntr
+        X,Y = sp.meshgrid(sp.arange(mask.shape[0]),sp.arange(mask.shape[1]))
+        c = cntr.Cntr(X, Y, mask.T)
+        nlist = c.trace(level, level, 0)
+        segs = nlist[:len(nlist)//2]
+        return segs
 
 if __name__ == '__main__':
     import Main

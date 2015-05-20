@@ -81,6 +81,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
         Open = self.Menubar.addMenu('&Open')
         Open.addAction(self.OpenAction)
         Open.addAction(self.ReadROIAction)
+        Open.addAction(self.ReadNonparametricROIAction)
         Open.addAction(self.ReadLSTAction)
         Open.addAction(self.ReadTrialLabelsAction)
         
@@ -132,126 +133,147 @@ class MainWindow_Widget(QtGui.QMainWindow):
 #==============================================================================
 # readers        
 #==============================================================================
-                        'OpenAction':{'label':'load data',
-                                      'status_tip':'Read data from disk',
-                                      'icon':None,
-                                      'func':self.Main.IO.init_data,
-                                      'checkable':False,
-                                      'no_data_disabled':False},
+                        'OpenAction':
+                            {'label':'load data',
+                             'status_tip':'Read data from disk',
+                             'icon':None,
+                             'func':self.Main.IO.init_data,
+                             'checkable':False,
+                             'no_data_disabled':False},
                                     
-                        'ReadROIAction':{'label':'Load .roi file',
-                                          'status_tip':'Read .roi file from disk',
-                                          'icon':None,
-                                          'func':self.Main.IO.load_ROIs,
-                                          'checkable':False,
-                                          'no_data_disabled':True},
+                        'ReadROIAction':
+                            {'label':'Load .roi file',
+                             'status_tip':'Read .roi file from disk',
+                             'icon':None,
+                             'func':self.Main.IO.load_ROIs,
+                             'checkable':False,
+                             'no_data_disabled':True},
+                                          
+                        'ReadNonparametricROIAction':
+                            {'label':'Load *_mask.tif file',
+                             'status_tip':'Read a mask file from disk',
+                             'icon':None,
+                             'func':self.Main.IO.load_nonparametric_ROIs,
+                             'checkable':False,
+                             'no_data_disabled':True},
                                     
-                        'ReadLSTAction':{'label':'Load .lst file',
-                                         'status_tip':'Read .lst file from disk',
-                                         'icon':None,
-                                         'func':self.Main.IO.load_lst,
-                                         'checkable':False,
-                                         'no_data_disabled':True},
+                        'ReadLSTAction':
+                            {'label':'Load .lst file',
+                             'status_tip':'Read .lst file from disk',
+                             'icon':None,
+                             'func':self.Main.IO.load_lst,
+                             'checkable':False,
+                             'no_data_disabled':True},
 
-                        'ReadTrialLabelsAction':{'label':'Load trial labels file',
-                                                 'status_tip':'Read trial labels from text file',
-                                                 'icon':self.Main.graphics_path + os.path.sep + 'icons' + os.path.sep +  'tags.svg',
-                                                 'func':self.Main.IO.load_trial_labels,
-                                                 'checkable':False,
-                                                 'no_data_disabled':True},                                    
+                        'ReadTrialLabelsAction':
+                            {'label':'Load trial labels file',
+                             'status_tip':'Read trial labels from text file',
+                             'icon':self.Main.graphics_path + os.path.sep + 'icons' + os.path.sep +  'tags.svg',
+                             'func':self.Main.IO.load_trial_labels,
+                             'checkable':False,
+                             'no_data_disabled':True},                                    
 
 #==============================================================================
 # Writers      
 #==============================================================================
 
-                        'WriteROIAction':{'label':'save ROIs',
-                                          'status_tip':'save current ROIs as specified in options',
-                                          'icon':None,
-                                          'func':self.Main.IO.write_extraction_mask,
-                                          'checkable':False,
-                                          'no_data_disabled':True},
+                        'WriteROIAction':
+                            {'label':'save ROIs',
+                             'status_tip':'save current ROIs as specified in options',
+                             'icon':None,
+                             'func':self.Main.IO.write_extraction_mask,
+                             'checkable':False,
+                             'no_data_disabled':True},
 
-                        'WriteMovieAction':{'label':'export movie',
-                                            'status_tip':'export current to movie file',
-                                            'icon':None,
-                                            'func':None,
-                                            'checkable':False,
-                                            'no_data_disabled':True},
+                        'WriteMovieAction':
+                            {'label':'export movie',
+                             'status_tip':'export current to movie file',
+                             'icon':None,
+                             'func':None,
+                             'checkable':False,
+                             'no_data_disabled':True},
 
-                        'WriteTracesAction':{'label':'export traces based on ROIs',
-                                             'status_tip':'slice datasets along time at ROIs and extract traces',
-                                             'icon':None,
-                                             'func':self.Main.IO.export_traces,
-                                             'checkable':False,
-                                             'no_data_disabled':True},
+                        'WriteTracesAction':
+                            {'label':'export traces based on ROIs',
+                             'status_tip':'slice datasets along time at ROIs and extract traces',
+                             'icon':None,
+                             'func':self.Main.IO.export_traces,
+                             'checkable':False,
+                             'no_data_disabled':True},
 
 
 #==============================================================================
 # Display switches
 #==============================================================================
 
-                        'toggledFFAction':{'label':'Display dFF',
-                                           'status_tip':'Toggles dF/F',
-                                           'icon':self.Main.graphics_path + os.path.sep + 'icons' + os.path.sep +  'calc_dFF.png',
-                                           'func':self.toggle_dFF,
-                                           'checkable':True,
-                                           'no_data_disabled':True},
+                        'toggledFFAction':
+                            {'label':'Display dFF',
+                             'status_tip':'Toggles dF/F',
+                             'icon':self.Main.graphics_path + os.path.sep + 'icons' + os.path.sep +  'calc_dFF.png',
+                             'func':self.toggle_dFF,
+                             'checkable':True,
+                             'no_data_disabled':True},
                                     
-                        'toggleGlobalLevels':{'label':'use global levels',
-                                              'status_tip':'toggles global levels use',
-                                              'icon':self.Main.graphics_path + os.path.sep + 'icons' + os.path.sep +  'globe-alt.svg',
-                                              'func':self.toggle_global_levels,
-                                              'checkable':True,
-                                              'no_data_disabled':True},
+                        'toggleGlobalLevels':
+                            {'label':'use global levels',
+                             'status_tip':'toggles global levels use',
+                             'icon':self.Main.graphics_path + os.path.sep + 'icons' + os.path.sep +  'globe-alt.svg',
+                             'func':self.toggle_global_levels,
+                             'checkable':True,
+                             'no_data_disabled':True},
                                     
-                        'toggleAvgAction':{'label':'Display time average',
-                                           'status_tip':'toggles display time average use',
-                                           'icon':self.Main.graphics_path + os.path.sep + 'icons' + os.path.sep +  'Average_Image.svg',
-                                           'func':self.toggle_avg_img,
-                                           'checkable':True,
-                                           'no_data_disabled':True},
+                        'toggleAvgAction':
+                            {'label':'Display time average',
+                             'status_tip':'toggles display time average use',
+                             'icon':self.Main.graphics_path + os.path.sep + 'icons' + os.path.sep +  'Average_Image.svg',
+                             'func':self.toggle_avg_img,
+                             'checkable':True,
+                             'no_data_disabled':True},
 
-                        'toggleMonochromeAction':{'label':'Monochrome mode',
-                                                  'status_tip':'toggles monochrome mode',
-                                                  'icon':self.Main.graphics_path + os.path.sep + 'icons' + os.path.sep +  'adjust.svg',
-                                                  'func':self.toggle_monochrome_mode,
-                                                  'checkable':True,
-                                                  'no_data_disabled':True},
+                        'toggleMonochromeAction':
+                            {'label':'Monochrome mode',
+                             'status_tip':'toggles monochrome mode',
+                             'icon':self.Main.graphics_path + os.path.sep + 'icons' + os.path.sep +  'adjust.svg',
+                             'func':self.toggle_monochrome_mode,
+                             'checkable':True,
+                             'no_data_disabled':True},
         
 #==============================================================================
 #         opening extra widgets
 #==============================================================================
 
-                        'OpenOptionsAction':{'label':'Options',
-                                             'status_tip':'Edit options',
-                                             'icon':self.Main.graphics_path + os.path.sep + 'icons' + os.path.sep +  'sliders.svg',
-                                             'func':self.open_Options_Widget,
-                                             'checkable':False,
-                                             'no_data_disabled':True},
+                        'OpenOptionsAction':
+                            {'label':'Options',
+                             'status_tip':'Edit options',
+                             'icon':self.Main.graphics_path + os.path.sep + 'icons' + os.path.sep +  'sliders.svg',
+                             'func':self.open_Options_Widget,
+                             'checkable':False,
+                             'no_data_disabled':True},
                                              
 #==============================================================================
 #           processing action
 #==============================================================================
 
-                        'ApplyFilterAction':{'label':'Smooth data set',
-                                             'status_tip':'Apply set filter to the data set',
-                                             'icon':None,
-                                             'func':self.Main.Processing.calc_gaussian_smooth,
-                                             'checkable':False,
-                                             'no_data_disabled':True},
+                        'ApplyFilterAction':
+                            {'label':'Smooth data set',
+                             'status_tip':'Apply set filter to the data set',
+                             'icon':None,
+                             'func':self.Main.Processing.calc_gaussian_smooth,
+                             'checkable':False,
+                             'no_data_disabled':True},
                                     
 
 #==============================================================================
 #           Converters action
 #==============================================================================
 
-                        'log2lstAction':{'label':'Generate .lst from .vws.log',
-                                         'status_tip':'reads a .vws.log from till vision imaging setups and generates a .lst file',
-                                         'icon':None,
-                                         'func':self.Main.IO.convert_log2lst,
-                                         'checkable':False,
-                                         'no_data_disabled':False}
-                                             
+                        'log2lstAction':
+                            {'label':'Generate .lst from .vws.log',
+                             'status_tip':'reads a .vws.log from till vision imaging setups and generates a .lst file',
+                             'icon':None,
+                             'func':self.Main.IO.convert_log2lst,
+                             'checkable':False,
+                             'no_data_disabled':False}
                         }
 
 
