@@ -288,8 +288,15 @@ class IO_Object(object):
             
             
             # find contour
-            segments = self.Main.Processing.find_contour(mask)
+            segments = self.Main.Processing.find_contour(mask,level=0.2)
+                        
             for seg in segments:
+                
+                # kick if area is below or above a threshold
+                area = self.Main.Processing.calc_segment_area(seg)
+                if area < 30 or area > 600:
+                    continue
+                
                 label = label + 1
                 
                 # convert to coordinates            
@@ -301,11 +308,12 @@ class IO_Object(object):
 #                    pos_list.append([pos.x(),pos.y()])
     
                 # add PolyLineROI
-                X = seg[:,0]
-                Y = seg[:,1]
+                X = seg[::4,0]
+                Y = seg[::4,1]
                 pos_list = zip(X,Y)
-                self.Main.ROIs.add_ROI(kind='polygon',label=str(label),pos_list=pos_list)
+                self.Main.ROIs.add_ROI(kind='nonparametric',label=str(label),pos_list=pos_list)
                 pass
+            
 #        import pdb
 #        pdb.set_trace()
 

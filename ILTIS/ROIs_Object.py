@@ -81,7 +81,8 @@ class ROIs_Object(QtCore.QObject):
                 pos_list = [[pos[0]-ROI_diameter,pos[1]-ROI_diameter], [pos[0]+ROI_diameter,pos[1]-ROI_diameter], [pos[0]+ROI_diameter,pos[1]+ROI_diameter], [pos[0]-ROI_diameter,pos[1]+ROI_diameter]]
             ROI = myPolyLineROI(self.Main, pos_list, label,  closed=True, removable=True, pen=current_pen)
         
-            
+        if kind == 'nonparametric':
+            ROI = myNonParametricROI(self.Main, pos_list, label, pen=current_pen)            
 
         # set only the current ROI active
         [roi.deactivate() for roi in self.ROI_list]
@@ -283,7 +284,6 @@ class myROI(object):
     def update_label(self,text):
         self.label = text
         self.labelItem.setText(self.label)
-        
        
         
 class myCircleROI(pg.CircleROI,myROI):
@@ -337,6 +337,52 @@ class myPolyLineROI(pg.PolyLineROI,myROI):
             h_pos = sp.array([[p.x(),p.y()] for p in pos_mapped])
         pos = sp.average(h_pos,axis=0)
         return pos
+    pass
+
+class myNonParametricROI(myROI,pg.PlotCurveItem):
+    sigRemoveRequested = QtCore.pyqtSignal()
+    sigRegionChanged = QtCore.pyqtSignal()
+#            self.sigRemoveRequested.connect(self.Main.ROIs.remove_ROI_request)
+#        self.proxy = pg.SignalProxy(self.sigRegionChanged, rateLimit=30, slot=self.Main.ROIs.ROI_region_changed) # rate limit movement
+#    setAcceptedMouseButtons = QtCore.pyqtSignal()
+#        self.sigClicked.connect(self.Main.ROIs.ROI_clicked)
+        
+    def __init__(self,Main,positions,label,**kwargs):
+        self.positions = sp.array(positions)
+        pg.PlotCurveItem.__init__(self)
+        myROI.__init__(self,Main,label)
+        self.Main = Main
+        self.label = label
+#        import pdb
+#        pdb.set_trace()
+#        
+        self.setData(self.positions[:,0],self.positions[:,1])
+#        self.line = pg.PlotDataItem(pxMode=True, pen='g')#green pen here
+#        plot.addItem(line)
+#        line.setData(x=x, y=y)
+
+        self.active = False
+        self.center = self.get_center()
+        self.labelItem = pg.TextItem(text=label,anchor=(0.5,0.5))
+        self.update_center()
+        self.Main.Data_Display.Frame_Visualizer.ViewBox.addItem(self.labelItem)
+    
+        # link signals
+#        self.sigRemoveRequested.connect(self.Main.ROIs.remove_ROI_request)
+#        self.proxy = pg.SignalProxy(self.sigRegionChanged, rateLimit=30, slot=self.Main.ROIs.ROI_region_changed) # rate limit movement
+#        self.setAcceptedMouseButtons(QtCore.Qt.LeftButton)
+#        self.sigClicked.connect(self.Main.ROIs.ROI_clicked)
+        
+#    def setPen(self,pen):
+#        pass
+    def setAcceptedMouseButtons(self,buttons):
+        """ implementation dummy?"""
+        pass
+    
+    def get_center(self):
+        """ pos is the centroid """
+        return sp.average(self.positions,axis=0)
+    
     pass
             
 if __name__ == '__main__':
