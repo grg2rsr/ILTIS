@@ -82,7 +82,8 @@ class ROIs_Object(QtCore.QObject):
             ROI = myPolyLineROI(self.Main, pos_list, label,  closed=True, removable=True, pen=current_pen)
         
         if kind == 'nonparametric':
-            ROI = myNonParametricROI(self.Main, pos_list, label, pen=current_pen)            
+            center = sp.averate(sp.array(pos_list),axis=0)
+            ROI = myNonParametricROI(self.Main, pos_list, center=center, label, removable=True, pen=current_pen)            
 
         # set only the current ROI active
         [roi.deactivate() for roi in self.ROI_list]
@@ -150,15 +151,18 @@ class ROIs_Object(QtCore.QObject):
     def get_ROI_mask(self,ROI):
         """ helper for slicing the pixels out of the image below a ROI 
         calculates a boolean mask containing true if pixel inside ROI """
+        import pdb
+        pdb.set_trace()
+        
         mask = sp.zeros((self.Main.Data.raw.shape[0],self.Main.Data.raw.shape[1]),dtype='bool')
 
         # getArraySlice gets 1) array to slice 2) ImageItem
         inds = ROI.getArraySlice(self.Main.Data.raw[:,:,0,0], self.Main.Data_Display.Frame_Visualizer.ImageItems[0], returnSlice=False)[0]
 
-        valinds = sp.where(ROI.getArrayRegion(self.Main.Data.raw[:,:,0,0], self.Main.Data_Display.Frame_Visualizer.ImageItems[0]) != 0)
+        val_inds = sp.where(ROI.getArrayRegion(self.Main.Data.raw[:,:,0,0], self.Main.Data_Display.Frame_Visualizer.ImageItems[0]) != 0)
         inds = sp.array([inds[0],inds[1]])
        
-        true_inds = sp.array([valinds[0] + inds[0,0],valinds[1] + inds[1,0]])
+        true_inds = sp.array([val_inds[0] + inds[0,0],val_inds[1] + inds[1,0]])
         mask[true_inds[0],true_inds[1]] = True
         
         return mask,true_inds
@@ -339,9 +343,9 @@ class myPolyLineROI(pg.PolyLineROI,myROI):
         return pos
     pass
 
-class myNonParametricROI(myROI,pg.PlotCurveItem):
-    sigRemoveRequested = QtCore.pyqtSignal()
-    sigRegionChanged = QtCore.pyqtSignal()
+class myNonParametricROI(myROI,pg.ROI):
+#    sigRemoveRequested = QtCore.pyqtSignal()
+#    sigRegionChanged = QtCore.pyqtSignal()
 #            self.sigRemoveRequested.connect(self.Main.ROIs.remove_ROI_request)
 #        self.proxy = pg.SignalProxy(self.sigRegionChanged, rateLimit=30, slot=self.Main.ROIs.ROI_region_changed) # rate limit movement
 #    setAcceptedMouseButtons = QtCore.pyqtSignal()
@@ -349,7 +353,7 @@ class myNonParametricROI(myROI,pg.PlotCurveItem):
         
     def __init__(self,Main,positions,label,**kwargs):
         self.positions = sp.array(positions)
-        pg.PlotCurveItem.__init__(self)
+        pg.ROI.__init__(self,**kwargs)
         myROI.__init__(self,Main,label)
         self.Main = Main
         self.label = label
