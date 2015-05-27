@@ -6,9 +6,19 @@ Created on Wed Apr  1 13:29:30 2015
 """
 import os
 import sys
-sys.path.append(os.path.split(os.path.realpath(__file__))[0] + os.path.sep + os.pardir) # this fixes imoprt issues if run by script from a different folder
+
+# quite ugly setting of proper imports
+this_dir = os.path.split(os.path.realpath(__file__))[0] # this directroy
+par_dir = os.path.sep.join([this_dir,os.pardir])
+sys.path.append(par_dir)
+
+# this is necessary for machines that have pyqtgraph already installed as it enforces import of the one from local lib
+pyqtgraph_path = os.path.sep.join([par_dir,'lib','pyqtgraph-master']) # path to the local pg
+sys.path.insert(0,pyqtgraph_path)
+
 from PyQt4 import QtGui, QtCore
 import pyqtgraph as pg
+#print pg.__file__
 from Options_Object import Options_Object
 
 from Processing_Object import Processing_Object
