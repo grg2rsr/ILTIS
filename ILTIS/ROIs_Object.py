@@ -82,8 +82,9 @@ class ROIs_Object(QtCore.QObject):
             ROI = myPolyLineROI(self.Main, pos_list, label,  closed=True, removable=True, pen=current_pen)
         
         if kind == 'nonparametric':
-            center = sp.averate(sp.array(pos_list),axis=0)
-            ROI = myNonParametricROI(self.Main, pos_list, center=center, label, removable=True, pen=current_pen)            
+            ROI = myPolyLineROI(self.Main, pos_list, label,  closed=True, removable=True, pen=current_pen)
+#            center = sp.average(sp.array(pos_list),axis=0)
+#            ROI = myNonParametricROI(self.Main, pos_list, center=center, label, removable=True, pen=current_pen)            
 
         # set only the current ROI active
         [roi.deactivate() for roi in self.ROI_list]
@@ -151,8 +152,6 @@ class ROIs_Object(QtCore.QObject):
     def get_ROI_mask(self,ROI):
         """ helper for slicing the pixels out of the image below a ROI 
         calculates a boolean mask containing true if pixel inside ROI """
-        import pdb
-        pdb.set_trace()
         
         mask = sp.zeros((self.Main.Data.raw.shape[0],self.Main.Data.raw.shape[1]),dtype='bool')
 
@@ -330,7 +329,7 @@ class myPolyLineROI(pg.PolyLineROI,myROI):
         pass
     
     def get_center(self,first_call=False):
-        """ returns ROI center, used for label show 
+        """ returns ROI centroid, used for label show 
         first_call kw for handling the weird bug upon first call to mapToView:
         this returns wrong coordinates"""
         handle_pos = [tup[1] for tup in self.getSceneHandlePositions()]
@@ -343,51 +342,52 @@ class myPolyLineROI(pg.PolyLineROI,myROI):
         return pos
     pass
 
-class myNonParametricROI(myROI,pg.ROI):
-#    sigRemoveRequested = QtCore.pyqtSignal()
-#    sigRegionChanged = QtCore.pyqtSignal()
-#            self.sigRemoveRequested.connect(self.Main.ROIs.remove_ROI_request)
-#        self.proxy = pg.SignalProxy(self.sigRegionChanged, rateLimit=30, slot=self.Main.ROIs.ROI_region_changed) # rate limit movement
-#    setAcceptedMouseButtons = QtCore.pyqtSignal()
-#        self.sigClicked.connect(self.Main.ROIs.ROI_clicked)
-        
-    def __init__(self,Main,positions,label,**kwargs):
-        self.positions = sp.array(positions)
-        pg.ROI.__init__(self,**kwargs)
-        myROI.__init__(self,Main,label)
-        self.Main = Main
-        self.label = label
-#        import pdb
-#        pdb.set_trace()
+#class myNonParametricROI(myROI,pg.ROI):
+##    sigRemoveRequested = QtCore.pyqtSignal()
+##    sigRegionChanged = QtCore.pyqtSignal()
+##            self.sigRemoveRequested.connect(self.Main.ROIs.remove_ROI_request)
+##        self.proxy = pg.SignalProxy(self.sigRegionChanged, rateLimit=30, slot=self.Main.ROIs.ROI_region_changed) # rate limit movement
+##    setAcceptedMouseButtons = QtCore.pyqtSignal()
+##        self.sigClicked.connect(self.Main.ROIs.ROI_clicked)
 #        
-        self.setData(self.positions[:,0],self.positions[:,1])
-#        self.line = pg.PlotDataItem(pxMode=True, pen='g')#green pen here
-#        plot.addItem(line)
-#        line.setData(x=x, y=y)
-
-        self.active = False
-        self.center = self.get_center()
-        self.labelItem = pg.TextItem(text=label,anchor=(0.5,0.5))
-        self.update_center()
-        self.Main.Data_Display.Frame_Visualizer.ViewBox.addItem(self.labelItem)
-    
-        # link signals
-#        self.sigRemoveRequested.connect(self.Main.ROIs.remove_ROI_request)
-#        self.proxy = pg.SignalProxy(self.sigRegionChanged, rateLimit=30, slot=self.Main.ROIs.ROI_region_changed) # rate limit movement
-#        self.setAcceptedMouseButtons(QtCore.Qt.LeftButton)
-#        self.sigClicked.connect(self.Main.ROIs.ROI_clicked)
+#    def __init__(self,Main,positions,label,**kwargs):
+#        self.positions = sp.array(positions)
+#        pg.ROI.__init__(self,**kwargs)
+#        myROI.__init__(self,Main,label)
+#        self.Main = Main
+#        self.label = label
+##        import pdb
+##        pdb.set_trace()
+##        
+#        self.setData(self.positions[:,0],self.positions[:,1])
+##        self.line = pg.PlotDataItem(pxMode=True, pen='g')#green pen here
+##        plot.addItem(line)
+##        line.setData(x=x, y=y)
+#
+#        self.active = False
+#        self.center = self.get_center()
+#        self.labelItem = pg.TextItem(text=label,anchor=(0.5,0.5))
+#        self.update_center()
+#        self.Main.Data_Display.Frame_Visualizer.ViewBox.addItem(self.labelItem)
+#    
+#        # link signals
+##        self.sigRemoveRequested.connect(self.Main.ROIs.remove_ROI_request)
+##        self.proxy = pg.SignalProxy(self.sigRegionChanged, rateLimit=30, slot=self.Main.ROIs.ROI_region_changed) # rate limit movement
+##        self.setAcceptedMouseButtons(QtCore.Qt.LeftButton)
+##        self.sigClicked.connect(self.Main.ROIs.ROI_clicked)
+#        
+##    def setPen(self,pen):
+##        pass
         
-#    def setPen(self,pen):
+#    def setAcceptedMouseButtons(self,buttons):
+#        """ implementation dummy?"""
 #        pass
-    def setAcceptedMouseButtons(self,buttons):
-        """ implementation dummy?"""
-        pass
-    
-    def get_center(self):
-        """ pos is the centroid """
-        return sp.average(self.positions,axis=0)
-    
-    pass
+#    
+#    def get_center(self):
+#        """ pos is the centroid """
+#        return sp.average(self.positions,axis=0)
+#    
+#    pass
             
 if __name__ == '__main__':
     import Main

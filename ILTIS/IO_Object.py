@@ -292,6 +292,7 @@ class IO_Object(object):
                         
             for seg in segments:
                 
+                # FIXME! KC and image dimension specific code!
                 # kick if area is below or above a threshold
                 area = self.Main.Processing.calc_segment_area(seg)
                 if area < 30 or area > 600:
@@ -308,8 +309,9 @@ class IO_Object(object):
 #                    pos_list.append([pos.x(),pos.y()])
     
                 # add PolyLineROI
-                X = seg[::4,0]
-                Y = seg[::4,1]
+                downsample = 1
+                X = seg[::downsample,0]
+                Y = seg[::downsample,1]
                 pos_list = zip(X,Y)
                 self.Main.ROIs.add_ROI(kind='nonparametric',label=str(label),pos_list=pos_list)
                 pass
@@ -535,9 +537,12 @@ class IO_Object(object):
     def load_lst(self):
         """ reads metadata from a .lst file. Needed to generate output in the
         .gloDatamix format """
-        
-        lst_path = self.OpenFileDialog(title='load lst',default_dir=self.Main.Options.general['cwd'],extension='*.lst')[0]
-        
+
+        try:        
+            lst_path = self.OpenFileDialog(title='load lst',default_dir=self.Main.Options.general['cwd'],extension='*.lst')[0]
+        except:
+            return
+
         # read
         self.Main.Data.Metadata.LSTdata = gio.read_lst(lst_path)
         self.Main.Options.flags['LST_was_read'] = True
