@@ -19,6 +19,9 @@ import re
 import time
 from collections import OrderedDict
 
+from skimage.measure import label as sklabel
+from skimage.measure import find_contours
+
 class IO_Object(object):
     """ holds all IO functionality """
     def __init__(self,Main):
@@ -275,53 +278,95 @@ class IO_Object(object):
         
         pass
 
-    def load_nonparametric_ROIs(self):
-        """ reads a *_mask.tif """
+    def load_nonparametric_ROIs(self,size_filter=None,thresh=0.5):
+        """ reads a *_mask.tif 
+        size_filter can be a tuple and segments with an area smaller than 
+        size_filter[0] or larger size_filter[1] are considered to be valid ROIs
+        """
         self.Main.ROIs.reset()    
+        
+        # get mask data
         file_path = self.OpenFileDialog(title='load nonparametric ROIs',default_dir = self.Main.Options.general['cwd'], extension='*.tif')[0]
         masks = io.read_tiffstack(file_path)
         
-        label = 0
-        # iterate over masks
-        for i in range(masks.shape[2]):
-            mask = masks[:,:,i]
-            
-            
-            # find contour
-            segments = self.Main.Processing.find_contour(mask,level=0.2)
-                        
-            for seg in segments:
-                
-                # FIXME! KC and image dimension specific code!
-                # kick if area is below or above a threshold
-                area = self.Main.Processing.calc_segment_area(seg)
-                if area < 30 or area > 600:
-                    continue
-                
-                label = label + 1
-                
-                # convert to coordinates            
-#                pos_list = []
-#                for i in range(len(X)):
-#                    x = X[i]
-#                    y = Y[i]
-#                    pos = self.Main.Data_Display.Frame_Visualizer.ViewBox.mapToView(QtCore.QPointF(x,y))
-#                    pos_list.append([pos.x(),pos.y()])
+        
+        
+        # skimage based segmentation
+        masks_thresh = masks > thresh
+        masks_label = sp.zeros(masks_thresh.shape)
+        for i in range(masks_thresh.shape[2]):
+            masks_label[:,:,i] = sklabel(masks_thresh[:,:,i])
     
-                # add PolyLineROI
-                downsample = 1
-                X = seg[::downsample,0]
-                Y = seg[::downsample,1]
-                pos_list = zip(X,Y)
-                self.Main.ROIs.add_ROI(kind='nonparametric',label=str(label),pos_list=pos_list)
-                pass
+        # split into a array of submasks
+        Nsubmasks = [int(masks_label[:,:,i].max()) for i in range(masks_label.shape[2])]
+        submasks = sp.zeros((masks.shape[0],masks.shape[1],sum(Nsubmasks)),dtype='bool')
+        
+        i = 0
+        for j in range(masks_label.shape[2]):
+            mask = masks_label[:,:,j]
+            for l in range(1,Nsubmasks[j]+1):
+                submasks[mask == l,i] = True
+                i += 1
+
+        # for each mask, calculate a contour
+        contours = []
+        for i in range(submasks.shape[2]):
+            contour = find_contours(submasks[:,:,i],level=0.5)
+            contours.append(contour)
+
+        
+        # add PolyLineROI
+        for i in range(submasks.shape[2]):
+            self.Main.ROIs.add_ROI(kind='nonparametric',label=str(i),contour=contours[i],mask=submasks[:,:,i])
+            pass
+            
+            
+#        
+#        
+#        label = 0
+#        # iterate over masks
+#        for i in range(masks.shape[2]):
+#            mask = masks[:,:,i]
+#            
+#            submasks = self.Main.Processing.find_submasks(mask,level=0.2)
+#            # find contour
+#            segments = self.Main.Processing.find_contour(mask,level=0.2)
+#                        
+#            for seg in segments:
+#                
+#                # FIXME! KC and image dimension specific code!
+#                # kick if area is below or above a threshold
+#                if size_filter: # KC 30/600 ?
+#                    area = self.Main.Processing.calc_segment_area(seg)
+#                    if area < size_filter[0] or area > size_filter[1]:
+#                        continue
+#                
+#                label = label + 1
+#                
+#                # convert to coordinates            
+##                pos_list = []
+##                for i in range(len(X)):
+##                    x = X[i]
+##                    y = Y[i]
+##                    pos = self.Main.Data_Display.Frame_Visualizer.ViewBox.mapToView(QtCore.QPointF(x,y))
+##                    pos_list.append([pos.x(),pos.y()])
+#    
+#                # add PolyLineROI
+#                downsample = 1
+#                X = seg[::downsample,0]
+#                Y = seg[::downsample,1]
+#                pos_list = zip(X,Y)
+#                self.Main.ROIs.add_ROI(kind='nonparametric',label=str(label),pos_list=pos_list,mask=submask)
+#                pass
             
 #        import pdb
 #        pdb.set_trace()
 
         # remove all handles
-        for ROI in self.Main.ROIs.ROI_list:
-            [handle.hide() for handle in ROI.getHandles()]
+#        for ROI in self.Main.ROIs.ROI_list:
+#            [handle.hide() for handle in ROI.getHandles()]
+            
+            
         
         
 #==============================================================================

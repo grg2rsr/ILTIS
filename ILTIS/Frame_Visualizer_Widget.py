@@ -35,6 +35,7 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
         
         # mouse interaction
         self.scene().sigMouseClicked.connect(self.Main.ROIs.add_ROI_request)
+#        self.scene().sigMouseMoved.connect(self.mouseMoved) # keep for debug
         pass
     
     def init_data(self):
@@ -130,4 +131,7 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
         for ImageItem in self.ImageItems_dFF:
             ImageItem.setCompositionMode(n)      
             
-        
+    def mouseMoved(self, evt):
+        """ keep for debug """
+        print "scene coordinates:", evt, "imageItem coordinates", self.ViewBox.mapToView(evt)
+

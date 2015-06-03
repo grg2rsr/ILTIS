@@ -32,8 +32,8 @@ class ROIs_Object(QtCore.QObject):
 
         while len(self.ROI_list) > 0:
             ROI = self.ROI_list.pop()
-            self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI)
-            self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI.labelItem)
+            self.Main.MainWindow.Data_Display.Frame_Visualizer.scene().removeItem(ROI)
+            self.Main.MainWindow.Data_Display.Frame_Visualizer.scene().removeItem(ROI.labelItem)
         
         self.Main.Options.ROI['last_active'] = None
                     
@@ -44,7 +44,7 @@ class ROIs_Object(QtCore.QObject):
         if pg.graphicsItems.ViewBox.ViewBox == type(evt.currentItem): # this is the fix for the ROI in the corners bug
             if evt.button() == 1:
                 # get correct position of mouse click
-                pos = self.Main.Data_Display.Frame_Visualizer.ViewBox.mapToView(evt.pos())
+                pos = self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.mapToView(evt.pos())
                 self.add_ROI(pos=sp.array([pos.x(),pos.y()]))
                 
     def remove_ROI_request(self,evt):
@@ -54,7 +54,7 @@ class ROIs_Object(QtCore.QObject):
         pass
         
     
-    def add_ROI(self,label=None,kind=None,pos=None,ROI_diameter=None,pos_list=None):
+    def add_ROI(self,label=None,kind=None,pos=None,ROI_diameter=None,pos_list=None,contour=None,mask=None):
         """ this function is called and takes care of the proper ROI instantiation 
         kind etc. """
         
@@ -63,28 +63,36 @@ class ROIs_Object(QtCore.QObject):
             label = str(len(self.ROI_list) + 1)
         if kind == None:
             kind = self.Main.Options.ROI['type']
-        if pos == None and pos_list == None:
-            ### FIXME raise error
-            print "trying to instantiate ROI without position!"
+#        if pos == None and pos_list == None and contour==None:
+#            ### FIXME raise error
+#            print "trying to instantiate ROI without position!"
         if ROI_diameter == None:
             ROI_diameter = self.Main.Options.ROI['diameter']
         
         # color the ROI according to the "active" dataset
         current_pen = pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8)
-
+        common_kwargs = {'parent':self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox,
+                         'pen':current_pen,
+                         'removable':True,
+                         'Main':self.Main,
+                         'label':label}
+        
         if kind == 'circle':
             pos = pos - ROI_diameter / 2 # empirically determined - not understood - minus is correct ... 
-            ROI = myCircleROI(self.Main,pos, [ROI_diameter,ROI_diameter], label, removable=True, pen=current_pen)
+            ROI = myCircleROI(pos, [ROI_diameter,ROI_diameter], **common_kwargs)
             
         if kind == 'polygon':
             if pos_list == None:
                 pos_list = [[pos[0]-ROI_diameter,pos[1]-ROI_diameter], [pos[0]+ROI_diameter,pos[1]-ROI_diameter], [pos[0]+ROI_diameter,pos[1]+ROI_diameter], [pos[0]-ROI_diameter,pos[1]+ROI_diameter]]
-            ROI = myPolyLineROI(self.Main, pos_list, label,  closed=True, removable=True, pen=current_pen)
+            ROI = myPolyLineROI(pos_list, closed=True, **common_kwargs)
         
         if kind == 'nonparametric':
-            ROI = myPolyLineROI(self.Main, pos_list, label,  closed=True, removable=True, pen=current_pen)
-#            center = sp.average(sp.array(pos_list),axis=0)
-#            ROI = myNonParametricROI(self.Main, pos_list, center=center, label, removable=True, pen=current_pen)            
+            # reusing PolyLineROI
+#            ROI = myPolyLineROI(self.Main, pos_list, label,  closed=True, removable=True, pen=current_pen, movable=False)
+#            [handle.hide() for handle in ROI.getHandles()]
+            
+            # own implementation
+            ROI = myNonParametricROI(mask, contour, movable=False, **common_kwargs)
 
         # set only the current ROI active
         [roi.deactivate() for roi in self.ROI_list]
@@ -93,7 +101,7 @@ class ROIs_Object(QtCore.QObject):
         # add ROI
         self.ROI_list.append(ROI)
         self.Main.Options.ROI['last_active'] = ROI
-        self.Main.Data_Display.Frame_Visualizer.ViewBox.addItem(ROI)
+        self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.addItem(ROI)
         
         # update
         self.Main.MainWindow.Front_Control_Panel.ROI_Manager.update()
@@ -103,9 +111,11 @@ class ROIs_Object(QtCore.QObject):
     def remove_ROI(self,ROI):
         """ remove a ROI, update all necessary  """
         
-        self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI)
-        self.Main.Data_Display.Frame_Visualizer.scene().removeItem(ROI.labelItem)
-        
+        # remove from scene
+        for child in ROI.children:
+            self.Main.MainWindow.Data_Display.Frame_Visualizer.scene().removeItem(child)
+        self.Main.MainWindow.Data_Display.Frame_Visualizer.scene().removeItem(ROI)
+#        self.Main.MainWindow.Data_Display.Frame_Visualizer.scene().removeItem(ROI.labelItem)
         
         # fix suggestion from luke campagnola (pyqtgraph mailinglist)
         # problem: ROI object doensn't have a removeTimer on all machines!        
@@ -156,9 +166,9 @@ class ROIs_Object(QtCore.QObject):
         mask = sp.zeros((self.Main.Data.raw.shape[0],self.Main.Data.raw.shape[1]),dtype='bool')
 
         # getArraySlice gets 1) array to slice 2) ImageItem
-        inds = ROI.getArraySlice(self.Main.Data.raw[:,:,0,0], self.Main.Data_Display.Frame_Visualizer.ImageItems[0], returnSlice=False)[0]
+        inds = ROI.getArraySlice(self.Main.Data.raw[:,:,0,0], self.Main.MainWindow.Data_Display.Frame_Visualizer.ImageItems[0], returnSlice=False)[0]
 
-        val_inds = sp.where(ROI.getArrayRegion(self.Main.Data.raw[:,:,0,0], self.Main.Data_Display.Frame_Visualizer.ImageItems[0]) != 0)
+        val_inds = sp.where(ROI.getArrayRegion(self.Main.Data.raw[:,:,0,0], self.Main.MainWindow.Data_Display.Frame_Visualizer.ImageItems[0]) != 0)
         inds = sp.array([inds[0],inds[1]])
        
         true_inds = sp.array([val_inds[0] + inds[0,0],val_inds[1] + inds[1,0]])
@@ -248,14 +258,20 @@ class ROIs_Object(QtCore.QObject):
         pass
     
 class myROI(object):
-    def __init__(self,Main,label):
+    def __init__(self,Main=None,label=None,ViewBox=None):
+#        super(myROI,self).__init__()
         self.Main = Main
         self.label = label
+        self.ViewBox = self.parentItem()
+        self.children = [] # a list of GraphicsItems
+        
         self.active = False
         self.center = self.get_center()
         self.labelItem = pg.TextItem(text=label,anchor=(0.5,0.5))
         self.update_center()
-        self.Main.Data_Display.Frame_Visualizer.ViewBox.addItem(self.labelItem)
+
+        self.ViewBox.addItem(self.labelItem)
+        self.children.append(self.labelItem)
     
         # link signals
         self.sigRemoveRequested.connect(self.Main.ROIs.remove_ROI_request)
@@ -263,7 +279,6 @@ class myROI(object):
         self.setAcceptedMouseButtons(QtCore.Qt.LeftButton)
         self.sigClicked.connect(self.Main.ROIs.ROI_clicked)
         
-
     def activate(self):
         self.active = True
         self.setPen(pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8))
@@ -281,18 +296,18 @@ class myROI(object):
     def update_center(self):
         self.center = self.get_center()
         self.labelItem.setPos(self.center[0],self.center[1])
-#        print self.center
-        pass
 
     def update_label(self,text):
         self.label = text
         self.labelItem.setText(self.label)
-       
+               
         
 class myCircleROI(pg.CircleROI,myROI):
-    def __init__(self,Main,pos,size,label,**kwargs):
+    def __init__(self,pos,size,**kwargs):
+        non_pg_kws = ['Main','label']
+        non_pg_vals = [kwargs.pop(key) for key in non_pg_kws]
         pg.CircleROI.__init__(self,pos,size,**kwargs)
-        myROI.__init__(self, Main, label)
+        myROI.__init__(self, **dict(zip(non_pg_kws,non_pg_vals)))
         self.diameter = self.size()[0]
         
     def get_center(self):
@@ -309,9 +324,11 @@ class myCircleROI(pg.CircleROI,myROI):
 
         
 class myPolyLineROI(pg.PolyLineROI,myROI):
-    def __init__(self,Main,positions,label,**kwargs):
+    def __init__(self,positions,**kwargs):
+        non_pg_kws = ['Main','label']
+        non_pg_vals = [kwargs.pop(key) for key in non_pg_kws]
         pg.PolyLineROI.__init__(self, positions,**kwargs)
-        myROI.__init__(self, Main, label)
+        myROI.__init__(self, **dict(zip(non_pg_kws,non_pg_vals)))
         
         # also workaround for the weird first_call bug
         self.center = self.get_center(first_call=True)
@@ -333,7 +350,7 @@ class myPolyLineROI(pg.PolyLineROI,myROI):
         first_call kw for handling the weird bug upon first call to mapToView:
         this returns wrong coordinates"""
         handle_pos = [tup[1] for tup in self.getSceneHandlePositions()]
-        pos_mapped = [self.Main.Data_Display.Frame_Visualizer.ViewBox.mapToView(pos) for pos in handle_pos]
+        pos_mapped = [self.ViewBox.mapToView(pos) for pos in handle_pos]
         if first_call == True:
             h_pos = sp.array([[p.x(),p.y()] for p in handle_pos])
         else:
@@ -342,53 +359,134 @@ class myPolyLineROI(pg.PolyLineROI,myROI):
         return pos
     pass
 
-#class myNonParametricROI(myROI,pg.ROI):
-##    sigRemoveRequested = QtCore.pyqtSignal()
-##    sigRegionChanged = QtCore.pyqtSignal()
-##            self.sigRemoveRequested.connect(self.Main.ROIs.remove_ROI_request)
-##        self.proxy = pg.SignalProxy(self.sigRegionChanged, rateLimit=30, slot=self.Main.ROIs.ROI_region_changed) # rate limit movement
-##    setAcceptedMouseButtons = QtCore.pyqtSignal()
-##        self.sigClicked.connect(self.Main.ROIs.ROI_clicked)
-#        
-#    def __init__(self,Main,positions,label,**kwargs):
-#        self.positions = sp.array(positions)
-#        pg.ROI.__init__(self,**kwargs)
-#        myROI.__init__(self,Main,label)
-#        self.Main = Main
-#        self.label = label
-##        import pdb
-##        pdb.set_trace()
-##        
-#        self.setData(self.positions[:,0],self.positions[:,1])
-##        self.line = pg.PlotDataItem(pxMode=True, pen='g')#green pen here
-##        plot.addItem(line)
-##        line.setData(x=x, y=y)
-#
-#        self.active = False
-#        self.center = self.get_center()
-#        self.labelItem = pg.TextItem(text=label,anchor=(0.5,0.5))
-#        self.update_center()
-#        self.Main.Data_Display.Frame_Visualizer.ViewBox.addItem(self.labelItem)
-#    
-#        # link signals
-##        self.sigRemoveRequested.connect(self.Main.ROIs.remove_ROI_request)
-##        self.proxy = pg.SignalProxy(self.sigRegionChanged, rateLimit=30, slot=self.Main.ROIs.ROI_region_changed) # rate limit movement
-##        self.setAcceptedMouseButtons(QtCore.Qt.LeftButton)
-##        self.sigClicked.connect(self.Main.ROIs.ROI_clicked)
-#        
-##    def setPen(self,pen):
-##        pass
+class myNonParametricROI(pg.ROI,myROI):
+    """ function that need to be reimplemented:
+    click, hover, return mask (is passed) """
         
-#    def setAcceptedMouseButtons(self,buttons):
-#        """ implementation dummy?"""
-#        pass
-#    
-#    def get_center(self):
-#        """ pos is the centroid """
-#        return sp.average(self.positions,axis=0)
-#    
-#    pass
+    def __init__(self,mask,contour,**kwargs):
+        non_pg_kws = ['Main','label']
+        non_pg_vals = [kwargs.pop(key) for key in non_pg_kws]
+        # pg.ROI needs a pos as the constructor. center of largest segment
+        pos = sp.average(contour[sp.argmax([cont.shape[0] for cont in contour])],axis=0)
+        self.contour = contour
+        self.mask = mask
+        
+        pg.ROI.__init__(self,pos,size=(2,2),**kwargs)
+        myROI.__init__(self,**dict(zip(non_pg_kws,non_pg_vals)))
+        
+        self.sigClicked.connect(self.clicked)
+#        self.sigHoverEvent.connect(self.hover)
+
+        # line
+        self.lines = []
+        for segment in self.contour:
+            x = segment[:,0]
+            y = segment[:,1]
             
+#            line = pg.PlotDataItem(pxMode=True,pen=pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8))
+            line = myPlotDataItem(parent=self,pxMode=True,pen=pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8))
+            line.setData(x=x,y=y)
+#            line.setAcceptHoverEvents(True)
+#            import pdb
+#            pdb.set_trace()
+            self.lines.append(line)
+            self.children.append(line)
+            self.ViewBox.addItem(line)
+            
+#    def mouseMoveEvent(self,evt):
+#        print "mousemove!", evt
+        
+#    def hoverEvent(self,evt):
+#        print "just to see if it works!", evt
+#        pass
+
+    def clicked(self):
+        print "i am clicked"
+        pass
+    
+    def activate(self):
+        self.active = True
+        for segment in self.lines:
+            segment.setPen(pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8))
+    
+    def deactivate(self):
+        self.active = False
+        for segment in self.lines:
+            segment.setPen(pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8))
+        pass
+
+#    def paint(self, p, *args):
+        
+#        def mapCoords(coords):
+#            mappedCoords = self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.mapFromItemToView(coords)
+#            mappedCoords = self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.mapSceneToView(coords)
+#            mappedCoords = self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.mapToView(coords)
+#            mappedCoords = self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.mapFromView(coords)
+#            mappedCoords = self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.mapViewToScene(coords)
+#            return mappedCoords
+            
+#        p.setRenderHint(QtGui.QPainter.Antialiasing)
+#        p.setPen(pg.mkPen(self.Main.Options.ROI['inactive_color'],width=2.8))
+        
+#        import pdb
+#        pdb.set_trace()
+
+        # line        
+#        line = pg.PlotDataItem(pxMode=True,pen='g')
+#        line.setData(x=self.positions[:,0],y=self.positions[:,1])
+#        self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.addItem(line)
+
+#        # polygon
+#        polygon = QtGui.QPolygon()
+#        QPointList = [QtCore.QPoint(*sp.int32(tup)) for tup in self.positions]
+#        polygon.setPoints(QPointList)
+#        self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.addItem(polygon)                
+        
+
+        
+#        nPoints = self.positions.shape[0]
+#        QPointList = [mapCoords(QtCore.QPoint(*tup)) for tup in self.positions]
+#        QPointList = QtCore.QPoint(*tup) for tup in self.positions
+#        polygon = QtGui.QPolygon(QPointList)
+#        p.drawPolygon(polygon)
+    
+#    def paint(self, p, *args):
+#        p.setRenderHint(QtGui.QPainter.Antialiasing)
+#        p.setPen(pg.mkPen(self.Main.Options.ROI['inactive_color'],width=2.8))
+#        for i in range(1,self.positions.shape[0]):
+##            import pdb
+##            pdb.set_trace()
+#            
+#            p1 = QtCore.QPointF(*self.positions[i-1,:])
+#            p2 = QtCore.QPointF(*self.positions[i,:])
+#            p.drawLine(p1,p2)
+#        
+        
+    def setAcceptedMouseButtons(self,buttons):
+        """ implementation dummy?"""
+        pass
+    
+    def get_center(self):
+        """ pos is the centroid """
+        return sp.average(self.contour[sp.argmax([cont.shape[0] for cont in self.contour])],axis=0)
+    
+    pass
+
+class myPlotDataItem(pg.PlotDataItem):
+    def __init__(self,*args,**kwargs):
+        super(myPlotDataItem,self).__init__(*args,**kwargs)
+        self.setAcceptHoverEvents(True)
+        print "instantiating line"
+        pass
+    
+    def hoverEnterEvent(self,evt):
+        print evt
+        pass
+
+    def hoverMoveEvent(self,evt):
+        print evt
+        pass
+                
 if __name__ == '__main__':
     import Main
     Main.main()

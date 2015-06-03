@@ -247,7 +247,12 @@ class Processing_Object(object):
             h = norm(seg[i-1,:] - seg[i,:])
             tri.append(g*h/2.0)
         area = sp.sum(sp.array(tri))
-        return area            
+        return area
+        
+    def find_submasks(self,mask,level=0.5):
+        """ return a list of submasks"""
+        
+        return submasks
 
 if __name__ == '__main__':
     import Main

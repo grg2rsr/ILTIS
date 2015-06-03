@@ -19,17 +19,13 @@ class Data_Display_Widget(QtGui.QMainWindow): # needs to be a QMainWindow to hav
         super(Data_Display_Widget,self).__init__()
 
         self.Main = Main
-#        self.Main.Data_Display = self
         self.MainWindow = parent
         
         self.Frame_Visualizer = None
         self.LUT_Controlers = None
         self.Traces_Visualizer = None
         self.Traces_Visualizer_Stimsorted = None
-        
-#        self.color_maps = None
-#        self.colors = None
-        
+               
         self.init_UI()
         pass
         
