@@ -162,18 +162,21 @@ class ROIs_Object(QtCore.QObject):
     def get_ROI_mask(self,ROI):
         """ helper for slicing the pixels out of the image below a ROI 
         calculates a boolean mask containing true if pixel inside ROI """
-        
-        mask = sp.zeros((self.Main.Data.raw.shape[0],self.Main.Data.raw.shape[1]),dtype='bool')
-
-        # getArraySlice gets 1) array to slice 2) ImageItem
-        inds = ROI.getArraySlice(self.Main.Data.raw[:,:,0,0], self.Main.MainWindow.Data_Display.Frame_Visualizer.ImageItems[0], returnSlice=False)[0]
-
-        val_inds = sp.where(ROI.getArrayRegion(self.Main.Data.raw[:,:,0,0], self.Main.MainWindow.Data_Display.Frame_Visualizer.ImageItems[0]) != 0)
-        inds = sp.array([inds[0],inds[1]])
-       
-        true_inds = sp.array([val_inds[0] + inds[0,0],val_inds[1] + inds[1,0]])
-        mask[true_inds[0],true_inds[1]] = True
-        
+        if type(ROI) != myNonParametricROI:
+            mask = sp.zeros((self.Main.Data.raw.shape[0],self.Main.Data.raw.shape[1]),dtype='bool')
+    
+            # getArraySlice gets 1) array to slice 2) ImageItem
+            inds = ROI.getArraySlice(self.Main.Data.raw[:,:,0,0], self.Main.MainWindow.Data_Display.Frame_Visualizer.ImageItems[0], returnSlice=False)[0]
+    
+            val_inds = sp.where(ROI.getArrayRegion(self.Main.Data.raw[:,:,0,0], self.Main.MainWindow.Data_Display.Frame_Visualizer.ImageItems[0]) != 0)
+            inds = sp.array([inds[0],inds[1]])
+           
+            true_inds = sp.array([val_inds[0] + inds[0,0],val_inds[1] + inds[1,0]])
+            mask[true_inds[0],true_inds[1]] = True
+        else:
+            mask = ROI.mask
+            true_inds = sp.where(mask)
+            
         return mask,true_inds
     
     def ROI_region_changed(self,evt):
@@ -231,18 +234,9 @@ class ROIs_Object(QtCore.QObject):
             for ROI in self.ROI_list:
                 if ROI.active == True:
                     pen = pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8)
-                    if type(ROI) == myCircleROI:
-                        ROI.setPen(pen)
-                    if type(ROI) == myPolyLineROI:
-                        for segment in ROI.segments:
-                            segment.setPen(pen)
                 if ROI.active == False:
                     pen = pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8)
-                    if type(ROI) == myCircleROI:
-                        ROI.setPen(pen)
-                    if type(ROI) == myPolyLineROI:
-                        for segment in ROI.segments:
-                            segment.setPen(pen)
+                ROI.set_Pen(pen)
                             
         # multiple ROI active, traces colored to ROI
         if nActiveROIs > 1:
@@ -250,11 +244,12 @@ class ROIs_Object(QtCore.QObject):
             for i,ROI_id in enumerate(self.Main.Options.ROI['active_ROIs']):
                 ROI = self.ROI_list[ROI_id]
                 pen = pg.mkPen(colors[i],width=1.8)
-                if type(ROI) == myCircleROI:
-                    ROI.setPen(pen)
-                if type(ROI) == myPolyLineROI:
-                    for segment in ROI.segments:
-                        segment.setPen(pen)
+                ROI.set_Pen(pen)
+#                if type(ROI) == myCircleROI:
+#                    ROI.setPen(pen)
+#                if type(ROI) == myPolyLineROI:
+#                    for segment in ROI.segments:
+#                        segment.setPen(pen)
         pass
     
 class myROI(object):
@@ -279,13 +274,18 @@ class myROI(object):
         self.setAcceptedMouseButtons(QtCore.Qt.LeftButton)
         self.sigClicked.connect(self.Main.ROIs.ROI_clicked)
         
+        # pens
+        self.active_pen = pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8)
+        self.inactive_pen = pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8)
+        self.hover_pen = pg.mkPen(255,255,0,width=1)
+        
     def activate(self):
         self.active = True
-        self.setPen(pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8))
+        self.setPen(self.active_pen)
     
     def deactivate(self):
         self.active = False
-        self.setPen(pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8))
+        self.setPen(self.inactive_pen)
     
     def toggle_state(self):
         if self.active == True:
@@ -321,6 +321,9 @@ class myCircleROI(pg.CircleROI,myROI):
         self.center = self.get_center()
         self.labelItem.setPos(self.center[0],self.center[1])
         self.diameter = self.size()[0]
+        
+    def set_Pen(self,pen):
+        self.setPen(pen)
 
         
 class myPolyLineROI(pg.PolyLineROI,myROI):
@@ -336,15 +339,20 @@ class myPolyLineROI(pg.PolyLineROI,myROI):
 
     def activate(self):
         self.active = True
-        for segment in self.segments:
-            segment.setPen(pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8))
+        self.set_Pen(self.active_pen)
+#        for segment in self.segments:
+#            segment.setPen(self.active_pen)
     
     def deactivate(self):
         self.active = False
-        for segment in self.segments:
-            segment.setPen(pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8))
-        pass
+        self.set_Pen(self.inactive_pen)
+#        for segment in self.segments:
+#            segment.setPen(self.inactive_pen)
+#        pass
     
+    def set_Pen(self,pen):
+        for segment in self.segments:
+            segment.setPen(pen)
     def get_center(self,first_call=False):
         """ returns ROI centroid, used for label show 
         first_call kw for handling the weird bug upon first call to mapToView:
@@ -371,7 +379,7 @@ class myNonParametricROI(pg.ROI,myROI):
         self.contour = contour
         self.mask = mask
         
-        pg.ROI.__init__(self,pos,size=(2,2),**kwargs)
+        pg.ROI.__init__(self,pos,size=(0,0),**kwargs)
         myROI.__init__(self,**dict(zip(non_pg_kws,non_pg_vals)))
         
         self.sigClicked.connect(self.clicked)
@@ -383,47 +391,78 @@ class myNonParametricROI(pg.ROI,myROI):
             x = segment[:,0]
             y = segment[:,1]
             
-#            line = pg.PlotDataItem(pxMode=True,pen=pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8))
-            line = myPlotDataItem(parent=self,pxMode=True,pen=pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8))
-            line.setData(x=x,y=y)
-#            line.setAcceptHoverEvents(True)
+#            from itertools import chain
+#            coords = list(chain.from_iterable(zip(x, y)))
+            coords = zip(x,y)
+            ### polygon
+            #        # polygon
+            
+#            QPointList = [QtCore.QPoint(*coord) for coord in coords]
+#            polygon = QtGui.QPolygonF(QPointList)
+#            PolyItem = myQGraphicsPolygonItem(polygon,parent=self)
+#            PolyItem.setPen(self.inactive_pen)
+#            self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.addItem(PolyItem)    
+            
+            
+            ## line
+#            line = myPlotDataItem(parent=self,pxMode=True,pen=self.inactive_pen)
+#            line.setData(x=x,y=y)
+            path = pg.arrayToQPath(x,y,connect='all')
+            polygon = path.toFillPolygon()
+            PolyItem = myQGraphicsPolygonItem(polygon,parent=self)
+            PolyItem.setPen(self.inactive_pen)
+            self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.addItem(PolyItem)    
+            self.lines.append(PolyItem)
+            self.children.append(PolyItem)
 #            import pdb
 #            pdb.set_trace()
-            self.lines.append(line)
-            self.children.append(line)
-            self.ViewBox.addItem(line)
             
-#    def mouseMoveEvent(self,evt):
-#        print "mousemove!", evt
-        
-#    def hoverEvent(self,evt):
-#        print "just to see if it works!", evt
-#        pass
+#            painter = QtGui.QPainter()
+#            painter.fillRect(0, 0, 100, 100, QtCore.Qt.white)
+#            painter.setPen(self.inactive_pen)
+#            painter.setBrush(QtGui.QColor(122, 163, 39));
+#            painter.drawPath(path)
+            
+#            self.lines.append(line)
+#            self.children.append(line)
+#            self.ViewBox.addItem(line)
+            
+    def hover(self,evt):
+        print "hovering over", self.label
+        pass
+    
+    def set_hover(self,val):
+        """ """
+        if val == True:
+            self.set_Pen(self.hover_pen)
+        if val == False:
+            if self.active:
+                self.set_Pen(self.active_pen)
+            else:
+                self.set_Pen(self.inactive_pen)
+            
+    def clicked(self,evt):
+        if evt.button() == QtCore.Qt.RightButton:
+            self.Main.ROIs.remove_ROI(self)            
 
-    def clicked(self):
-        print "i am clicked"
+        if evt.button() == QtCore.Qt.LeftButton:
+            self.toggle_state()
+
         pass
     
     def activate(self):
         self.active = True
         for segment in self.lines:
-            segment.setPen(pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8))
+            segment.setPen(self.active_pen)
     
     def deactivate(self):
         self.active = False
         for segment in self.lines:
-            segment.setPen(pg.mkPen(self.Main.Options.ROI['inactive_color'],width=1.8))
+            segment.setPen(self.inactive_pen)
         pass
 
 #    def paint(self, p, *args):
         
-#        def mapCoords(coords):
-#            mappedCoords = self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.mapFromItemToView(coords)
-#            mappedCoords = self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.mapSceneToView(coords)
-#            mappedCoords = self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.mapToView(coords)
-#            mappedCoords = self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.mapFromView(coords)
-#            mappedCoords = self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.mapViewToScene(coords)
-#            return mappedCoords
             
 #        p.setRenderHint(QtGui.QPainter.Antialiasing)
 #        p.setPen(pg.mkPen(self.Main.Options.ROI['inactive_color'],width=2.8))
@@ -461,30 +500,56 @@ class myNonParametricROI(pg.ROI,myROI):
 #            p2 = QtCore.QPointF(*self.positions[i,:])
 #            p.drawLine(p1,p2)
 #        
-        
-    def setAcceptedMouseButtons(self,buttons):
-        """ implementation dummy?"""
-        pass
-    
+            
     def get_center(self):
         """ pos is the centroid """
         return sp.average(self.contour[sp.argmax([cont.shape[0] for cont in self.contour])],axis=0)
     
-    pass
+    def set_Pen(self,pen):
+        for line in self.lines:
+            line.setPen(pen)
+            pass
+        
 
 class myPlotDataItem(pg.PlotDataItem):
     def __init__(self,*args,**kwargs):
         super(myPlotDataItem,self).__init__(*args,**kwargs)
         self.setAcceptHoverEvents(True)
+        self.setAcceptedMouseButtons(QtCore.Qt.RightButton and QtCore.Qt.LeftButton)
+        self.parent = kwargs['parent'] # parent is the nonparametric ROI class
         print "instantiating line"
         pass
     
     def hoverEnterEvent(self,evt):
-        print evt
+        print "hovering on", self.parent.label
+        self.parent.hover(evt)
         pass
 
     def hoverMoveEvent(self,evt):
         print evt
+        pass
+    
+class myQGraphicsPolygonItem(QtGui.QGraphicsPolygonItem):
+    def __init__(self,*args,**kwargs):
+        super(myQGraphicsPolygonItem,self).__init__(*args,**kwargs)
+        self.setAcceptHoverEvents(True)
+        self.setAcceptedMouseButtons(QtCore.Qt.RightButton and QtCore.Qt.LeftButton)
+        self.parent = kwargs['parent'] # parent is the nonparametric ROI class
+        print "instantiating polygon"
+        pass
+    
+    def hoverEnterEvent(self,evt):
+        print "hovering on", self.parent.label
+        self.parent.set_hover(True)
+        pass
+#    
+    def hoverLeaveEvent(self,evt):
+        print "leaving on", self.parent.label
+        self.parent.set_hover(False)
+        pass
+    
+    def mousePressEvent(self,evt):
+        self.parent.clicked(evt)
         pass
                 
 if __name__ == '__main__':
