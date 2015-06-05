@@ -164,13 +164,13 @@ class Processing_Object(object):
 #==============================================================================
     ### color calculations
 #==============================================================================
-    def calc_colormaps(self,nColors,HSVsubset=(0,360),HSVoffset=0):
+    def calc_colormaps(self,nColors,HSVsubset=(0,270),HSVoffset=0):
         colors = self.calc_colors(nColors,HSVsubset,HSVoffset)
         color_maps = [self.calc_colormap(color) for color in colors]
         return colors, color_maps
         
     def calc_colors(self,nColors,HSVsubset=(0,360),HSVoffset=0):
-        h = sp.linspace(0,360,nColors,endpoint=False).astype('int')
+        h = sp.linspace(HSVsubset[0],HSVsubset[1],nColors,endpoint=False).astype('int')
         h = self.add_circular_offset(h,HSVoffset,HSVsubset[1]).tolist()
         s = [255] * nColors
         v = [255] * nColors
@@ -227,16 +227,7 @@ class Processing_Object(object):
 #==============================================================================
     ### parametric / nonparametric mask conversions
 #==============================================================================       
-
-#    def find_contour(self,mask):
-#        """ returns x and y coordinates of a boolean mask """
-#        cs = plt.contour(mask,1)
-#        p = cs.collections[0].get_paths()[0]
-#        v = p.vertices
-#        x = v[:,0]
-#        y = v[:,1]
-#        return x,y
-        
+       
     def find_contour(self,mask,level=0.5):
         """ returns a list of segments """
         import matplotlib._cntr as cntr
@@ -245,6 +236,23 @@ class Processing_Object(object):
         nlist = c.trace(level, level, 0)
         segs = nlist[:len(nlist)//2]
         return segs
+        
+    def calc_segment_area(self,seg):
+        """ calculates the area inside a segment (defined as [[x1,y1], ... ,[xn,yn]]) """
+        from scipy.linalg import norm
+        centroid = sp.average(seg,axis=0)
+        tri = []
+        for i in range(1,seg.shape[0]):
+            g = norm(seg[i-1,:] - centroid)
+            h = norm(seg[i-1,:] - seg[i,:])
+            tri.append(g*h/2.0)
+        area = sp.sum(sp.array(tri))
+        return area
+        
+    def find_submasks(self,mask,level=0.5):
+        """ return a list of submasks"""
+        
+        return submasks
 
 if __name__ == '__main__':
     import Main
