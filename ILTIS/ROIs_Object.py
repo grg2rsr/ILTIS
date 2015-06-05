@@ -203,10 +203,16 @@ class ROIs_Object(QtCore.QObject):
 #        self.Main.MainWindow.Data_Display.Traces_Visualizer.update_traces()
 #        self.Main.MainWindow.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
         
-    def ROI_clicked(self,evt):
+    def ROI_clicked_handler(self,evt):
+        """ handles the click event """
+        ROI = evt.sender()
+        self.ROI_clicked(ROI)
+        pass
+        
+    def ROI_clicked(self,ROI):
         """ ROI gets activated upon click, if shift click multiple active can be
         selected """
-        ROI = evt.sender()
+
         modifiers = QtGui.QApplication.keyboardModifiers()
 
         if modifiers == QtCore.Qt.ShiftModifier:
@@ -218,8 +224,19 @@ class ROIs_Object(QtCore.QObject):
         self.Main.Options.ROI['last_active'] = ROI
         self.update_active_ROIs()
         self.update_display_settings()
+        pass
+    
+#    def ROI_hover_handler(self,evt):
+#        ROI = evt.sender()
+#        self.ROI_hover(self,ROI)
+#        pass
+#    
+#    def ROI_hover(self,ROI):
+#        
+#        pass
         
     def update_display_settings(self):
+        """ sets the colors for the ROIs and whether or not to show the label """
         # handle the labels
         if self.Main.Options.ROI['show_labels'] == True:
             [ROI.labelItem.show() for ROI in self.ROI_list]
@@ -245,11 +262,6 @@ class ROIs_Object(QtCore.QObject):
                 ROI = self.ROI_list[ROI_id]
                 pen = pg.mkPen(colors[i],width=1.8)
                 ROI.set_Pen(pen)
-#                if type(ROI) == myCircleROI:
-#                    ROI.setPen(pen)
-#                if type(ROI) == myPolyLineROI:
-#                    for segment in ROI.segments:
-#                        segment.setPen(pen)
         pass
     
 class myROI(object):
@@ -272,7 +284,8 @@ class myROI(object):
         self.sigRemoveRequested.connect(self.Main.ROIs.remove_ROI_request)
         self.proxy = pg.SignalProxy(self.sigRegionChanged, rateLimit=30, slot=self.Main.ROIs.ROI_region_changed) # rate limit movement
         self.setAcceptedMouseButtons(QtCore.Qt.LeftButton)
-        self.sigClicked.connect(self.Main.ROIs.ROI_clicked)
+        self.sigClicked.connect(self.Main.ROIs.ROI_clicked_handler)
+#        self.sigHoverEvent.connect(self.Main.ROIs.ROI_hover_handler)
         
         # pens
         self.active_pen = pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8)
@@ -281,11 +294,9 @@ class myROI(object):
         
     def activate(self):
         self.active = True
-        self.setPen(self.active_pen)
     
     def deactivate(self):
         self.active = False
-        self.setPen(self.inactive_pen)
     
     def toggle_state(self):
         if self.active == True:
@@ -336,23 +347,11 @@ class myPolyLineROI(pg.PolyLineROI,myROI):
         # also workaround for the weird first_call bug
         self.center = self.get_center(first_call=True)
         self.labelItem.setPos(self.center[0],self.center[1])
-
-    def activate(self):
-        self.active = True
-        self.set_Pen(self.active_pen)
-#        for segment in self.segments:
-#            segment.setPen(self.active_pen)
-    
-    def deactivate(self):
-        self.active = False
-        self.set_Pen(self.inactive_pen)
-#        for segment in self.segments:
-#            segment.setPen(self.inactive_pen)
-#        pass
     
     def set_Pen(self,pen):
         for segment in self.segments:
             segment.setPen(pen)
+            
     def get_center(self,first_call=False):
         """ returns ROI centroid, used for label show 
         first_call kw for handling the weird bug upon first call to mapToView:
@@ -370,7 +369,7 @@ class myPolyLineROI(pg.PolyLineROI,myROI):
 class myNonParametricROI(pg.ROI,myROI):
     """ function that need to be reimplemented:
     click, hover, return mask (is passed) """
-        
+           
     def __init__(self,mask,contour,**kwargs):
         non_pg_kws = ['Main','label']
         non_pg_vals = [kwargs.pop(key) for key in non_pg_kws]
@@ -414,22 +413,9 @@ class myNonParametricROI(pg.ROI,myROI):
             self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.addItem(PolyItem)    
             self.lines.append(PolyItem)
             self.children.append(PolyItem)
-#            import pdb
-#            pdb.set_trace()
-            
-#            painter = QtGui.QPainter()
-#            painter.fillRect(0, 0, 100, 100, QtCore.Qt.white)
-#            painter.setPen(self.inactive_pen)
-#            painter.setBrush(QtGui.QColor(122, 163, 39));
-#            painter.drawPath(path)
-            
-#            self.lines.append(line)
-#            self.children.append(line)
-#            self.ViewBox.addItem(line)
             
     def hover(self,evt):
         print "hovering over", self.label
-        pass
     
     def set_hover(self,val):
         """ """
@@ -442,65 +428,13 @@ class myNonParametricROI(pg.ROI,myROI):
                 self.set_Pen(self.inactive_pen)
             
     def clicked(self,evt):
-        if evt.button() == QtCore.Qt.RightButton:
-            self.Main.ROIs.remove_ROI(self)            
+        print evt.button()
+        if evt.button() == QtCore.Qt.MiddleButton:
+            self.Main.ROIs.remove_ROI(self)
 
         if evt.button() == QtCore.Qt.LeftButton:
-            self.toggle_state()
-
-        pass
-    
-    def activate(self):
-        self.active = True
-        for segment in self.lines:
-            segment.setPen(self.active_pen)
-    
-    def deactivate(self):
-        self.active = False
-        for segment in self.lines:
-            segment.setPen(self.inactive_pen)
-        pass
-
-#    def paint(self, p, *args):
-        
-            
-#        p.setRenderHint(QtGui.QPainter.Antialiasing)
-#        p.setPen(pg.mkPen(self.Main.Options.ROI['inactive_color'],width=2.8))
-        
-#        import pdb
-#        pdb.set_trace()
-
-        # line        
-#        line = pg.PlotDataItem(pxMode=True,pen='g')
-#        line.setData(x=self.positions[:,0],y=self.positions[:,1])
-#        self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.addItem(line)
-
-#        # polygon
-#        polygon = QtGui.QPolygon()
-#        QPointList = [QtCore.QPoint(*sp.int32(tup)) for tup in self.positions]
-#        polygon.setPoints(QPointList)
-#        self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox.addItem(polygon)                
-        
-
-        
-#        nPoints = self.positions.shape[0]
-#        QPointList = [mapCoords(QtCore.QPoint(*tup)) for tup in self.positions]
-#        QPointList = QtCore.QPoint(*tup) for tup in self.positions
-#        polygon = QtGui.QPolygon(QPointList)
-#        p.drawPolygon(polygon)
-    
-#    def paint(self, p, *args):
-#        p.setRenderHint(QtGui.QPainter.Antialiasing)
-#        p.setPen(pg.mkPen(self.Main.Options.ROI['inactive_color'],width=2.8))
-#        for i in range(1,self.positions.shape[0]):
-##            import pdb
-##            pdb.set_trace()
-#            
-#            p1 = QtCore.QPointF(*self.positions[i-1,:])
-#            p2 = QtCore.QPointF(*self.positions[i,:])
-#            p.drawLine(p1,p2)
-#        
-            
+            self.Main.ROIs.ROI_clicked(self)
+           
     def get_center(self):
         """ pos is the centroid """
         return sp.average(self.contour[sp.argmax([cont.shape[0] for cont in self.contour])],axis=0)
@@ -508,51 +442,23 @@ class myNonParametricROI(pg.ROI,myROI):
     def set_Pen(self,pen):
         for line in self.lines:
             line.setPen(pen)
-            pass
-        
-
-class myPlotDataItem(pg.PlotDataItem):
-    def __init__(self,*args,**kwargs):
-        super(myPlotDataItem,self).__init__(*args,**kwargs)
-        self.setAcceptHoverEvents(True)
-        self.setAcceptedMouseButtons(QtCore.Qt.RightButton and QtCore.Qt.LeftButton)
-        self.parent = kwargs['parent'] # parent is the nonparametric ROI class
-        print "instantiating line"
-        pass
-    
-    def hoverEnterEvent(self,evt):
-        print "hovering on", self.parent.label
-        self.parent.hover(evt)
-        pass
-
-    def hoverMoveEvent(self,evt):
-        print evt
-        pass
-    
+           
 class myQGraphicsPolygonItem(QtGui.QGraphicsPolygonItem):
     def __init__(self,*args,**kwargs):
         super(myQGraphicsPolygonItem,self).__init__(*args,**kwargs)
         self.setAcceptHoverEvents(True)
-        self.setAcceptedMouseButtons(QtCore.Qt.RightButton and QtCore.Qt.LeftButton)
+        self.setAcceptedMouseButtons(QtCore.Qt.RightButton and QtCore.Qt.LeftButton and QtCore.Qt.MiddleButton)
         self.parent = kwargs['parent'] # parent is the nonparametric ROI class
-        print "instantiating polygon"
-        pass
     
     def hoverEnterEvent(self,evt):
-        print "hovering on", self.parent.label
         self.parent.set_hover(True)
-        pass
 #    
     def hoverLeaveEvent(self,evt):
-        print "leaving on", self.parent.label
         self.parent.set_hover(False)
-        pass
     
     def mousePressEvent(self,evt):
         self.parent.clicked(evt)
-        pass
                 
 if __name__ == '__main__':
     import Main
     Main.main()
-    pass
