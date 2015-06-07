@@ -4,9 +4,13 @@
 
 ## General description
 
-This program was designed to interactively and flexibly slice datasets from functional imaging experiments along the time axis. A classical imaging experiment generates higher dimensional data sets: The individual imaging _trials_, e.g. the response of a certain area to a stimulus is usually imaged as `(x,y)` images over time _(t)_, resulting in 3d image stacks. Additionally, different _stimuli (S)_ are given with a certain number of _repetitions (R)_, resulting in 5 dimensional data `(x,y,t,S,R)`.
+This program was designed to interactively and flexibly slice datasets from functional imaging experiments along the time axis. A classical imaging experiment generates data sets of high dimensionality: The individual imaging _trials_, e.g. the response of a certain area to a stimulus is usually imaged as `(x,y)` images over time _(t)_, resulting in 3d image stacks. Additionally, different _stimuli (S)_ are given with a certain number of _repetitions (R)_, resulting in 5 dimensional data `(x,y,t,S,R)`.
 
-This program is designed to slice this type of data along the temporal axis in _time traces_, and sort them according to _stimulus class S_ and _repetition R_ and offers great flexibility in terms of selective data display, intensity scaling, color maps, overlays, ROI handling, data subselection and trace visualization.
+This program serves the following purposes:
+
+1.  It is a flexible data visualizer and inspector by offering interactive intensity scaling, color maps, overlays and data subselection to really see how your dataset _looks like_.
+2.  It allows to select regions-of-interest (ROI) at which the data set is sliced along the temporal axis. The resulting _time traces_ are directly displayed and updated upon any change.
+3. The traces can be extracted in `.csv` format, sorted to  _stimulus class S_ and _repetition R_ for subsequent data analysis.
 
 ## Usage
 ### Loading data
