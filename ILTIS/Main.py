@@ -18,7 +18,7 @@ sys.path.insert(0,pyqtgraph_path)
 
 from PyQt4 import QtGui, QtCore
 import pyqtgraph as pg
-#print pg.__file__
+print 'using pyqtgraph at', pg.__file__
 from Options_Object import Options_Object
 
 from Processing_Object import Processing_Object

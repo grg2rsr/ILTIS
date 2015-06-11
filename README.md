@@ -68,7 +68,7 @@ Installation script is coming soon. Until then, just run the `run.sh` if you are
 + scikit image >= `0.11.3`
 + (pyqtgraph >= `0.9.8`, but this is now included in the main branch)
 
-At least these are the ones that I have installed right now, probalby older versions will work just fine. All packages were pulled either through `pip install <package>` or through linux package manager, so no manual installation of any extra module is needed.
+At least these are the ones that I have installed right now, probalby older versions will work just fine. All packages were pulled either through `pip install <package>` or through linux package manager, so no manual installation of any extra module is needed. Note for scikit image: the current version in the Ubuntu repositories is 0.9, so this package currently needs to be installed via pip.
 
 ### Coming soon
 + rigid and nonlinear transformation based movement correction

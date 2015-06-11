@@ -265,6 +265,16 @@ class DockLabel(VerticalLabel):
 
     def updateStyle(self):
         r = '3px'
+#        if self.dim:
+#            fg = '#aaa'
+#            bg = '#44a'
+#            border = '#339'
+#        else:
+#            fg = '#fff'
+#            bg = '#66c'
+#            border = '#FF0'
+        
+#         original
         if self.dim:
             fg = '#aaa'
             bg = '#44a'
