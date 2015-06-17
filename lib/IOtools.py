@@ -131,7 +131,8 @@ def read_mhd(mhd_path):
     return data_reshape
     
 def read_pst(pst_path):
-    """ read tillvision based .pst files as uint16 """
+    """ read tillvision based .pst files as uint16. DEPRECATED! 
+    USE THE VERSION IN gioIO! """
 
     inf_path = os.path.splitext(pst_path)[0] + '.inf'
     
@@ -297,23 +298,24 @@ def split_color_lsm(path,outpath=None):
         save_tstack(data[:,:,:,i],out)
 
 if __name__ == '__main__':
-#    import sys
-#    sys.exit()
-#    """ this is a library now """
-    
     import sys
+    print "this is a library now"
+    sys.exit()
+    
+    
+#    import sys
     
 ## testing
-    path = '/home/georg/Dropbox/python/xyt_movement_correction/test_data/stack_trunc.tif'
-    os.chdir(os.path.dirname(path))
-    data = read_tiffstack(path)
-    page = data[:,:,0]
-    save_tiff(page,'stack_trunc_page.tif')
-    save_mhd(page,'stack_trunc_page.mhd')
-    mhd_data = read_mhd('stack_trunc_page.mhd')
-    tif_data = read_tiff('stack_trunc_page.tif')
-    mhd2tiff('stack_trunc_page.mhd','./stack_trunc_page_prev_mhd.tif')
-    
+#    path = '/home/georg/Dropbox/python/xyt_movement_correction/test_data/stack_trunc.tif'
+#    os.chdir(os.path.dirname(path))
+#    data = read_tiffstack(path)
+#    page = data[:,:,0]
+#    save_tiff(page,'stack_trunc_page.tif')
+#    save_mhd(page,'stack_trunc_page.mhd')
+#    mhd_data = read_mhd('stack_trunc_page.mhd')
+#    tif_data = read_tiff('stack_trunc_page.tif')
+#    mhd2tiff('stack_trunc_page.mhd','./stack_trunc_page_prev_mhd.tif')
+#    
 
 ## nontesting
 #    """ """

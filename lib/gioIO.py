@@ -24,9 +24,11 @@ def read_lst(lst_path):
                 
     # remove the weird random amount of whitespaces in the column names
     columns = []
+
     for col in LSTdata.columns:
         columns.append(col.strip())
         pass
+    
     LSTdata.columns = columns
     return LSTdata
 

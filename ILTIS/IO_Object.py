@@ -594,12 +594,13 @@ class IO_Object(object):
         
         # update labels
         ind_map = self.map_lst_inds_to_path_inds()
-        
+               
         #concentration
-        concs = [str(self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['OConc']) for n in range(self.Main.Data.nTrials)]
-        new_concs = []        
+        concs = [self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['OConc'] for n in range(self.Main.Data.nTrials)]
+        new_concs = []
+        
         for conc in concs:
-            if sp.int32(conc) > 0: # info is in dilutions
+            if conc > 0: # info is in dilutions
                 new_conc = str(-1 * sp.around(sp.log10(sp.int32(conc))))
                 new_concs.append(new_conc)
             else:
