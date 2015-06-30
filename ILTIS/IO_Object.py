@@ -553,7 +553,7 @@ class IO_Object(object):
             # c) output of the motion correction scripts
 
             # moco compatibility
-            suffixes = ['affine','full','fullglobal','fullaffineglobal','fullbsplineglobal','correctedVflip','corrected']          
+            suffixes = ['affine','full','fullglobal','fullaffineglobal','affineaffineglobal','fullbsplineglobal','correctedVflip','corrected']          
             if os.path.splitext(filename.split('_')[-1])[0] in suffixes:
                 filename = '_'.join(filename.split('_')[:-1])
             
@@ -595,6 +595,9 @@ class IO_Object(object):
         # update labels
         ind_map = self.map_lst_inds_to_path_inds()
                
+        import pdb
+        pdb.set_trace()
+        
         #concentration
         concs = [self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['OConc'] for n in range(self.Main.Data.nTrials)]
         new_concs = []
