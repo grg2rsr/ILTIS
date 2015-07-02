@@ -10,7 +10,8 @@ from scipy import random
 #from PyQt4 import QtGui,QtCore
 from PyQt4.QtGui import QColor
 from pyqtgraph import ColorMap as PGColorMap
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
+import sys
 
 class Processing_Object(object):
     def __init__(self,Main):
@@ -156,9 +157,8 @@ class Processing_Object(object):
             try:
                 self.Main.Data.Traces_sorted[:,:,stim_index,rep_index] = self.Main.Data.Traces[:,:,n]
             except IndexError:
-                import pdb
-                pdb.set_trace()
-            pass
+                sys.exit()
+                pass
         pass
     
 #==============================================================================
@@ -249,10 +249,10 @@ class Processing_Object(object):
         area = sp.sum(sp.array(tri))
         return area
         
-    def find_submasks(self,mask,level=0.5):
-        """ return a list of submasks"""
-        
-        return submasks
+#    def find_submasks(self,mask,level=0.5):
+#        """ return a list of submasks"""
+#        
+#        return submasks
 
 if __name__ == '__main__':
     import Main
