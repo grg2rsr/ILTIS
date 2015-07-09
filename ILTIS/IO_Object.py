@@ -553,7 +553,7 @@ class IO_Object(object):
             # c) output of the motion correction scripts
 
             # moco compatibility
-            suffixes = ['affine','full','fullglobal','fullaffineglobal','affineaffineglobal','fullbsplineglobal','correctedVflip','corrected']          
+            suffixes = ['affine','full','fullglobal','fullaffineglobal','affineaffineglobal','affinebsplineglobal','fullbsplineglobal','correctedVflip','corrected']
             if os.path.splitext(filename.split('_')[-1])[0] in suffixes:
                 filename = '_'.join(filename.split('_')[:-1])
             
