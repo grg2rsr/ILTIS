@@ -133,10 +133,12 @@ def log2lst(fname):
     
     for Measurement in Measurements:
         label_split = Measurement['label'].split('_')
+        if len(label_split) == 5:
+            tmp, Odour, NOConc, tmp, tmp = label_split
         if len(label_split) == 3:
-            setting,Odour, NOConc = label_split
+            setting,Odour,NOConc = label_split
         if len(label_split) == 2:
-            setting,OConc = label_split
+            setting,NOConc = label_split
             Odour = 'Missing'
     
         # time
