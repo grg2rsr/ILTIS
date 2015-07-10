@@ -131,8 +131,10 @@ def read_mhd(mhd_path):
     return data_reshape
     
 def read_pst(pst_path):
-    """ read tillvision based .pst files as uint16. DEPRECATED! 
-    USE THE VERSION IN gioIO! """
+    """ read tillvision based .pst files as uint16. 
+    note: this func was flagged deprecated ("use the version in gioIO" instead,
+    but that one never existed ... ")
+    problematic: does not work on all .pst on my machine """
 
     inf_path = os.path.splitext(pst_path)[0] + '.inf'
     

@@ -596,7 +596,13 @@ class IO_Object(object):
         ind_map = self.map_lst_inds_to_path_inds()
                        
         #concentration
-        concs = [self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['OConc'] for n in range(self.Main.Data.nTrials)]
+        """ there is some confusion about the odor concentration field. 
+        Sometimes it is specified as 'NOConc' and sometimes as 'OConc'. 
+        This block deals with this ambiguity """
+        try:
+            concs = [self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['OConc'] for n in range(self.Main.Data.nTrials)]
+        except:
+            concs = [self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['NOConc'] for n in range(self.Main.Data.nTrials)]
         new_concs = []
         
         for conc in concs:
@@ -662,15 +668,16 @@ class IO_Object(object):
         """ reads the labels from the text file at path (newline separated) """
         
         if mode == 'single':
+            """ the labels are strings seperated by newlines """
             with open(filepath, 'r') as fh:
                 labels = [label.strip() for label in fh.readlines()]
         
-        if mode == 'mappable':
-            with open(filepath, 'r') as fh:
-                lines = [line.strip() for line in fh.readlines()]
-                ordered = [line.split(',') for line in lines]
-                names = [entries[0] for entries in ordered]
-                labels = [entries[1] for entries in ordered]
+#        if mode == 'mappable':
+#            with open(filepath, 'r') as fh:
+#                lines = [line.strip() for line in fh.readlines()]
+#                ordered = [line.split(',') for line in lines]
+#                names = [entries[0] for entries in ordered]
+#                labels = [entries[1] for entries in ordered]
         
         return labels
     
@@ -722,7 +729,6 @@ class IO_Object(object):
     ### helpers
 #==============================================================================
 
-    
     def convert_lsm2tif(self,paths):
         """ batch convert .lsm files to tiffs """
         for path in paths:
@@ -745,8 +751,6 @@ class IO_Object(object):
             fname = fname + ext
         return fname
 
-        
-    
     def glo_sort_traces(self):
         """ converts a Traces np.array from the definition (t,ROI,trial) into the 
         .gloDatamix style (ROI/trial,t) where iteration is first over ROI and then
