@@ -594,31 +594,34 @@ class IO_Object(object):
         
         # update labels
         ind_map = self.map_lst_inds_to_path_inds()
-                       
-        #concentration
-        """ there is some confusion about the odor concentration field. 
-        Sometimes it is specified as 'NOConc' and sometimes as 'OConc'. 
-        This block deals with this ambiguity """
-        try:
-            concs = [self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['OConc'] for n in range(self.Main.Data.nTrials)]
-        except:
-            concs = [self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['NOConc'] for n in range(self.Main.Data.nTrials)]
-        new_concs = []
         
-        for conc in concs:
-            if conc > 0: # info is in dilutions
-                new_conc = str(-1 * sp.around(sp.log10(sp.int32(conc))))
-                new_concs.append(new_conc)
-            else:
-                new_concs.append(conc)
-                
-        # label
-        labels = [self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['Odour'] for n in range(self.Main.Data.nTrials)]
-
-        # combine
-        new_labels = [labels[i]+new_concs[i] for i in range(len(labels))]
-        
-        self.Main.Data.Metadata.trial_labels = new_labels
+        if 0: # FIXME make this settable
+            #concentration
+            """ there is some confusion about the odor concentration field. 
+            Sometimes it is specified as 'NOConc' and sometimes as 'OConc'. 
+            This block deals with this ambiguity """
+            try:
+                concs = [self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['OConc'] for n in range(self.Main.Data.nTrials)]
+            except:
+                concs = [self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['NOConc'] for n in range(self.Main.Data.nTrials)]
+            new_concs = []
+            
+            for conc in concs:
+                if conc > 0: # info is in dilutions
+                    new_conc = str(-1 * sp.around(sp.log10(sp.int32(conc))))
+                    new_concs.append(new_conc)
+                else:
+                    new_concs.append(conc)
+                    
+            # label
+            labels = [self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['Odour'] for n in range(self.Main.Data.nTrials)]
+    
+            # combine
+            new_labels = [labels[i]+new_concs[i] for i in range(len(labels))]
+            
+            self.Main.Data.Metadata.trial_labels = new_labels
+            
+            
         self.Main.MainWindow.Front_Control_Panel.Data_Selector.set_current_labels(self.Main.Data.Metadata.trial_labels)
         
         # set stimulus timing
