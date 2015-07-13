@@ -90,7 +90,7 @@ def log2lst(fname):
     block_starts = []
     block_names = []
     read_length = 18 # const
-    lst_labels = ["Measu","Label","Odour","DBB1","Cycle","MTime","NOConc","Control","StimON","StimOFF","Pharma","PhTime","PhConc","Comment","ShiftX","ShiftY","StimISI","setting","dbb2","dbb3","PxSzX","PxSzY","PosZ","Lambda","Countl","slvFlip","Stim2ON","Stim2OFF","Age","Analyze"]
+    lst_labels = ["Measu","Label","Odour","DBB1","Cycle","MTime","OConc","Control","StimON","StimOFF","Pharma","PhTime","PhConc","Comment","ShiftX","ShiftY","StimISI","setting","dbb2","dbb3","PxSzX","PxSzY","PosZ","Lambda","Countl","slvFlip","Stim2ON","Stim2OFF","Age","Analyze"]
     last_time = 0
     lst_fname = os.path.splitext(os.path.splitext(fname)[0])[0] + '.lst' # removes both .vws and .log
     
