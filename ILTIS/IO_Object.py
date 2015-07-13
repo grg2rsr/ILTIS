@@ -498,7 +498,10 @@ class IO_Object(object):
                 row = OrderedDict()
                 row['NGloTag'] = str(self.Main.ROIs.ROI_list[i].label)
                 row['NOdorNr'] = '-999'
-                row['NOConc'] = str(lst_values['OConc'])
+                try: # hack because of the OConc vs. NOConc inconsistency in the lst format
+                    row['NOConc'] = str(lst_values['OConc'])
+                except:
+                    row['NOConc'] = str(lst_values['NOConc'])
                 row['NStim_ON'] = str(self.Main.Options.preprocessing['stimuli'][0,0])
                 row['NStim_Off'] = str(self.Main.Options.preprocessing['stimuli'][0,1])
                 row['NNoFrames'] = str(self.Main.Data.nFrames)
