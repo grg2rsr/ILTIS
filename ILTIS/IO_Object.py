@@ -619,9 +619,13 @@ class IO_Object(object):
             # combine
             new_labels = [labels[i]+new_concs[i] for i in range(len(labels))]
             
-            self.Main.Data.Metadata.trial_labels = new_labels
+#            self.Main.Data.Metadata.trial_labels = new_labels
             
+        else:
+            # label
+            new_labels = [self.Main.Data.Metadata.LSTdata.loc[ind_map[n]]['Odour'] for n in range(self.Main.Data.nTrials)]
             
+        self.Main.Data.Metadata.trial_labels = new_labels
         self.Main.MainWindow.Front_Control_Panel.Data_Selector.set_current_labels(self.Main.Data.Metadata.trial_labels)
         
         # set stimulus timing
