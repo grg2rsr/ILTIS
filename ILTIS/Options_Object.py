@@ -60,7 +60,7 @@ class Options_Object(QtCore.QObject):
                               'avg_frames':[0,self.Main.Data.nFrames-1],
                               'filter_xy':0.8,
                               'filter_t':1,
-                              'filter_target':'dff',
+                              'filter_target':'dFF',
                               'filter_size':[0.8,1],
                               'dt':0.24
                               }
