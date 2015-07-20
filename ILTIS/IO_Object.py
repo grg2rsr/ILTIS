@@ -452,8 +452,6 @@ class IO_Object(object):
             gio.write_gloDatamix(gloMeta,traces,outpath)
                 
 
-
-
 #==============================================================================
     ### lst parser / gloDatamix compatibility
 #==============================================================================
@@ -470,7 +468,6 @@ class IO_Object(object):
             for i in range(len(self.Main.ROIs.ROI_list)):
                 
                 lst_values = self.Main.Data.Metadata.LSTdata.loc[inds_map[n]]                
-
 
                 # roi centroid                
                 pos = self.Main.ROIs.ROI_list[i].get_center()
