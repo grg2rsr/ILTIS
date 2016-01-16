@@ -187,9 +187,9 @@ class MainWindow_Widget(QtGui.QMainWindow):
 
                         'WriteMovieAction':
                             {'label':'export movie',
-                             'status_tip':'export current to movie file',
+                             'status_tip':'export current view to movie file',
                              'icon':None,
-                             'func':None,
+                             'func':self.Main.IO.export_movie,
                              'checkable':False,
                              'no_data_disabled':True},
 

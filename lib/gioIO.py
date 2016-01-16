@@ -30,10 +30,12 @@ def read_lst(lst_path):
         pass
     
     LSTdata.columns = columns
+    import pdb
+    pdb.set_trace()
     return LSTdata
 
 
-def read_gloDatamix(path,nTags=None):
+def read_gloDatamix(path,nTags=None,tagList=None):
     """ reads a .gloDatamix file and puts the metadata into a pd.Dataframe and
     the numerical data into a np.array.
     Data is a flat 2d representation of nROI*nMeasurements x time, the order in 
@@ -42,10 +44,12 @@ def read_gloDatamix(path,nTags=None):
     # read line by line
     fh = open(path,'r')
     lines = fh.readlines()
-    
-    # infer nTags
-    if nTags == None:
-        nTags = sp.sum([field[:4] != 'data' for field in lines[0].strip().split('\t')])
+
+
+    if tagList == None:
+        if nTags == None:
+            # infer nTags
+            nTags = sp.sum([field[:4] != 'data' for field in lines[0].strip().split('\t')]) # this breaks with Ana style gloDatamix
     
     # read data into np.array and medadata into pd.DataFrame
     Data = sp.zeros((len(lines)-1,len(lines[0].split('\t')) - nTags))
@@ -211,5 +215,5 @@ def log2lst(fname):
         
 if __name__ == '__main__':
     # for some testing purposes ...
-    lst_path = '/home/georg/python/ILTIS/testdata/daniel/testings/tl_56a-Geosmin_130617a.lst'
+    lst_path = '/home/georg/python/ILTIS/testdata/2015_11_Iltis_PN_TillVision/ps081202c_orig.lst'
     lst_data = read_lst(lst_path)

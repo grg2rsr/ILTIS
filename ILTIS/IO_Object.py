@@ -18,9 +18,10 @@ import pickle
 import re
 import time
 from collections import OrderedDict
+import pyqtgraph as pg
 
-from skimage.measure import label as sklabel
-from skimage.measure import find_contours
+# from skimage.measure import label as sklabel
+# from skimage.measure import find_contours
 
 class IO_Object(object):
     """ holds all IO functionality """
@@ -172,6 +173,71 @@ class IO_Object(object):
         """ rgb color merge, crop """
         pass
     
+
+    def export_movie(self):
+        """ creates a movie file based on the current selected datasets.
+        EXPERIMENTAL - needs avconv installed ... (first pngs are dumped, then
+        avconv is called to make a avi file) """
+        
+        from pyqtgraph import exporters
+        ### FIXME
+        # care for correct path
+        # care for already existing files, remove first
+        # care for a proper avconv command! this one is pulled form the net
+        # http://stackoverflow.com/questions/16315192/avconv-make-a-video-from-a-subset-on-images
+        # care for compatibility of the avconv produced file with ppt
+        # ask for path, framerate
+
+        print "exporting movie ... "
+        # from http://www.pyqtgraph.org/documentation/exporting.html
+        # create an exporter instance, as an argument give it
+        # the item you wish to export
+
+        outpath = self.SaveFileDialog(title='save movie',default_dir = self.Main.Options.general['cwd'], extension='*.avi')
+        tmpdir = os.path.join(os.path.dirname(outpath),'movie_export')
+        try:
+            os.mkdir(tmpdir)
+        except OSError:
+            pass
+        
+        print "movie will be saved to: ", outpath        
+        print "tmp directory folder is: ", tmpdir        
+        
+        # adding a cue for the odor stimulus   
+        frac = 0.05
+        rect = QtGui.QGraphicsRectItem(0, 0, self.Main.Data.raw.shape[0]*frac, self.Main.Data.raw.shape[0]*frac)
+        rect.setPen(pg.mkPen((0, 0, 0, 100)))
+        rect.setBrush(pg.mkBrush((250, 250, 250)))
+        self.Main.Data_Display.Frame_Visualizer.ViewBox.addItem(rect)
+        rect.hide()
+
+        for t in range(self.Main.Data.raw.shape[2]):
+            self.Main.Data_Display.Frame_Visualizer.frame = t
+            self.Main.Data_Display.Frame_Visualizer.update_frame()
+            print t
+            stimuli_frames = self.Main.Options.preprocessing['stimuli']
+            for stim_frames in stimuli_frames:
+                onset, offset = stim_frames
+                if (t >= onset) and (t <= offset):
+                    rect.show()
+                else:
+                    rect.hide()
+                
+            exporter = exporters.ImageExporter(self.Main.Data_Display.Frame_Visualizer.ViewBox)
+            exporter.export(os.path.join(tmpdir,'frame_'+str(t)+'.png'))
+
+        # make system call
+        if os.name == 'posix': # make it only run on linux systems ... 
+            import subprocess
+#            command = 'avconv -i '+outpath + os.path.sep + 'frame_%d.png -b:v 6400k -r 24 '+outpath + os.path.sep+'exported_movie.avi'
+#            command = 'avconv -r 8 -i '+outpath + os.path.sep + 'frame_%d.png -b:v 6400k -r 8 '+outpath + os.path.sep+'exported_movie.avi'
+            command = 'avconv -r 8 -i '+ tmpdir + os.path.sep + 'frame_%d.png -b:v 6400k '+ outpath
+            print command
+    #        command = 'avconv -r 10 -i ./movie_export/frame_%d.png ./movie_export/output.avi'
+            subprocess.call(command,shell=True)
+        print "done"
+      
+        pass
     
 #==============================================================================
     ### ROI IO
@@ -606,6 +672,13 @@ class IO_Object(object):
         """ opens file dialog to chose a log file to convert """
         log_path = self.OpenFileDialog(title='load .vws.log',default_dir=self.Main.Options.general['cwd'],extension='*.log')[0]
         gio.log2lst(log_path)
+        
+    def generate_fura_ratio(self):
+        """ generates a ratiometric image for currently loaded fura based imaging
+        needs to have a .lst loaded in which the dbb2 is specified
+        resulting image that is saved is dbb1 / dbb2
+        
+        """
         
 #==============================================================================
     ### trial labels as text files
