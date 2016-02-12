@@ -204,7 +204,7 @@ def log2lst(fname):
         Stim2ON = '36'
         Stim2OFF = '40'
         Age = '-1'
-        Analyze = '-2'
+        Analyze = '2'
         
         values = '\t'.join([Measu,Label,Odour,DBB1,Cycle,MTime,OConc,Control,StimON,StimOFF,Pharma,PhTime,PhConc,Comment,ShiftX,ShiftY,StimISI,setting,dbb2,dbb3,PxSzX,PxSzY,PosZ,Lambda,Countl,slvFlip,Stim2ON,Stim2OFF,Age,Analyze])
         lst_handle.write('\n')
