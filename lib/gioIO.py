@@ -144,6 +144,10 @@ def log2lst(fname):
         if len(label_split) == 2:
             setting,OConc = label_split
             Odour = 'Missing'
+        else:
+            setting = Measurement['label']
+            Odour = 'Missing'
+            OConc = '0'
     
         # time
         """ it is unclear what mtime is exactly supposed to be. In this calc, there
