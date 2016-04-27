@@ -30,8 +30,6 @@ def read_lst(lst_path):
         pass
     
     LSTdata.columns = columns
-    import pdb
-    pdb.set_trace()
     return LSTdata
 
 
