@@ -136,12 +136,16 @@ def log2lst(fname):
     for Measurement in Measurements:
         label_split = Measurement['label'].split('_')
         if len(label_split) == 5:
-            tmp, Odour, NOConc, tmp, tmp = label_split
+            tmp, Odour, OConc, tmp, tmp = label_split
         if len(label_split) == 3:
-            setting,Odour,NOConc = label_split
+            setting,Odour,OConc = label_split
         if len(label_split) == 2:
-            setting,NOConc = label_split
+            setting,OConc = label_split
             Odour = 'Missing'
+        else:
+            setting = Measurement['label']
+            Odour = 'Missing'
+            OConc = '0'
     
         # time
         """ it is unclear what mtime is exactly supposed to be. In this calc, there
@@ -175,7 +179,7 @@ def log2lst(fname):
         DBB1 = Location
         Cycle = dt
         MTime = mtime
-        NOConc = NOConc
+        OConc = OConc
         Control = '0'
         StimON = '24'
         StimOFF = '28'
@@ -198,9 +202,9 @@ def log2lst(fname):
         Stim2ON = '36'
         Stim2OFF = '40'
         Age = '-1'
-        Analyze = '-2'
+        Analyze = '2'
         
-        values = '\t'.join([Measu,Label,Odour,DBB1,Cycle,MTime,NOConc,Control,StimON,StimOFF,Pharma,PhTime,PhConc,Comment,ShiftX,ShiftY,StimISI,setting,dbb2,dbb3,PxSzX,PxSzY,PosZ,Lambda,Countl,slvFlip,Stim2ON,Stim2OFF,Age,Analyze])
+        values = '\t'.join([Measu,Label,Odour,DBB1,Cycle,MTime,OConc,Control,StimON,StimOFF,Pharma,PhTime,PhConc,Comment,ShiftX,ShiftY,StimISI,setting,dbb2,dbb3,PxSzX,PxSzY,PosZ,Lambda,Countl,slvFlip,Stim2ON,Stim2OFF,Age,Analyze])
         lst_handle.write('\n')
         lst_handle.write(values)
         
