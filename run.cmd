@@ -1,2 +1,2 @@
 set "curpath=%cd%"
-python %curpath%\ILTIS\Main.py
+python %cd%\ILTIS\Main.py
