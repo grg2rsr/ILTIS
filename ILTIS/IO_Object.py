@@ -260,10 +260,11 @@ class IO_Object(object):
                     info = sp.array(line[2:],dtype=float)
                     if kind == 'circle':
                         self.Main.ROIs.add_ROI(kind='circle',label=label,pos=(info[0],info[1]),ROI_diameter=info[2])
+                        
                     if kind == 'polygon':
                         pos_list = []
                         for i in range(0,info.shape[0],2):
-                            pos = self.Main.Data_Display.Frame_Visualizer.ViewBox.mapToView(QtCore.QPointF(info[i],info[i+1]))
+                            pos = QtCore.QPointF(info[i],info[i+1])
                             pos_list.append([pos.x(),pos.y()])
                             pass
                         self.Main.ROIs.add_ROI(kind='polygon',label=label,pos_list=pos_list)
@@ -318,9 +319,12 @@ class IO_Object(object):
             if type(ROI) == myPolyLineROI:
                  fh.write('\t'.join(['polygon',label]))
                  fh.write('\t')
-                 for j in range(len(ROI.getSceneHandlePositions())):
+                                  
+                 handle_pos = [tup[1] for tup in ROI.getSceneHandlePositions()]
+                 pos_mapped = [ROI.ViewBox.mapToView(pos) for pos in handle_pos]
 
-                     pos = self.Main.Data_Display.Frame_Visualizer.mapFromScene(ROI.getSceneHandlePositions()[j][1])
+                 for pos in (pos_mapped):
+                     
                      x = pos.x()
                      y = pos.y()
 
