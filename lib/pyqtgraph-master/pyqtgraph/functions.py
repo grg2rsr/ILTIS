@@ -1032,7 +1032,8 @@ def makeQImage(imgData, alpha=None, copy=True, transpose=True):
             raise Exception('Array has only 3 channels; cannot make QImage without copying.')
     
     if alpha:
-        imgFormat = QtGui.QImage.Format_ARGB32
+        # imgFormat = QtGui.QImage.Format_ARGB32
+        imgFormat = QtGui.QImage.Format_ARGB32_Premultiplied	
     else:
         imgFormat = QtGui.QImage.Format_RGB32
         

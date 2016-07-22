@@ -66,13 +66,13 @@ class Options_Object(QtCore.QObject):
                               }
                               
         self.view = {'show_flags':sp.ones(self.Main.Data.nTrials,dtype='bool'),
-                     'composition_mode':'Screen',
+                     'composition_mode':'Plus',
                      'last_selected':0,
                      'show_dFF':False,
                      'show_avg':False,
                      'show_monochrome':False,
                      'use_global_levels':False,
-                     'trial_labels_on_traces_vis':False,
+                     'trial_labels_on_traces_vis':True,
                      'color_maps':None,
                      'colors':None,
                      'heatmap':None,

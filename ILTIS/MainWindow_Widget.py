@@ -102,6 +102,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
 #        Process.addAction(self.RunSegmentationAction)
         
         Help = self.Menubar.addMenu('&Help')
+        Help.addAction(self.EnterDebugAction)
         
         pass
     
@@ -261,7 +262,6 @@ class MainWindow_Widget(QtGui.QMainWindow):
                              'func':self.Main.Processing.calc_gaussian_smooth,
                              'checkable':False,
                              'no_data_disabled':True},
-                                    
 
 #==============================================================================
 #           Converters action
@@ -273,10 +273,22 @@ class MainWindow_Widget(QtGui.QMainWindow):
                              'icon':None,
                              'func':self.Main.IO.convert_log2lst,
                              'checkable':False,
+                             'no_data_disabled':False},
+                        
+
+#==============================================================================
+#           Help action
+#==============================================================================
+
+                        'EnterDebugAction':
+                            {'label':'enter pdb',
+                             'status_tip':'halts ILTIS and enters python debugger',
+                             'icon':None,
+                             'func':self.EnterDebug,
+                             'checkable':False,
                              'no_data_disabled':False}
-                        }
-
-
+                             
+                    }
 
         # programatically generate Actions from self.Actions
         def setup_action(self,name,settings):
@@ -342,6 +354,11 @@ class MainWindow_Widget(QtGui.QMainWindow):
         
         self.Main.Data_Display.Traces_Visualizer.update_traces()
         self.Main.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
+        
+    def EnterDebug(self):
+        import pdb
+        pdb.set_trace()
+        pass
         
 
     def open_Options_Widget(self):
