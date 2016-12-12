@@ -59,16 +59,13 @@ After setting up all ROIs, the dataset can be sliced according to the pixels cov
 
 If a `dt` value is specified in the Options, the corresponding time vector is calculated and added to the first column of the `.csv`, with the stimulus start being set to 0, pre stimulus times are thus negative.
 
+
 ## Installation
-Under linux, you can simply run the `run.sh`, under windows, you can double click the `run.cmd`. Both will execute the `Main.py` with `python`.
+1. Install the python 2.7 version of [Anaconda](https://www.continuum.io/downloads) for your operating system.
+2. Download the [environment file](https://github.com/grg2rsr/ILTIS/blob/master/ILTIS.yml).
+3. Open a terminal in the directory where you saved the file and type `conda env create -n ILTIS`. This will install all correct dependencies automatically for you, without interfering with your current python install on your computer.
+4. To start ILTIS, you have the  to first type `source activate ILTIS` in a terminal (omit the `source` on Windows). Then, you can start ILTIS from command line by typing `sh ILTIS.sh` (Linux, Mac) or by double clicking `run.cmd` on Windows.
 
-## Dependencies
-All dependencies are included in standard scientific python bundles, such as the [anaconda distribution from continuum](https://www.continuum.io/downloads) 
-
-+ python 2.7
-+ matplotlib
-+ scipy
-+ pandas
 
 ### Coming soon
 + rigid and nonlinear transformation based movement correction
