@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=ILTIS
+Comment=an Interactive Labeled-Trial Image-stack Slicer
+Exec=/home/daniel/Uni/Dokumente/Software/ILTIS/run.sh
+Icon=/home/daniel/Uni/Dokumente/Software/ILTIS/docs/noun_38617_cc.png
+Terminal=false
+Type=Application
+Categories=Science;                                                
+StartupNotify=true
+
