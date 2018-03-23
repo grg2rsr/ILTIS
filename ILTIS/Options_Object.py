@@ -56,7 +56,7 @@ class Options_Object(QtCore.QObject):
                         
         self.preprocessing = {'stimuli':sp.array([[20,22]]),
                               'nStimuli':1,
-                              'dFF_frames':[0,20],
+                              'dFF_frames':[10,40],
                               'avg_frames':[0,self.Main.Data.nFrames-1],
                               'filter_xy':0.8,
                               'filter_t':1,
@@ -89,7 +89,7 @@ class Options_Object(QtCore.QObject):
                     'show_labels':True}
                     
         self.export = {'format':'.csv - normal',
-                       'data':'dFF'
+                       'data':'raw'
                        }
                        
         self.flags = {'LST_was_read':False,
