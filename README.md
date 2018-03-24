@@ -65,10 +65,11 @@ If a `dt` value is specified in the Options, the corresponding time vector is ca
 2. Download `ILTIS`
 3. Open a terminal in the `env` subdirectory of ILTIS and type `conda env create -f <matching_os> -n ILTIS`, where you replace `<matching_os>` with a suitable environment file. This will install all correct dependencies automatically for you, without interfering with your current python install on your computer. More on managing conda environments [here](https://conda.io/docs/user-guide/tasks/manage-environments.html)
 
-## Staring ILTIS
+## Starting ILTIS
 1. activate the conda environment (by `source activate ILTIS` on Linux/Mac, or `activate ILTIS` on Windows)
-2. ILTIS is started by running `python Main.py` in the `src` folder. On Linux/Mac, you can use the shortcut script `sh ILTIS.sh` in the main ILTIS folder to do so. Both can be combined in a single shell script, when this script is added to `~/.local/bin` you can invoke ILTIS from anywhere from your terminal.
-3. For windows users, double click the `run.cmd` file.
+2. ILTIS is started by running `python Main.py` in the `src` folder.
+  + On Linux/Mac, you can use the shortcut script `sh ILTIS.sh` in the main ILTIS folder to do so. Both can be combined in a single shell script, when this script is added to `~/.local/bin` you can invoke ILTIS from anywhere from your terminal.
+  + For windows users, double click the `run.cmd` file.
 
 <!-- ## Starting ILTIS
 ### Windows
