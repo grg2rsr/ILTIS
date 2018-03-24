@@ -1,3 +1,3 @@
 #!/bin/sh
 BASEDIR=$(dirname $0)
-python $BASEDIR/ILTIS/Main.py
+python $BASEDIR/src/Main.py
