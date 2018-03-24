@@ -79,6 +79,6 @@ class ROI_Manager_Widget(QtGui.QTableWidget):
     
 
 if __name__ == '__main__':
-    import Main
+    from . import Main
     Main.main()
     pass

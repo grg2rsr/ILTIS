@@ -318,7 +318,7 @@ class myCircleROI(pg.CircleROI,myROI):
         non_pg_kws = ['Main','label']
         non_pg_vals = [kwargs.pop(key) for key in non_pg_kws]
         pg.CircleROI.__init__(self,pos,size,**kwargs)
-        myROI.__init__(self, **dict(zip(non_pg_kws,non_pg_vals)))
+        myROI.__init__(self, **dict(list(zip(non_pg_kws,non_pg_vals))))
         self.diameter = self.size()[0]
         
     def get_center(self):
@@ -342,7 +342,7 @@ class myPolyLineROI(pg.PolyLineROI,myROI):
         non_pg_kws = ['Main','label']
         non_pg_vals = [kwargs.pop(key) for key in non_pg_kws]
         pg.PolyLineROI.__init__(self, positions,**kwargs)
-        myROI.__init__(self, **dict(zip(non_pg_kws,non_pg_vals)))
+        myROI.__init__(self, **dict(list(zip(non_pg_kws,non_pg_vals))))
         
         # also workaround for the weird first_call bug
         self.center = self.get_center(first_call=True)
@@ -379,7 +379,7 @@ class myNonParametricROI(pg.ROI,myROI):
         self.mask = mask
         
         pg.ROI.__init__(self,pos,size=(0,0),**kwargs)
-        myROI.__init__(self,**dict(zip(non_pg_kws,non_pg_vals)))
+        myROI.__init__(self,**dict(list(zip(non_pg_kws,non_pg_vals))))
         
         self.sigClicked.connect(self.clicked)
 #        self.sigHoverEvent.connect(self.hover)
@@ -392,7 +392,7 @@ class myNonParametricROI(pg.ROI,myROI):
             
 #            from itertools import chain
 #            coords = list(chain.from_iterable(zip(x, y)))
-            coords = zip(x,y)
+            coords = list(zip(x,y))
             ### polygon
             #        # polygon
             
@@ -415,7 +415,7 @@ class myNonParametricROI(pg.ROI,myROI):
             self.children.append(PolyItem)
             
     def hover(self,evt):
-        print "hovering over", self.label
+        print("hovering over", self.label)
     
     def set_hover(self,val):
         """ """
@@ -428,7 +428,7 @@ class myNonParametricROI(pg.ROI,myROI):
                 self.set_Pen(self.inactive_pen)
             
     def clicked(self,evt):
-        print evt.button()
+        print(evt.button())
         if evt.button() == QtCore.Qt.MiddleButton:
             self.Main.ROIs.remove_ROI(self)
 
@@ -460,5 +460,5 @@ class myQGraphicsPolygonItem(QtGui.QGraphicsPolygonItem):
         self.parent.clicked(evt)
                 
 if __name__ == '__main__':
-    import Main
+    from . import Main
     Main.main()

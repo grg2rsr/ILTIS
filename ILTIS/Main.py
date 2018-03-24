@@ -4,21 +4,22 @@ Created on Wed Apr  1 13:29:30 2015
 
 @author: georg
 """
-import os
-import sys
+import sys, os
+from PyQt4 import QtGui, QtCore
+from lib import pyqtgraph
 
 # quite ugly setting of proper imports
-this_dir = os.path.split(os.path.realpath(__file__))[0] # this directroy
-par_dir = os.path.sep.join([this_dir,os.pardir])
-sys.path.append(par_dir)
-
-# this is necessary for machines that have pyqtgraph already installed as it enforces import of the one from local lib
+# this_dir = os.path.split(os.path.realpath(__file__))[0] # this directroy
+# par_dir = os.path.sep.join([this_dir,os.pardir])
+# sys.path.append(par_dir)
+#
+# # this is necessary for machines that have pyqtgraph already installed as it enforces import of the one from local lib
 # pyqtgraph_path = os.path.sep.join([par_dir,'lib','pyqtgraph-master']) # path to the local pg
 # sys.path.insert(0,pyqtgraph_path)
 
-from PyQt4 import QtGui, QtCore
-import pyqtgraph as pg
-print 'using pyqtgraph at', pg.__file__
+# import pyqtgraph as pg
+print(('using pyqtgraph at', pg.__file__))
+sys.exit()
 from Options_Object import Options_Object
 
 from Processing_Object import Processing_Object
@@ -78,7 +79,7 @@ class Main(QtCore.QObject):
     ### messages
     def print_startup_msg(self):
 
-        print "no startup msg set"
+        print("no startup msg set")
 #        print "this is ILTIS version" + self.version
 #        print "os type: ", os.name
 #        print "Process ID: ", os.getpid()
@@ -101,7 +102,7 @@ def main():
     return_code = app.exec_()
 
     if return_code != 0:
-        print "exiting with return code: ", return_code
+        print(("exiting with return code: ", return_code))
 
     # after closing MainWindow, do cleanup and exit
     pg.exit() # the exit hammer

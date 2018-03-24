@@ -255,6 +255,6 @@ class Processing_Object(object):
 #        return submasks
 
 if __name__ == '__main__':
-    import Main
+    from . import Main
     Main.main()
     pass

@@ -107,7 +107,9 @@ class IO_Object(object):
         # determine format
         endings = sp.array([os.path.splitext(path)[1] for path in paths])
         if not(sp.all(endings[0] == endings)):
-            raise "not all file formats are equal!"
+            # FIXME in 2to3 transition
+            sys.exit()
+            # raise "not all file formats are equal!"
         file_format = endings[0]
 
         # open appropriate reader
@@ -154,8 +156,8 @@ class IO_Object(object):
         self.Main.Data.dFF = sp.zeros((x,y,t,n),dtype='float32')
 
         for n,path in enumerate(paths):
-            print "loading dataset from " + path
-            print "Dataset size: " + str(os.stat(path).st_size / 1000000.0) + ' MB'
+            print("loading dataset from " + path)
+            print("Dataset size: " + str(os.stat(path).st_size / 1000000.0) + ' MB')
             self.Main.MainWindow.statusBar().showMessage("loading dataset: " + path)
             self.Main.Data.raw[:,:,:,n] = io.read_tiffstack(path)
         self.Main.MainWindow.statusBar().clearMessage()
@@ -188,7 +190,7 @@ class IO_Object(object):
         # care for compatibility of the avconv produced file with ppt
         # ask for path, framerate
 
-        print "exporting movie ... "
+        print("exporting movie ... ")
         # from http://www.pyqtgraph.org/documentation/exporting.html
         # create an exporter instance, as an argument give it
         # the item you wish to export
@@ -200,8 +202,8 @@ class IO_Object(object):
         except OSError:
             pass
 
-        print "movie will be saved to: ", outpath
-        print "tmp directory folder is: ", tmpdir
+        print("movie will be saved to: ", outpath)
+        print("tmp directory folder is: ", tmpdir)
 
         # adding a cue for the odor stimulus
         frac = 0.05
@@ -214,7 +216,7 @@ class IO_Object(object):
         for t in range(self.Main.Data.raw.shape[2]):
             self.Main.Data_Display.Frame_Visualizer.frame = t
             self.Main.Data_Display.Frame_Visualizer.update_frame()
-            print t
+            print(t)
             stimuli_frames = self.Main.Options.preprocessing['stimuli']
             for stim_frames in stimuli_frames:
                 onset, offset = stim_frames
@@ -232,10 +234,10 @@ class IO_Object(object):
 #            command = 'avconv -i '+outpath + os.path.sep + 'frame_%d.png -b:v 6400k -r 24 '+outpath + os.path.sep+'exported_movie.avi'
 #            command = 'avconv -r 8 -i '+outpath + os.path.sep + 'frame_%d.png -b:v 6400k -r 8 '+outpath + os.path.sep+'exported_movie.avi'
             command = 'avconv -r 8 -i '+ tmpdir + os.path.sep + 'frame_%d.png -b:v 6400k '+ outpath
-            print command
+            print(command)
     #        command = 'avconv -r 10 -i ./movie_export/frame_%d.png ./movie_export/output.avi'
             subprocess.call(command,shell=True)
-        print "done"
+        print("done")
 
         pass
 
@@ -334,14 +336,14 @@ class IO_Object(object):
 
         fh.close()
 
-        print "saved ROIs in .roi format to", outpath
+        print("saved ROIs in .roi format to", outpath)
 #        outpath = os.path.splitext(outpath)[0] + '_mask.tif'
 #        outpath = self.MainWindow.SaveFileDialog(title='saving ROIs',defaultdir=self.path,extension='.tif')
 
         # extraction mask
         self.Main.Processing.calc_extraction_mask()
         io.save_tstack(self.Main.Data.extraction_mask.astype('uint16'),os.path.splitext(outpath)[0] + '_mask.tif')
-        print "saved ROIs in .tif format to", outpath
+        print("saved ROIs in .tif format to", outpath)
 
         pass
 
@@ -459,7 +461,7 @@ class IO_Object(object):
         ## exporting to csv
         if self.Main.Options.export['format'] == '.csv - normal':
             if self.Main.verbose:
-                print "extracting traces and writing to .csv"
+                print("extracting traces and writing to .csv")
 
             labels = [ROI.label for ROI in self.Main.ROIs.ROI_list]
             labels.insert(0,'time [s]')
@@ -472,7 +474,7 @@ class IO_Object(object):
                 pd.DataFrame(data,columns=labels).to_csv(outpath,sep=',')
 
                 if self.Main.verbose:
-                    print 'written: ', outpath
+                    print('written: ', outpath)
 
 
         ## exporting sorted csv
@@ -503,7 +505,7 @@ class IO_Object(object):
         ## exporting to gloDatamix
         if self.Main.Options.export['format'] == '.gloDatamix':
             if self.Main.verbose:
-                print "extracting traces and writing to .gloDatamix format"
+                print("extracting traces and writing to .gloDatamix format")
 
             # if no .lst has been read, do so now
             if self.Main.Options.flags['LST_was_read'] == False:
@@ -593,7 +595,7 @@ class IO_Object(object):
                 gloMeta.append(row)
 
         # make a pd.DataFrame out of it:
-        gloMetaDF = pd.DataFrame(columns=gloMeta[0].keys())
+        gloMetaDF = pd.DataFrame(columns=list(gloMeta[0].keys()))
         for i in range(len(gloMeta)):
             gloMetaDF = gloMetaDF.append(pd.Series(gloMeta[i]),ignore_index=True)
 
@@ -638,8 +640,8 @@ class IO_Object(object):
                     ind_map.append(ind)
 
             if myInd == None:
-                print "Experiment not found in the .lst file!"
-                print Experiment, filename
+                print("Experiment not found in the .lst file!")
+                print(Experiment, filename)
         return ind_map
 
 
@@ -709,7 +711,9 @@ class IO_Object(object):
         if len(firstline.split(',')) == 2:
             mode = 'mappable'
         if len(firstline.split(',')) > 2:
-            raise "trial labels file contains more than 2 strings per line, cannot parse that."
+            # FIXME again, in 2to3 transition
+            sys.exit()
+            # raise "trial labels file contains more than 2 strings per line, cannot parse that."
 
         labels = self.read_trial_labels(filepath,mode=mode)
         self.Main.Data.Metadata.labels = labels
@@ -739,14 +743,14 @@ class IO_Object(object):
 
     def load_options(self,reset=True):
         if not(reset):
-            print "restoring last options"
+            print("restoring last options")
             try:
                 self.Main.IO.read_options()
             except:
-                print "no options to restore found, defaulting"
+                print("no options to restore found, defaulting")
                 self.Main.Options.load_default_options()
         else:
-            print "default options"
+            print("default options")
             self.Main.Options.load_default_options()
             pass
 

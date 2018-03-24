@@ -46,7 +46,7 @@ class Options_Object(QtCore.QObject):
 
     def load_default_options(self):
         if self.Main.verbose:
-            print "loading default options"
+            print("loading default options")
 
         self.general = {'verbose':True,
                         'experiment_name':os.path.split(os.path.dirname(self.Main.Data.Metadata.paths[0]))[1], # defaults to folder name
@@ -109,6 +109,6 @@ class Options_Object(QtCore.QObject):
 
 
 if __name__ == '__main__':
-    import Main
+    from . import Main
     Main.main()
     pass

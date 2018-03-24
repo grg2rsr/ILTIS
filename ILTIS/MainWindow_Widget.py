@@ -28,7 +28,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
         # layout
         self.Container = None
         self.Splitter = None
-        
+
         # initializations
         self.setup_Actions()
         self.setup_MenuBar()
@@ -49,32 +49,32 @@ class MainWindow_Widget(QtGui.QMainWindow):
 #        self.resize(width*0.7,height*0.7)
 #        self.move(width/15,height/15)
         self.showMaximized()
-        
+
         # ini
         self.Data_Display = Data_Display_Widget(self.Main,self)
         self.Front_Control_Panel = Front_Control_Panel_Widget(self.Main,self)
         self.Container = QtGui.QWidget()
         self.Options_Control = Options_Control_Widget(self.Main,self)
-#        
+#
 #        # splitter variant
         self.Splitter = QtGui.QSplitter(QtCore.Qt.Horizontal)
         self.Splitter.addWidget(self.Data_Display)
         self.Splitter.addWidget(self.Front_Control_Panel)
-        
+
 #        self.Splitter = QtGui.QWidget(self)
         self.setCentralWidget(self.Splitter)
-        
+
 #        self.setWindowIcon(QtGui.QIcon(self.Main.graphics_path + os.path.sep + )) ### FIXME
         self.setWindowTitle('ILTIS')
-        
+
         frac = 0.8
         self.Splitter.setSizes([int(self.Splitter.size().height() * frac), int(self.Splitter.size().height() * (1-frac))])
         # note: http://stackoverflow.com/questions/16280323/qt-set-size-of-qmainwindow
-        
-        self.show() 
+
+        self.show()
 
         pass
-    
+
     def setup_MenuBar(self):
 
         self.Menubar = self.menuBar()
@@ -84,30 +84,30 @@ class MainWindow_Widget(QtGui.QMainWindow):
         Open.addAction(self.ReadNonparametricROIAction)
         Open.addAction(self.ReadLSTAction)
         Open.addAction(self.ReadTrialLabelsAction)
-        
+
         Save = self.Menubar.addMenu('&Save')
         Save.addAction(self.WriteROIAction)
         Save.addAction(self.WriteMovieAction)
         Save.addAction(self.WriteTracesAction)
-        
+
         Converters = self.Menubar.addMenu('&Convert')
         Converters.addAction(self.log2lstAction)
 #        Options = self.Menubar.addMenu('&Options')
 #        Options.addAction(self.OpenOptionsAction)
-        
+
         Process = self.Menubar.addMenu('&Process')
         Process.addAction(self.ApplyFilterAction)
 #        Process.addAction(self.RunMocoSingleAction)
 #        Process.addAction(self.RunMocoAlignAction)
 #        Process.addAction(self.RunSegmentationAction)
-        
+
         Help = self.Menubar.addMenu('&Help')
         Help.addAction(self.EnterDebugAction)
-        
+
         pass
-    
+
     def setup_ToolBar(self):
-        
+
         # spacer widget for right, have to be two different objects
         spacers = [QtGui.QWidget(),QtGui.QWidget()]
         for spacer in spacers:
@@ -122,17 +122,17 @@ class MainWindow_Widget(QtGui.QMainWindow):
         self.ToolBar.addAction(self.OpenOptionsAction)
         self.ToolBar.addWidget(spacers[1])
         pass
-    
+
     def setup_StatusBar(self):
         self.StatusBar = self.statusBar()
         pass
-    
+
     def setup_Actions(self):
         """ generate actions """
         self.Actions = {
-        
+
 #==============================================================================
-# readers        
+# readers
 #==============================================================================
                         'OpenAction':
                             {'label':'load data',
@@ -141,7 +141,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                              'func':self.Main.IO.init_data,
                              'checkable':False,
                              'no_data_disabled':False},
-                                    
+
                         'ReadROIAction':
                             {'label':'Load .roi file',
                              'status_tip':'Read .roi file from disk',
@@ -149,7 +149,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                              'func':self.Main.IO.load_ROIs,
                              'checkable':False,
                              'no_data_disabled':True},
-                                          
+
                         'ReadNonparametricROIAction':
                             {'label':'Load *_mask.tif file',
                              'status_tip':'Read a mask file from disk',
@@ -157,7 +157,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                              'func':self.Main.IO.load_nonparametric_ROIs,
                              'checkable':False,
                              'no_data_disabled':True},
-                                    
+
                         'ReadLSTAction':
                             {'label':'Load .lst file',
                              'status_tip':'Read .lst file from disk',
@@ -172,10 +172,10 @@ class MainWindow_Widget(QtGui.QMainWindow):
                              'icon':self.Main.graphics_path + os.path.sep + 'icons' + os.path.sep +  'tags.svg',
                              'func':self.Main.IO.load_trial_labels,
                              'checkable':False,
-                             'no_data_disabled':True},                                    
+                             'no_data_disabled':True},
 
 #==============================================================================
-# Writers      
+# Writers
 #==============================================================================
 
                         'WriteROIAction':
@@ -214,7 +214,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                              'func':self.toggle_dFF,
                              'checkable':True,
                              'no_data_disabled':True},
-                                    
+
                         'toggleGlobalLevels':
                             {'label':'use global levels',
                              'status_tip':'toggles global levels use',
@@ -222,7 +222,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                              'func':self.toggle_global_levels,
                              'checkable':True,
                              'no_data_disabled':True},
-                                    
+
                         'toggleAvgAction':
                             {'label':'Display time average',
                              'status_tip':'toggles display time average use',
@@ -238,7 +238,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                              'func':self.toggle_monochrome_mode,
                              'checkable':True,
                              'no_data_disabled':True},
-        
+
 #==============================================================================
 #         opening extra widgets
 #==============================================================================
@@ -250,7 +250,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                              'func':self.open_Options_Widget,
                              'checkable':False,
                              'no_data_disabled':True},
-                                             
+
 #==============================================================================
 #           processing action
 #==============================================================================
@@ -274,7 +274,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                              'func':self.Main.IO.convert_log2lst,
                              'checkable':False,
                              'no_data_disabled':False},
-                        
+
 
 #==============================================================================
 #           Help action
@@ -287,7 +287,7 @@ class MainWindow_Widget(QtGui.QMainWindow):
                              'func':self.EnterDebug,
                              'checkable':False,
                              'no_data_disabled':False}
-                             
+
                     }
 
         # programatically generate Actions from self.Actions
@@ -304,46 +304,46 @@ class MainWindow_Widget(QtGui.QMainWindow):
             Action.setDisabled(settings['no_data_disabled'])
             return Action
 
-        for name,settings in self.Actions.iteritems():
+        for name,settings in self.Actions.items():
             Action = setup_action(self,name,settings)
             setattr(self,name,Action)
 
-        
+
 #        ### Moco Single
 #        self.RunMocoSingleAction =  QtGui.QAction('Movement correct trials',self)
 #        self.RunMocoSingleAction.setStatusTip('Align selected trials to their own background')
-#        
+#
 #        ### Moco Mulit
 #        self.RunMocoAlignAction = QtGui.QAction('Align measurements',self)
 #        self.RunMocoAlignAction.setStatusTip('Align selected trials to the background of the last selected data set')
-#        
+#
 #        ### Segmentation
 #        self.RunSegmentationAction = QtGui.QAction('Filter data set',self)
 #        self.RunSegmentationAction.setStatusTip('dummy')
-        
+
     def enable_actions(self):
         """ enable disabled options """
-        for name,settings in self.Actions.iteritems():
+        for name,settings in self.Actions.items():
             if settings['no_data_disabled'] == True:
                 getattr(self,name).setEnabled(True)
 
     ### togglers view mode
-    def toggle_dFF(self):     
+    def toggle_dFF(self):
         """ toggles the dFF show flag, button on the toolbar """
         self.Main.Options.view['show_dFF'] = not(self.Main.Options.view['show_dFF'])
         self.Main.Signals.updateDisplaySettingsSignal.emit()
         self.Main.Data_Display.Traces_Visualizer.update_traces()
         self.Main.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
-           
+
     def toggle_avg_img(self):
         """ toggles display time-average image """
         self.Main.Options.view['show_avg'] = not(self.Main.Options.view['show_avg'])
         self.Main.Signals.updateDisplaySettingsSignal.emit()
-#        
+#
     def toggle_global_levels(self):
         """ toggles the use of global level setting """
         self.Main.Options.view['use_global_levels'] = not(self.Main.Options.view['use_global_levels'])
-#        
+#
     def toggle_monochrome_mode(self):
         """ toggles display in color merges or only one in monochrome 1 trial """
         self.Main.Options.view['show_monochrome'] = not(self.Main.Options.view['show_monochrome']) # the toggle
@@ -351,35 +351,35 @@ class MainWindow_Widget(QtGui.QMainWindow):
         # this should have a signal
         self.Main.MainWindow.Front_Control_Panel.Data_Selector.update_selection()
         self.Main.Signals.updateDisplaySettingsSignal.emit()
-        
+
         self.Main.Data_Display.Traces_Visualizer.update_traces()
         self.Main.Data_Display.Traces_Visualizer_Stimsorted.update_traces()
-        
+
     def EnterDebug(self):
         import pdb
         pdb.set_trace()
         pass
-        
+
 
     def open_Options_Widget(self):
         self.Options_Control.show()
         self.Options_Control.raise_()
         pass
-    
+
     def keyPressEvent(self, event): # reimplementation
         if event.key() == 16777234:
 #            print " left arrow "
             self.Data_Display.Frame_Visualizer.frame = self.Data_Display.Frame_Visualizer.frame - 1
             self.Data_Display.Frame_Visualizer.frame = sp.clip(self.Data_Display.Frame_Visualizer.frame,0,self.Main.Data.nFrames-1)
-        
+
         if event.key() == 16777236:
-#            print " right arrow "            
+#            print " right arrow "
             self.Data_Display.Frame_Visualizer.frame = self.Data_Display.Frame_Visualizer.frame + 1
             self.Data_Display.Frame_Visualizer.frame = sp.clip(self.Data_Display.Frame_Visualizer.frame,0,self.Main.Data.nFrames-1)
 
         self.Data_Display.Frame_Visualizer.update_frame()
         self.Data_Display.Traces_Visualizer.update_vline(self.Data_Display.Frame_Visualizer.frame) # one call is enougth because this one calls the other as well
-        
+
     def closeEvent(self,event): # reimplementation
         reply=QtGui.QMessageBox.question(self,'Message',"Are you sure to quit?",QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
         if reply==QtGui.QMessageBox.Yes:
@@ -393,6 +393,6 @@ class MainWindow_Widget(QtGui.QMainWindow):
 
 
 if __name__ == '__main__':
-    import Main
+    from . import Main
     Main.main()
     pass

@@ -129,6 +129,6 @@ class Data_Selector_Widget(QtGui.QTableWidget):
         
 
 if __name__ == '__main__':
-    import Main
+    from . import Main
     Main.main()
     pass

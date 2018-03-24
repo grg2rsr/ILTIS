@@ -41,7 +41,7 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
 
         # some preparations
         self.trial_labels = self.Main.Data.Metadata.trial_labels
-        self.trial_indices = range(self.Main.Data.nTrials)
+        self.trial_indices = list(range(self.Main.Data.nTrials))
         self.trial_labels_unique = sp.unique(self.trial_labels)
         self.nStimClasses = len(self.trial_labels_unique)
         self.nRepetitions = self.trial_labels.count(self.trial_labels[0]) # FIXME: this imposes a fixed number of repetitions per trial. this should be changed into a vector holding values for each stim
@@ -50,7 +50,7 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
         # looping over StimClasses
         for i,StimClass in enumerate(range(self.nStimClasses)):
             if self.Main.Options.view['trial_labels_on_traces_vis']:
-                print self.Main.Options.view['trial_labels_on_traces_vis']
+                print(self.Main.Options.view['trial_labels_on_traces_vis'])
                 plot = self.plotWidget.addPlot(title=self.trial_labels_unique[StimClass])
             else:
                 plot = self.plotWidget.addPlot(title=None) # for inheriting from QWidget
@@ -213,6 +213,6 @@ class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
 
 
 if __name__ == '__main__':
-    import Main
+    from . import Main
     Main.main()
     pass

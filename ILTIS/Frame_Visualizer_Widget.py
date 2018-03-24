@@ -135,4 +135,4 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
 
     def mouseMoved(self, evt):
         """ keep for debug """
-        print "scene coordinates:", evt, "imageItem coordinates", self.ViewBox.mapToView(evt)
+        print("scene coordinates:", evt, "imageItem coordinates", self.ViewBox.mapToView(evt))

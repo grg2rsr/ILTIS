@@ -347,6 +347,6 @@ class StimRegionWidget(QtGui.QWidget):
     
         
 if __name__ == '__main__':
-    import Main
+    from . import Main
     Main.main()
     pass
