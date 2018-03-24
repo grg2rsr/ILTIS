@@ -54,20 +54,28 @@ Both display modes can be accessed by selecting the corresponding tab of the `tr
 ### Traces export
 After setting up all ROIs, the dataset can be sliced according to the pixels covered by the ROIs. The average value of those pixels for each frame is calculated and the resulting vectors can be written in different ways into `.csv` files:
 
-+ `.csv - normal` writes one file per loaded dataset, with the shape (t,ROI). 
++ `.csv - normal` writes one file per loaded dataset, with the shape (t,ROI).
 + `.csv - sorted` writes one file per ROI and stimulus combination, with the individual columns representing the repetitions.
 
 If a `dt` value is specified in the Options, the corresponding time vector is calculated and added to the first column of the `.csv`, with the stimulus start being set to 0, pre stimulus times are thus negative.
 
 
 ## Installation
-1. Install the python 2.7 version of [Anaconda](https://www.continuum.io/downloads) for your operating system.
-2. Download the [environment file](https://github.com/grg2rsr/ILTIS/blob/master/ILTIS.yml).
-3. Open a terminal in the directory where you saved the file and type `conda env create -n ILTIS`. This will install all correct dependencies automatically for you, without interfering with your current python install on your computer.
-4. To start ILTIS, you have the  to first type `source activate ILTIS` in a terminal (omit the `source` on Windows). Then, you can start ILTIS from command line by typing `sh ILTIS.sh` (Linux, Mac) or by double clicking `run.cmd` on Windows.
+1. Install the python 3.6 version of [Anaconda](https://www.continuum.io/downloads) for your operating system.
+2. Download `ILTIS`
+3. Open a terminal in the `env` subdirectory of ILTIS and type `conda env create -f <matching_os> -n ILTIS`, where you replace `<matching_os>` with a suitable environment file. This will install all correct dependencies automatically for you, without interfering with your current python install on your computer. More on managing conda environments [here](https://conda.io/docs/user-guide/tasks/manage-environments.html)
 
+## Staring ILTIS
+1. activate the conda environment (by `source activate ILTIS` on Linux/Mac, or `activate ILTIS` on Windows)
+2. ILTIS is started by running `python Main.py` in the `src` folder. On Linux/Mac, you can use the shortcut script `sh ILTIS.sh` in the main ILTIS folder to do so. Both can be combined in a single shell script, when this script is added to `~/.local/bin` you can invoke ILTIS from anywhere from your terminal.
+3. For windows users, double click the `run.cmd` file.
 
-### Coming soon
-+ rigid and nonlinear transformation based movement correction
-+ activity based calculation of ROIs
-+ Data export and loading of internal python data objects
+<!-- ## Starting ILTIS
+### Windows
+double click `run.cmd` // currently not implemented!
+### Linux
+// make launcher -->
+
+### Upcoming functionality implementations
++ automatic calculation of ROIs (NNMF)
++ movement corrections: rigid and nonlinear transformation based movement correction
