@@ -6,20 +6,7 @@ Created on Wed Apr  1 13:29:30 2015
 """
 import sys, os
 from PyQt4 import QtGui, QtCore
-from lib.pyqtgraph import pyqtgraph as pg
-
-# quite ugly setting of proper imports
-# this_dir = os.path.split(os.path.realpath(__file__))[0] # this directroy
-# par_dir = os.path.sep.join([this_dir,os.pardir])
-# sys.path.append(par_dir)
-#
-# # this is necessary for machines that have pyqtgraph already installed as it enforces import of the one from local lib
-# pyqtgraph_path = os.path.sep.join([par_dir,'lib','pyqtgraph-master']) # path to the local pg
-# sys.path.insert(0,pyqtgraph_path)
-
-# import pyqtgraph as pg
-# print(('using pyqtgraph at', pg.__file__))
-
+from lib import pyqtgraph as pg
 from Objects.Options_Object import Options_Object
 from Objects.Processing_Object import Processing_Object
 from Objects.ROIs_Object import ROIs_Object
