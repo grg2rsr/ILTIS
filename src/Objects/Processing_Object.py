@@ -8,7 +8,7 @@ import sys, os
 import scipy as sp
 from scipy import random, ndimage
 from PyQt4.QtGui import QColor
-from lib.pyqtgraph.pyqtgraph import ColorMap as PGColorMap
+from lib import pyqtgraph as pg
 
 class Processing_Object(object):
     def __init__(self,Main):
@@ -182,17 +182,17 @@ class Processing_Object(object):
         """ input is a rgb(a) tuple returns PGColorMap """
         pos = sp.array([1,0])
         cols = sp.array([rgba,[0,0,0,0]],dtype=sp.ubyte)
-        cmap = PGColorMap(pos,cols)
+        cmap = pg.ColorMap(pos,cols)
         return cmap
 
     def calc_preset_colormaps(self):
         pos = sp.array([1,0.66,0.33,0])
         cols = sp.array([[255,255,255,255],[255,220,0,255],[185,0,0,255],[0,0,0,0]],dtype=sp.ubyte)
-        heatmap = PGColorMap(pos,cols)
+        heatmap = pg.ColorMap(pos,cols)
 
         pos = sp.array([1,0])
         cols = sp.array([[255,255,255,255],[0,0,0,255]],dtype=sp.ubyte)
-        graymap = PGColorMap(pos,cols)
+        graymap = pg.ColorMap(pos,cols)
 
         return heatmap, graymap
 

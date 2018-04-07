@@ -5,7 +5,7 @@ Created on Wed Apr 15 15:00:08 2015
 @author: georg
 """
 from PyQt4 import QtGui, QtCore
-import lib.pyqtgraph.pyqtgraph as pg
+import lib.pyqtgraph as pg
 import scipy as sp
 
 class Traces_Visualizer_Stimsorted_Widget(QtGui.QWidget):
