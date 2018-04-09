@@ -6,7 +6,7 @@ Created on Wed Apr  1 13:21:29 2015
 """
 from PyQt4 import QtGui, QtCore
 # import lib.pyqtgraph.pyqtgraph as pg
-from lib import pyqtgraph as pg
+from lib.pyqtgraph import pyqtgraph as pg
 import scipy as sp
 
 class ROIs_Object(QtCore.QObject):

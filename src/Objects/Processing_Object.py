@@ -8,7 +8,7 @@ import sys, os
 import scipy as sp
 from scipy import random, ndimage
 from PyQt4.QtGui import QColor
-from lib import pyqtgraph as pg
+from lib.pyqtgraph import pyqtgraph as pg
 
 class Processing_Object(object):
     def __init__(self,Main):

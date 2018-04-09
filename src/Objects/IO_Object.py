@@ -6,7 +6,7 @@ Created on Wed Apr 15 14:52:50 2015
 """
 import sys, os
 from PyQt4 import QtGui, QtCore # for the dialogs
-from lib import pyqtgraph as pg
+from lib.pyqtgraph import pyqtgraph as pg
 from lib import IOtools as io
 from lib import gioIO as gio
 from .Data_Object import Data_Object, Metadata_Object

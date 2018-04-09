@@ -6,7 +6,7 @@ Created on Wed Apr  1 13:11:53 2015
 """
 
 from PyQt4 import Qt, QtGui, QtCore
-import lib.pyqtgraph as pg
+from lib.pyqtgraph import pyqtgraph as pg
 from .Data_Selector_Widget import Data_Selector_Widget
 from .ROI_Manager_Widget import ROI_Manager_Widget
 import scipy as sp

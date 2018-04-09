@@ -5,9 +5,9 @@ Created on Wed Apr  1 13:10:05 2015
 @author: georg
 """
 from PyQt4 import QtGui, QtCore
-from lib import pyqtgraph as pg
-from lib.pyqtgraph import dockarea as pgd
-from lib.pyqtgraph.dockarea.Dock import DockLabel
+from lib.pyqtgraph import pyqtgraph as pg
+from lib.pyqtgraph.pyqtgraph import dockarea as pgd
+from lib.pyqtgraph.pyqtgraph.dockarea.Dock import DockLabel
 
 from .Frame_Visualizer_Widget import Frame_Visualizer_Widget
 from .LUT_Controlers_Widget import LUT_Controlers_Widget

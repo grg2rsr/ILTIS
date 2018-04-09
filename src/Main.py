@@ -6,7 +6,7 @@ Created on Wed Apr  1 13:29:30 2015
 """
 import sys, os
 from PyQt4 import QtGui, QtCore
-from lib import pyqtgraph as pg
+from lib.pyqtgraph import pyqtgraph as pg
 from Objects.Options_Object import Options_Object
 from Objects.Processing_Object import Processing_Object
 from Objects.ROIs_Object import ROIs_Object

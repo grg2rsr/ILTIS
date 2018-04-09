@@ -5,7 +5,7 @@ Created on Wed Apr 15 14:59:08 2015
 @author: georg
 """
 from PyQt4 import QtGui, QtCore
-import lib.pyqtgraph as pg
+from lib.pyqtgraph import pyqtgraph as pg
 import scipy as sp
 from scipy import random
 

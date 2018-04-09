@@ -5,7 +5,7 @@ Created on Wed Apr 15 14:58:09 2015
 @author: georg
 """
 from PyQt4 import Qt, QtGui, QtCore
-import lib.pyqtgraph as pg
+from lib.pyqtgraph import pyqtgraph as pg
 import scipy as sp
 
 
