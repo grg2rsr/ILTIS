@@ -1,0 +1,10 @@
+name: ILTIS
+channels:
+  - defaults
+dependencies:
+  - pandas=0.21
+  - pyqt=4.11.4
+  - numpy=1.11
+  - python=3.5
+  - scipy=1.0.0
+  - qt=4.8
