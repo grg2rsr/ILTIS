@@ -82,8 +82,9 @@ class IO_Object(object):
         if title is None:
             title = 'Save File'
 
-        qpath = QtWidgets.QFileDialog.getSaveFileName(parent=self.Main.MainWindow,
-                                                      caption=title, directory=default_dir, filter=extension)
+        qpath, file_filters = QtWidgets.QFileDialog.getSaveFileName(parent=self.Main.MainWindow,
+                                                                    caption=title,
+                                                                    directory=default_dir, filter=extension)
         path = str(qpath)
 
         return path
@@ -296,7 +297,9 @@ class IO_Object(object):
         if circle: label, layer, pos x, pos y, diameter
         if poly: label, layer, pos x_1, pos_y1, ... pos x_n, pos y_n
         """
-        outpath = self.SaveFileDialog(title='saving ROIs',default_dir = self.Main.Options.general['cwd'], extension='*.roi')
+        outpath = self.SaveFileDialog(title='saving ROIs',
+                                      default_dir=self.Main.Options.general['cwd'],
+                                      extension='*.roi')
         outpath = self.append_extension(outpath, '.roi')
 
         fh = open(outpath,'w')
