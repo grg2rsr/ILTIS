@@ -6,16 +6,16 @@ config = {
     'setup_requires': ['setuptools_scm'],
     'install_requires': ['scipy',
                          'pyqtgraph',
-                         'nose',
                          'pandas',
                          'matplotlib',
                          'PyQt5',
                          'tifffile'],
     'python_requires': ">=3.7",
     "packages": find_packages(),
+    "package_data": {"iltis2": ["graphics/icons/*.svg", "graphics/*.jpg"]},
     'scripts': [],
     "entry_points": {"console_scripts": ["iltis = iltis2.Main:main"]},
-    'name': 'ILTIS2'
+    'name': 'iltis2'
 }
 
 setup(**config)

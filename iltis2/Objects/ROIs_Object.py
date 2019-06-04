@@ -73,7 +73,7 @@ class ROIs_Object(QtCore.QObject):
         # color the ROI according to the "active" dataset
         current_pen = pg.mkPen(self.Main.Options.ROI['active_color'],width=1.8)
         common_kwargs = {
-                         # 'parent':self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox,
+                         'parent':self.Main.MainWindow.Data_Display.Frame_Visualizer.ViewBox,
                          'pen': current_pen,
                          'removable': True,
                          'Main': self.Main,
@@ -269,16 +269,16 @@ class ROIs_Object(QtCore.QObject):
 
 class myROI(object):
 
-    def __init__(self,Main=None,label=None,ViewBox=None):
-#        super(myROI,self).__init__()
+    def __init__(self, Main=None, label=None, ViewBox=None, **kwargs):
+        super().__init__(**kwargs)
         self.Main = Main
         self.label = label
         self.ViewBox = self.parentItem()
-        self.children = [] # a list of GraphicsItems
+        self.children = []  # a list of GraphicsItems
 
         self.active = False
         self.center = self.get_center()
-        self.labelItem = pg.TextItem(text=label,anchor=(0.5,0.5))
+        self.labelItem = pg.TextItem(text=label,anchor=(0.5, 0.5))
         self.update_center()
 
         self.ViewBox.addItem(self.labelItem)
@@ -317,13 +317,14 @@ class myROI(object):
         self.labelItem.setText(self.label)
 
 
-class myCircleROI(pg.CircleROI, myROI):
+class myCircleROI(myROI, pg.CircleROI):
 
     def __init__(self, pos, size, **kwargs):
-        non_pg_kws = ['Main', 'label']
-        non_pg_vals = [kwargs.pop(key) for key in non_pg_kws]
-        super(pg.CircleROI, self).__init__(pos, size=size, **kwargs)
-        super(myROI, self).__init__(**dict(list(zip(non_pg_kws, non_pg_vals))))
+        # non_pg_kws = ['Main', 'label']
+        # non_pg_vals = [kwargs.pop(key) for key in non_pg_kws]
+        # pg.CircleROI.__init__(self, pos, size=size, **kwargs)
+        # myROI.__init__(self, **dict(list(zip(non_pg_kws, non_pg_vals))))
+        super().__init__(pos=pos, size=size, **kwargs)
         self.diameter = self.size()[0]
 
     def get_center(self):
