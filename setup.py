@@ -8,7 +8,7 @@ config = {
                          'pyqtgraph',
                          'pandas',
                          'matplotlib',
-                         'PyQt5',
+                         'PyQt5>=5.11.2',
                          'tifffile'],
     'python_requires': ">=3.7",
     "packages": find_packages(),
