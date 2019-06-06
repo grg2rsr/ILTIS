@@ -8,7 +8,7 @@ Created on Fri May 15 10:22:28 2015
 """ a collection of IO tools that are compatible with the .lst / .gloDatamix
 file specifications by C.Giovanni Galizia 
 
-lib is designed useable by ILTIS interface as well as programmatically
+io is designed useable by ILTIS interface as well as programmatically
 """
 
 

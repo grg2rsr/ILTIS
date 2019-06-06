@@ -61,21 +61,17 @@ If a `dt` value is specified in the Options, the corresponding time vector is ca
 
 
 ## Installation
-1. Install the python 3.6 version of [Anaconda](https://www.continuum.io/downloads) for your operating system.
+1. Install the python 3.7 version of [Anaconda](https://www.anaconda.com/distribution/) for your operating system.
 2. Download `ILTIS`
-3. Open a terminal in the `env` subdirectory of ILTIS and type `conda env create -f <matching_os> -n ILTIS`, where you replace `<matching_os>` with a suitable environment file. This will install all correct dependencies automatically for you, without interfering with your current python install on your computer. More on managing conda environments [here](https://conda.io/docs/user-guide/tasks/manage-environments.html)
+3. Open a terminal (Linux and Mac) or Powershell (Windows) and create an environment containing Python 3.7: <br> `conda create -n ILTIS python=3.7`
+(More on managing conda environments [here](https://conda.io/docs/user-guide/tasks/manage-environments.html))
+4. Activate the conda environment created <br>`conda activate ILTIS`
+5. Navigate into the folder containing ILTIS.<br>`cd <path of folder containing ILTIS>`
+6. Install ILTIS into the environment<br>`pip install ILTIS` 
 
 ## Starting ILTIS
-1. activate the conda environment (by `source activate ILTIS` on Linux/Mac, or `activate ILTIS` on Windows)
-2. ILTIS is started by running `python Main.py` in the `src` folder.
-  + On Linux/Mac, you can use the shortcut script `sh ILTIS.sh` in the main ILTIS folder to do so. Both can be combined in a single shell script, when this script is added to `~/.local/bin` you can invoke ILTIS from anywhere from your terminal.
-  + For windows users, double click the `run.cmd` file.
-
-<!-- ## Starting ILTIS
-### Windows
-double click `run.cmd` // currently not implemented!
-### Linux
-// make launcher -->
+1. Open a terminal (Linux and Mac) or Powershell (Windows) and activate the conda environment created <br>`conda activate ILTIS`
+2. Start ILTIS using the command "iltis"<br>`iltis` 
 
 ### Upcoming functionality implementations
 + automatic calculation of ROIs (NNMF)

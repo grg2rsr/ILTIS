@@ -10,12 +10,12 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 import pyqtgraph as pg
 
 
-from iltis2.Objects.Options_Object import Options_Object
-from iltis2.Objects.Processing_Object import Processing_Object
-from iltis2.Objects.ROIs_Object import ROIs_Object
-from iltis2.Objects.IO_Object import IO_Object
-from iltis2.Widgets.MainWindow_Widget import MainWindow_Widget
-from iltis2.Signals import Signals
+from iltis.Objects.Options_Object import Options_Object
+from iltis.Objects.Processing_Object import Processing_Object
+from iltis.Objects.ROIs_Object import ROIs_Object
+from iltis.Objects.IO_Object import IO_Object
+from iltis.Widgets.MainWindow_Widget import MainWindow_Widget
+from iltis.Signals import Signals
 
 # pg.setConfigOption("useOpenGL", True)
 pg.setConfigOptions(antialias=True)

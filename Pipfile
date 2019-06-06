@@ -15,8 +15,9 @@ numpy = "*"
 pyqt5 = "*"
 pyqtgraph = "*"
 matplotlib = "*"
-iltis2 = {editable = true,path = "."}
+iltis2 = {path = "."}
 tifffile = "*"
+iltis = {path = "."}
 
 [requires]
 python_version = "3.7"

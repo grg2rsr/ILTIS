@@ -12,10 +12,10 @@ config = {
                          'tifffile'],
     'python_requires': ">=3.7",
     "packages": find_packages(),
-    "package_data": {"iltis2": ["graphics/icons/*.svg", "graphics/*.jpg"]},
+    "package_data": {"iltis": ["graphics/icons/*.svg", "graphics/*.jpg"]},
     'scripts': [],
-    "entry_points": {"console_scripts": ["iltis = iltis2.Main:main"]},
-    'name': 'iltis2'
+    "entry_points": {"console_scripts": ["iltis = iltis.Main:main"]},
+    'name': 'iltis'
 }
 
 setup(**config)

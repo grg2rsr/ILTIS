@@ -7,8 +7,8 @@ Created on Wed Apr 15 14:52:50 2015
 import sys, os
 from PyQt5 import QtCore, QtWidgets # for the dialogs
 import pyqtgraph as pg
-from ..lib import IOtools as io
-from ..lib import gioIO as gio
+from ..io import IOtools as io
+from ..io import gioIO as gio
 from .Data_Object import Data_Object, Metadata_Object
 from .ROIs_Object import myCircleROI, myPolyLineROI
 import scipy as sp

@@ -81,7 +81,7 @@ def read_3dtiff(path):
 
 
 def read_lsm(path,color=False):
-    """ takes a path to a lsm file, reads the file with the tifffile lib and
+    """ takes a path to a lsm file, reads the file with the tifffile io and
     returns a np array
 
     final format is of the array dims: x y t - if color is True: x y t c
