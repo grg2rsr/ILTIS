@@ -67,7 +67,6 @@ class Traces_Visualizer_Stimsorted_Widget(QtWidgets.QWidget):
             # vlines
             vline = plot.addLine(x=self.Data_Display.Frame_Visualizer.frame, movable=True)
             vline.setBounds((0, self.Main.Data.nFrames -1))
-            vline.sigPositionChanged.connect(self.vline_pos_changed) # add interactivity
             self.vlines.append(vline)
 
             # add the plot to the list of plots
@@ -206,7 +205,7 @@ class Traces_Visualizer_Stimsorted_Widget(QtWidgets.QWidget):
         self.Main.Data_Display.Traces_Visualizer.vline.setValue(pos)
 
     def wheelEvent(self, evt): # reimplementation
-        d = sp.around(evt.delta() / 120.0)  # check this on different machines how much it is
+        d = sp.around(evt.angleDelta().y() / 120.0)  # check this on different machines how much it is
         self.Main.Data_Display.Frame_Visualizer.frame -= d
         self.update_vlines(self.Main.Data_Display.Frame_Visualizer.frame)
         self.Main.Data_Display.Frame_Visualizer.update_frame()

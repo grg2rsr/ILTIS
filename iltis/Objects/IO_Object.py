@@ -144,6 +144,9 @@ class IO_Object(object):
         # load options
         self.load_options(reset=True)
 
+        # enable all mouse based interactions in the Data_Display_Widget
+        self.Main.MainWindow.Data_Display.enable_interaction()
+
     def load_tif(self, paths):
         """ read tifs found at paths (list with paths) """
 

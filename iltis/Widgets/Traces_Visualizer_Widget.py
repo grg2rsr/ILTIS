@@ -29,7 +29,7 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         self.plotItem.showGrid(x=True,y=True,alpha=0.5)
 
         self.vline = self.plotItem.addLine(x=self.Data_Display.Frame_Visualizer.frame,movable=True)
-        self.vline.sigPositionChanged.connect(self.vline_pos_changed)  # add interactivity
+
 
     def reset(self):
         for trace in self.traces:
@@ -185,7 +185,7 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
             vline.blockSignals(False)
 
     def wheelEvent(self, evt):  # reimplementation
-        d = sp.around(evt.delta() / 120.0)  # check this on different machines how much it is
+        d = sp.around(evt.angleDelta().y() / 120.0)  # check this on different machines how much it is
         self.Main.Data_Display.Frame_Visualizer.frame -= d
         self.update_vline(self.Main.Data_Display.Frame_Visualizer.frame)
         self.Main.Data_Display.Frame_Visualizer.update_frame()

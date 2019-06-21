@@ -33,9 +33,6 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
         self.ViewBox.setAcceptDrops(True) # for drag and drop interaction? put it to the Data Selector!
         self.setCentralItem(self.ViewBox)
 
-        # mouse interaction
-        self.scene().sigMouseClicked.connect(self.Main.ROIs.add_ROI_request)
-#        self.scene().sigMouseMoved.connect(self.mouseMoved) # keep for debug
         pass
 
     def init_data(self):

@@ -80,10 +80,28 @@ class Data_Display_Widget(QtWidgets.QMainWindow): # needs to be a QMainWindow to
         self.FrameDock.setStretch(y=(height/3.0) * 2)
         self.TracesDock.setStretch(y=(height/3.0) * 1)
 
+    # this function enables interaction which is disabled at GUI initialization. To be enabled after loading data.
+    def enable_interaction(self):
+
+        # enable ROI creation upon mouse click in Frame_Visualizer
+        self.Frame_Visualizer.scene().sigMouseClicked.connect(self.Main.ROIs.add_ROI_request)
+        # self.scene().sigMouseMoved.connect(self.mouseMoved) # keep for debug
+
+        # enable updating frame based on the movement of the vertical line in Traces_Visualizer
+        traces_visualizer = self.Traces_Visualizer
+        traces_visualizer.vline.sigPositionChanged.connect(traces_visualizer.vline_pos_changed)
+
+        # enable updating frame based on the movement of a vertical ine in Traces_Visualizer_Stimsorted
+        traces_visualizer_stimsorted = self.Traces_Visualizer_Stimsorted
+        for vline in traces_visualizer_stimsorted.vlines:
+            vline.sigPositionChanged.connect(traces_visualizer_stimsorted.vline_pos_changed)
+
+
 class myDock(pgd.Dock):
     def __init__(self,name,**kwargs):
         super(myDock,self).__init__(name,**kwargs)
         self.label = myDockLabel(name,self)
+
 
 class myDockLabel(DockLabel):
     def __init__(self,*args):
