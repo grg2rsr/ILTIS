@@ -115,7 +115,7 @@ class Processing_Object(object):
         """ calculates traces based on the extraction_mask
         definition: Traces is of shape (t,ID,stim),
         t,ID,stim,rep is Traces_sorted """
-        if extraction_mask == None:
+        if extraction_mask is None:
             extraction_mask = self.Main.Data.extraction_mask
 
         self.Main.Data.Traces = sp.zeros((self.Main.Data.nFrames,extraction_mask.shape[2],self.Main.Data.nTrials))
