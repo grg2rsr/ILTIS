@@ -211,7 +211,7 @@ class MainWindow_Widget(QtWidgets.QMainWindow):
                         'toggledFFAction':
                             {'label':'Display dFF',
                              'status_tip':'Toggles dF/F',
-                             'icon':self.Main.graphics_path + os.path.sep + 'icons' + os.path.sep +  'calc_dFF.png',
+                             'icon':self.Main.graphics_path + os.path.sep + 'icons' + os.path.sep + 'calc_dFF.svg',
                              'func':self.toggle_dFF,
                              'checkable':True,
                              'no_data_disabled':True},
