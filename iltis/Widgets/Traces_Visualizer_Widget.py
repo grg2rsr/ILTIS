@@ -6,6 +6,7 @@ Created on Wed Apr 15 14:59:11 2015
 """
 import pyqtgraph as pg
 import scipy as sp
+import numpy as np
 
 
 class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
@@ -170,7 +171,7 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
     def vline_pos_changed(self, evt):
         """ updater for the zlayer change caused by the vline """
         vline = evt
-        pos = int(vline.pos().x())
+        pos = int(np.clip(vline.pos().x(), 0, self.Main.Data.nFrames))
         self.Main.Data_Display.Frame_Visualizer.frame = pos
         self.Main.Data_Display.Frame_Visualizer.update_frame()
         self.update_vline(pos)
@@ -186,9 +187,11 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
 
     def wheelEvent(self, evt):  # reimplementation
         d = sp.around(evt.angleDelta().y() / 120.0)  # check this on different machines how much it is
-        self.Main.Data_Display.Frame_Visualizer.frame -= d
-        self.update_vline(self.Main.Data_Display.Frame_Visualizer.frame)
-        self.Main.Data_Display.Frame_Visualizer.update_frame()
+        updated_frame = self.Main.Data_Display.Frame_Visualizer.frame - d
+        if 0 <= updated_frame < self.Main.Data.nFrames:
+            self.Main.Data_Display.Frame_Visualizer.frame -= d
+            self.update_vline(self.Main.Data_Display.Frame_Visualizer.frame)
+            self.Main.Data_Display.Frame_Visualizer.update_frame()
 
     pass
 

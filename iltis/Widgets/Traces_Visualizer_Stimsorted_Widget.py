@@ -7,6 +7,7 @@ Created on Wed Apr 15 15:00:08 2015
 from PyQt5 import QtWidgets
 import pyqtgraph as pg
 import scipy as sp
+import numpy as np
 
 
 class Traces_Visualizer_Stimsorted_Widget(QtWidgets.QWidget):
@@ -188,12 +189,12 @@ class Traces_Visualizer_Stimsorted_Widget(QtWidgets.QWidget):
     def vline_pos_changed(self, evt):
         """ updater for the zlayer change caused by the vline """
         vline = evt
-        pos = int(vline.pos().x())
+        pos = int(np.clip(vline.pos().x(), 0, self.Main.Data.nFrames))
         self.Main.Data_Display.Frame_Visualizer.frame = pos
         self.Main.Data_Display.Frame_Visualizer.update_frame()
-        self.update_vlines(pos)
+        self.update_vline(pos)
 
-    def update_vlines(self, pos):
+    def update_vline(self, pos):
         """ handles sigPositionChanged """
         # update all other lines in this widget as well
         for vline in self.vlines:
@@ -206,9 +207,11 @@ class Traces_Visualizer_Stimsorted_Widget(QtWidgets.QWidget):
 
     def wheelEvent(self, evt): # reimplementation
         d = sp.around(evt.angleDelta().y() / 120.0)  # check this on different machines how much it is
-        self.Main.Data_Display.Frame_Visualizer.frame -= d
-        self.update_vlines(self.Main.Data_Display.Frame_Visualizer.frame)
-        self.Main.Data_Display.Frame_Visualizer.update_frame()
+        updated_frame = self.Main.Data_Display.Frame_Visualizer.frame - d
+        if 0 <= updated_frame < self.Main.Data.nFrames:
+            self.Main.Data_Display.Frame_Visualizer.frame -= d
+            self.update_vline(self.Main.Data_Display.Frame_Visualizer.frame)
+            self.Main.Data_Display.Frame_Visualizer.update_frame()
 
 
 if __name__ == '__main__':
