@@ -139,7 +139,7 @@ class Traces_Visualizer_Widget(pg.GraphicsLayoutWidget):
         for stim_id in range(self.Main.Options.preprocessing['stimuli'].shape[0]):
             stim_frames = self.Main.Options.preprocessing['stimuli'][stim_id, :]
             stim_region = pg.LinearRegionItem(values=stim_frames,movable=False,
-                                              brush=pg.mkBrush([50, 50, 50, 100]))
+                                              brush=pg.mkBrush([63, 63, 63, 191]))
             for line in stim_region.lines:
                 line.hide()
             stim_region.setZValue(-1000)
