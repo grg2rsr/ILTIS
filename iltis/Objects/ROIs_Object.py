@@ -343,12 +343,14 @@ class myCircleROI(myROI, pg.CircleROI):
         self.setPen(pen)
 
 
-class myPolyLineROI(pg.PolyLineROI,myROI):
-    def __init__(self,positions,**kwargs):
-        non_pg_kws = ['Main','label']
-        non_pg_vals = [kwargs.pop(key) for key in non_pg_kws]
-        pg.PolyLineROI.__init__(self, positions,**kwargs)
-        myROI.__init__(self, **dict(list(zip(non_pg_kws,non_pg_vals))))
+class myPolyLineROI(myROI, pg.PolyLineROI):
+    def __init__(self, positions, **kwargs):
+        # non_pg_kws = ['Main','label']
+        # non_pg_vals = [kwargs.pop(key) for key in non_pg_kws]
+        # pg.PolyLineROI.__init__(self, positions,**kwargs)
+        # myROI.__init__(self, **dict(list(zip(non_pg_kws,non_pg_vals))))
+
+        super().__init__(positions=positions, **kwargs)
 
         # also workaround for the weird first_call bug
         self.center = self.get_center(first_call=True)
