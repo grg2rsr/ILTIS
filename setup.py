@@ -1,19 +1,21 @@
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup, find_packages
 
 config = {
     'description': 'ILTIS - an interactive labeled-trial image stack slicer',
-    'author': 'Georg Raiser',
-    'url': 'https://github.com/grg2rsr/ILTIS',
-    'download_url': 'https://github.com/grg2rsr/ILTIS.git.',
-    'author_email': 'grg2rsr@gmail.com.',
-    'version': '0.1dev',
-    'install_requires': ['scipy','pyqtgraph','nose'],
-    'packages': ['ILTIS'],
+    'use_scm_version': True,
+    'setup_requires': ['setuptools_scm'],
+    'install_requires': ['scipy',
+                         'pyqtgraph',
+                         'pandas',
+                         'matplotlib',
+                         'PyQt5>=5.11.2',
+                         'tifffile'],
+    'python_requires': ">=3.7",
+    "packages": find_packages(),
+    "package_data": {"iltis": ["graphics/icons/*.svg", "graphics/*.jpg"]},
     'scripts': [],
-    'name': 'ILTIS'
+    "entry_points": {"console_scripts": ["iltis = iltis.Main:main"]},
+    'name': 'iltis'
 }
 
 setup(**config)

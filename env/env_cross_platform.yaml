@@ -3,8 +3,8 @@ channels:
   - defaults
 dependencies:
   - pandas=0.21
-  - pyqt=4.11.4
+  - pyqt=5.12.2
   - numpy=1.11
-  - python=3.5
+  - python=3.7
   - scipy=1.0.0
-  - qt=4.8
+  - qt=5.12.2
