@@ -157,10 +157,11 @@ def read_pst(pst_path):
 
     shape = sp.int32((meta['Width'],meta['Height'],meta['Frames']))
 
-
-    raw = sp.fromfile(pst_path,dtype='int16')
-    data = sp.reshape(raw,shape,order='F')
-    return data.astype('uint16')
+    raw = sp.fromfile(pst_path, dtype='int16')
+    data = sp.reshape(raw, shape, order='F')
+    data_uint16 = data.astype('uint16')
+    data_flipped = sp.flip(data_uint16, axis=1)
+    return data_flipped
 
 
 #==============================================================================
