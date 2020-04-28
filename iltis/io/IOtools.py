@@ -60,6 +60,7 @@ def read_tiff(path):
     dimensions to x y """
     data = tifffile.imread(path)
     data = data.T
+    data = sp.flip(data, axis=1)
     return data
 
 
@@ -69,6 +70,7 @@ def read_tiffstack(path):
 
     data = tifffile.TiffFile(path).asarray()
     data = data.swapaxes(0,2) # moves t to last dim. tifffile reads pages as first dim
+    data = sp.flip(data, axis=1)
     return data
 
 
@@ -77,6 +79,8 @@ def read_3dtiff(path):
     data = tifffile.TiffFile(path).asarray()
     data = data.swapaxes(0,3)
     data = data[:,0,:,:]
+    # not sure which dimension is Y, 1 or 2?
+    data = sp.flip(data, axis=2)
     return data
 
 
@@ -94,6 +98,8 @@ def read_lsm(path,color=False):
         Data_cut = data[0,:,:,:]
         Data_cut_rot = sp.swapaxes(Data_cut,2,0)
         Data_cut_rot = sp.swapaxes(Data_cut_rot,1,3)
+
+    Data_cut_rot = sp.flip(Data_cut_rot, 1)
 
     return Data_cut_rot
 
@@ -160,6 +166,7 @@ def read_pst(pst_path):
 
     raw = sp.fromfile(pst_path,dtype='int16')
     data = sp.reshape(raw,shape,order='F')
+    data = sp.flip(data, axis=1)
     return data.astype('uint16')
 
 
@@ -175,7 +182,7 @@ def save_tstack(data,path):
     # tifffile.imsave gets z y x
     datac = data.copy()
     datac = datac.swapaxes(0,2) #
-
+    datac = sp.flip(datac, axis=1)
     tifffile.imsave(path,datac)
     pass
 
