@@ -60,7 +60,7 @@ class Options_Object(QtCore.QObject):
                         'cwd':self.Main.cwd,
                         }
 
-        self.preprocessing = {'stimuli':sp.array([[20,22]]),
+        self.preprocessing = {'stimuli':sp.array([[20.0, 22.0]]),
                               'nStimuli':1,
                               'dFF_frames':[10,40],
                               'avg_frames':[0,self.Main.Data.nFrames-1],
