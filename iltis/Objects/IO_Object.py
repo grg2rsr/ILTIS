@@ -36,19 +36,22 @@ class IO_Object(object):
         DO NOT connect this init_data to the initDataSignal slot, this one
         has to be called seperately
         """
-        self.Main.Signals.resetSignal.emit()
 
-        # read in new data
-        self.load_data()  # opens filedialog, sets meta_data.paths
+        # try to read in new data
+        success = self.load_data()  # opens filedialog, sets meta_data.paths
 
-        # init the UI of Options Control
-        self.Main.MainWindow.Options_Control.init_UI()
+        if success:
+            # reset ROIs and display
+            self.Main.Signals.resetSignal.emit()
 
-        # initialize Data display again
-        self.Main.Signals.initDataSignal.emit()
+            # init the UI of Options Control
+            self.Main.MainWindow.Options_Control.init_UI()
 
-        # and emit an update Signal
-        self.Main.Signals.updateSignal.emit()
+            # initialize Data display again
+            self.Main.Signals.initDataSignal.emit()
+
+            # and emit an update Signal
+            self.Main.Signals.updateSignal.emit()
 
     def reset(self):
         """ deletes data object """
@@ -96,15 +99,18 @@ class IO_Object(object):
     def load_data(self):
         """ get paths to load. determine file format. open appropriate reader """
 
-        # Data init
-        self.Main.Data = Data_Object()
-        self.Main.Data.Metadata = Metadata_Object(self.Main.Data)
-
         # get paths
         paths = self.OpenFileDialog(title='Open data set', default_dir=self.Main.Options.general['cwd'],
                                                   extension='(*.tif *.lsm *.pst)')
-        if paths is None:
-            pass
+
+        # do nothing if no paths were returned, i.e., when user pressed "Cancel"
+        if not paths:
+            # return False to indicate unsuccessful loading
+            return False
+
+        # Data init if a path was chosen
+        self.Main.Data = Data_Object()
+        self.Main.Data.Metadata = Metadata_Object(self.Main.Data)
 
         # determine format
         endings = sp.array([os.path.splitext(path)[1] for path in paths])
@@ -146,6 +152,9 @@ class IO_Object(object):
 
         # enable all mouse based interactions in the Data_Display_Widget
         self.Main.MainWindow.Data_Display.enable_interaction()
+
+        # return True to indicate successful loading
+        return True
 
     def load_tif(self, paths):
         """ read tifs found at paths (list with paths) """
@@ -246,9 +255,17 @@ class IO_Object(object):
 #==============================================================================
     def load_ROIs(self):
         """ reads a .roi or .coor file and updates the ROIs """
-        self.Main.ROIs.reset()
-        file_path = self.OpenFileDialog(title='load ROIs',default_dir = self.Main.Options.general['cwd'], extension='*.roi *.coor')[0]
 
+        paths = self.OpenFileDialog(title='load ROIs',default_dir = self.Main.Options.general['cwd'], extension='*.roi *.coor')
+
+        # do nothing if no paths were returned, i.e., when user pressed "Cancel"
+        if not paths:
+            return
+
+        self.Main.ROIs.reset()
+
+        # since OpenFileDialog can allow selection of multiple files, select the first one
+        file_path = paths[0]
         kind = os.path.splitext(file_path)[1]
 
         if kind == '.roi': # new style
@@ -354,12 +371,17 @@ class IO_Object(object):
         size_filter can be a tuple and segments with an area smaller than
         size_filter[0] or larger size_filter[1] are considered to be valid ROIs
         """
-        self.Main.ROIs.reset()
 
         # get mask data
-        file_path = self.OpenFileDialog(title='load nonparametric ROIs',default_dir = self.Main.Options.general['cwd'], extension='*.tif')[0]
-        masks = io.read_tiffstack(file_path)
+        paths = self.OpenFileDialog(title='load nonparametric ROIs',default_dir = self.Main.Options.general['cwd'], extension='*.tif')
 
+        # do nothing if no paths were returned, i.e., when user pressed "Cancel"
+        if not paths:
+            return
+
+        self.Main.ROIs.reset()
+        # since OpenFileDialog can allow selection of multiple files, select the first one
+        masks = io.read_tiffstack(paths[0])
 
 
         # skimage based segmentation
@@ -702,8 +724,15 @@ class IO_Object(object):
         first is the filename without extension, and the second is the label """
 
         # get filepath per UI
-        filepath = self.OpenFileDialog(title='load a textfile with trial labels',default_dir=self.Main.Options.general['cwd'])
-        filepath = filepath[0]
+        paths = self.OpenFileDialog(
+            title='load a textfile with trial labels',default_dir=self.Main.Options.general['cwd'])
+
+        # do nothing if no paths were returned, i.e., when user pressed "Cancel"
+        if not paths:
+            return
+
+        # since OpenFileDialog can allow selection of multiple files, select the first one
+        filepath = paths[0]
 
         # check which whay to parse
         with open(filepath,'r') as fh:
