@@ -374,20 +374,24 @@ class myPolyLineROI(myROI, pg.PolyLineROI):
         return pos
     pass
 
-class myNonParametricROI(pg.ROI,myROI):
+
+class myNonParametricROI(myROI, pg.ROI):
     """ function that need to be reimplemented:
     click, hover, return mask (is passed) """
 
     def __init__(self,mask,contour,**kwargs):
-        non_pg_kws = ['Main','label']
-        non_pg_vals = [kwargs.pop(key) for key in non_pg_kws]
+
         # pg.ROI needs a pos as the constructor. center of largest segment
         pos = sp.average(contour[sp.argmax([cont.shape[0] for cont in contour])],axis=0)
         self.contour = contour
         self.mask = mask
 
-        pg.ROI.__init__(self,pos,size=(0,0),**kwargs)
-        myROI.__init__(self,**dict(list(zip(non_pg_kws,non_pg_vals))))
+        # non_pg_kws = ['Main', 'label']
+        # non_pg_vals = [kwargs.pop(key) for key in non_pg_kws]
+        # pg.ROI.__init__(self,pos,size=(0,0),**kwargs)
+        # myROI.__init__(self,**dict(list(zip(non_pg_kws,non_pg_vals))))
+
+        super().__init__(pos=pos, size=(0, 0), **kwargs)
 
         self.sigClicked.connect(self.clicked)
 #        self.sigHoverEvent.connect(self.hover)

@@ -18,8 +18,8 @@ import re
 import time
 from collections import OrderedDict
 
-# from skimage.measure import label as sklabel
-# from skimage.measure import find_contours
+from skimage.measure import label as sklabel
+from skimage.measure import find_contours
 
 class IO_Object(object):
     """ holds all IO functionality """
@@ -359,7 +359,6 @@ class IO_Object(object):
         # get mask data
         file_path = self.OpenFileDialog(title='load nonparametric ROIs',default_dir = self.Main.Options.general['cwd'], extension='*.tif')[0]
         masks = io.read_tiffstack(file_path)
-
 
 
         # skimage based segmentation
