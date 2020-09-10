@@ -1,10 +1,13 @@
-name: ILTIS
+name: iltis
 channels:
   - defaults
 dependencies:
-  - pandas=0.21
-  - pyqt=5.12.2
-  - numpy=1.11
+  - pandas
+  - pyqt
+  - numpy
   - python=3.7
-  - scipy=1.0.0
-  - qt=5.12.2
+  - scipy
+  - qt
+  - pyqtgraph
+  - scikit-image
+  - tifffile
