@@ -62,16 +62,16 @@ If a `dt` value is specified in the Options, the corresponding time vector is ca
 
 ## Installation
 1. Install the python 3.7 version of [Anaconda](https://www.anaconda.com/distribution/) for your operating system.
-2. Download the repostory `ILTIS`
-3. Open a terminal (Linux and Mac) or Powershell (Windows) and create an environment containing Python 3.7: <br> `conda create -n ILTIS python=3.7`
+2. Download the repostory `ILTIS` and extract it.
+3. Navigate into the repository containing ILTIS.<br>`cd <path of the repository ILTIS>`
+4. Open a terminal (Linux and Mac) or Powershell (Windows) and create an environment using the YAML file provided: <br> `conda env create -f ./env/env_cross_platform.yaml`
 (More on managing conda environments [here](https://conda.io/docs/user-guide/tasks/manage-environments.html))
-4. Activate the conda environment created <br>`conda activate ILTIS`
-5. Navigate into the repository containing ILTIS.<br>`cd <path of the repository ILTIS>`
+5. Activate the conda environment created <br>`conda activate iltis`
 6. Make sure that the file `setup.py` in your current path by looking at the output of the command `ls` (Linux/Mac) or `dir` (Windows).
-6. Install ILTIS into the environment<br>`pip install ./` 
+7. Install ILTIS into the environment<br>`pip install ./` 
 
 ## Starting ILTIS
-1. Open a terminal (Linux and Mac) or Powershell (Windows) and activate the conda environment created <br>`conda activate ILTIS`
+1. Open a terminal (Linux and Mac) or Powershell (Windows) and activate the conda environment created <br>`conda activate iltis`
 2. Start ILTIS using the command "iltis"<br>`iltis` 
 
 ### Upcoming functionality implementations
