@@ -100,11 +100,11 @@ class Frame_Visualizer_Widget(pg.GraphicsView):
     def update_frame(self):
         for ind in self.active_inds:
             if self.Main.Options.view['show_avg']:
-                self.ImageItems_dFF[ind].setImage(sp.average(self.Main.Data.dFF[:,:,:,ind],axis=2))
-                self.ImageItems[ind].setImage(sp.average(self.Main.Data.raw[:,:,:,ind],axis=2))
+                self.ImageItems_dFF[ind].setImage(sp.average(self.Main.Data.dFF[:,:,:,ind],axis=2), autoLevels=False)
+                self.ImageItems[ind].setImage(sp.average(self.Main.Data.raw[:,:,:,ind],axis=2), autoLevels=False)
             else:
-                self.ImageItems_dFF[ind].setImage(self.Main.Data.dFF[:,:,self.frame,ind])
-                self.ImageItems[ind].setImage(self.Main.Data.raw[:,:,self.frame,ind])
+                self.ImageItems_dFF[ind].setImage(self.Main.Data.dFF[:,:,self.frame,ind], autoLevels=False)
+                self.ImageItems[ind].setImage(self.Main.Data.raw[:,:,self.frame,ind], autoLevels=False)
 
         self.update_levels()
         pass

@@ -378,7 +378,7 @@ class MainWindow_Widget(QtWidgets.QMainWindow):
             self.Data_Display.Frame_Visualizer.frame = self.Data_Display.Frame_Visualizer.frame + 1
             self.Data_Display.Frame_Visualizer.frame = sp.clip(self.Data_Display.Frame_Visualizer.frame,0,self.Main.Data.nFrames-1)
 
-        self.Data_Display.Frame_Visualizer.update_frame()
+        # self.Data_Display.Frame_Visualizer.update_frame()
         self.Data_Display.Traces_Visualizer.update_vline(self.Data_Display.Frame_Visualizer.frame) # one call is enougth because this one calls the other as well
 
     def closeEvent(self,event): # reimplementation
